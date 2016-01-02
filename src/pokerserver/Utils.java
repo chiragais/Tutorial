@@ -1,9 +1,11 @@
-package rummydemoais;
+package pokerserver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+/**
+ * @author Chirag
+ */
 public class Utils {
     /*
      * This function accept three card (id) and check if they are of same type

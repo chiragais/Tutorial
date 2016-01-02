@@ -2,22 +2,28 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package rummydemoais;
+package pokerserver;
 
 
 import com.shephertz.app42.server.AppWarpServer;
 
 /**
- * @author DHRUV CHOPRA
+ * @author Chirag
  */
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 	String appconfigPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"AppConfig.json";
-	boolean started = AppWarpServer.start(new RummyServerExtension(), appconfigPath);
+	System.out.print("AppConfig : " + appconfigPath);
+	boolean started = AppWarpServer.start(new PokerServerExtension(), appconfigPath);
         if(!started){
+        	System.out.println();
+        	System.out.print("Main : AppWarpServer did not start. See logs for details. " );
             throw new Exception("AppWarpServer did not start. See logs for details.");
+        }else{
+        	System.out.println();
+        	System.out.print("Main : Server Started " );
         }
     }
 

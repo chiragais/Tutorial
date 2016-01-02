@@ -2,9 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package rummydemoais;
+package pokerserver;
 
-
+/**
+ * @author Chirag
+ */
 public class CardsConstants {
     
     /*

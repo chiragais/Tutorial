@@ -2,21 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package rummydemoais;
+package pokerserver;
 
 import com.shephertz.app42.server.idomain.BaseServerAdaptor;
 import com.shephertz.app42.server.idomain.IZone;
 
 /**
- *
- * @author shephertz
+ * @author Chirag
  */
-public class RummyServerExtension extends BaseServerAdaptor{
+public class PokerServerExtension extends BaseServerAdaptor{
     
     @Override
     public void onZoneCreated(IZone zone)
     {             
-        zone.setAdaptor(new RummyZoneExtension(zone));
+    	System.out.println();
+    	System.out.print("Poker Server Extension : "+zone.getName());
+        zone.setAdaptor(new PokerZoneExtension(zone));
     }
     
 }
