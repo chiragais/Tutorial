@@ -1,10 +1,15 @@
 package pokerserver;
 
+import java.util.ArrayList;
+
+import org.json.JSONObject;
+
 import com.shephertz.app42.server.idomain.BaseTurnRoomAdaptor;
 import com.shephertz.app42.server.idomain.HandlingResult;
 import com.shephertz.app42.server.idomain.ITurnBasedRoom;
 import com.shephertz.app42.server.idomain.IUser;
 import com.shephertz.app42.server.idomain.IZone;
+
 /**
  * 
  * @author Chirag
@@ -34,11 +39,14 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor {
 			System.out.print("Room : onTimerTick : "
 					+ gameRoom.getJoinedUsers().size());
 		}
-//		if (GAME_STATUS == CardsConstants.STOPPED
-//				&& gameRoom.getJoinedUsers().size() >= 2) {
-		if (GAME_STATUS == CardsConstants.STOPPED) {
+		 if (GAME_STATUS == CardsConstants.STOPPED
+		 && gameRoom.getJoinedUsers().size() >= 2) {
+//		if (GAME_STATUS == CardsConstants.STOPPED) {
 			GAME_STATUS = CardsConstants.RUNNING;
 			gameRoom.startGame(CardsConstants.SERVER_NAME);
+			for(IUser iUser : gameRoom.getJoinedUsers()){
+				iUser.SendChatNotification(CardsConstants.SERVER_NAME, "Game is started.. ;)", gameRoom);
+			}
 			System.out.println();
 			System.out.print("Room : onTimerTick : Start Game : ");
 		} else if (GAME_STATUS == CardsConstants.RESUMED) {
@@ -142,6 +150,36 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor {
 		System.out.println();
 		System.out.print("Room : handleUserLeavingTurnRoom :  User : "
 				+ user.getName());
+		// This will be changed.
+		if (GAME_STATUS == CardsConstants.RUNNING
+				&& gameRoom.getJoinedUsers().size() == 0) {
+			System.out.println();
+			System.out.print("Room : Game Over ..... ");
+			for(IUser iUser : gameRoom.getJoinedUsers()){
+				iUser.SendChatNotification(CardsConstants.SERVER_NAME, user.getName()+" is left room", gameRoom);
+			}
+			handleFinishGame("Chirag", null);
+		}
+	}
+
+	/*
+	 * This function stop the game and notify the room players about winning
+	 * user and his cards.
+	 */
+	private void handleFinishGame(String winningUser, ArrayList<Integer> cards) {
+		try {
+			JSONObject object = new JSONObject();
+			object.put("win", winningUser);
+			object.put("cards", cards);
+			GAME_STATUS = CardsConstants.FINISHED;
+			gameRoom.BroadcastChat(CardsConstants.SERVER_NAME,
+					CardsConstants.RESULT_GAME_OVER + "#" + object);
+			gameRoom.setAdaptor(null);
+			izone.deleteRoom(gameRoom.getId());
+			gameRoom.stopGame(CardsConstants.SERVER_NAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -165,25 +203,28 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor {
 				+ sender.getName() + " : Message : " + message);
 	}
 
-	 /**
-     * Invoked when a join request is received by the room and the number of
-     * joined users is less than the maxUsers allowed.
-     * 
-     * By default this will result in a success response sent back the user, 
-     * the user will be added to the list of joined users of the room and
-     * a user joined room notification will be sent back to all the subscribed 
-     * users of the room.
-     * 
-     * @param user the user who has sent the request
-     * @param result use this to override the default behavior
-     */
-	public void handleUserJoinRequest(IUser user, HandlingResult result){
+	/**
+	 * Invoked when a join request is received by the room and the number of
+	 * joined users is less than the maxUsers allowed.
+	 * 
+	 * By default this will result in a success response sent back the user, the
+	 * user will be added to the list of joined users of the room and a user
+	 * joined room notification will be sent back to all the subscribed users of
+	 * the room.
+	 * 
+	 * @param user
+	 *            the user who has sent the request
+	 * @param result
+	 *            use this to override the default behavior
+	 */
+	public void handleUserJoinRequest(IUser user, HandlingResult result) {
 		System.out.println();
 		System.out.print("Room : handleUserJoinRequest :  User : "
-				+ user.getName() );
-		gameRoom.BroadcastChat(CardsConstants.SERVER_NAME, "New User Joined");
+				+ user.getName());
+		gameRoom.BroadcastChat(CardsConstants.SERVER_NAME, user.getName()+" User Joined");
 
-    }
+	}
+
 	public void onUserPaused(IUser user) {
 
 	}

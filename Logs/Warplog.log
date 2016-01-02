@@ -99,3 +99,28 @@
 2016-01-02 08:21:19,425 - WARNING: Running with 500 CCU limit
 2016-01-02 08:50:37,057 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
 2016-01-02 08:50:37,061 - WARNING: Running with 500 CCU limit
+2016-01-02 11:50:45,735 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-01-02 11:50:45,740 - WARNING: Running with 500 CCU limit
+2016-01-02 12:40:27,941 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-01-02 12:40:27,945 - WARNING: Running with 500 CCU limit
+2016-01-02 12:40:30,951 - WARNING: Failed Auth. Zone for 4c35c32d-e912-46c9-b does not exist
+2016-01-02 12:41:52,839 - WARNING: Failed Auth. Zone for 4c35c32d-e912-46c9-b does not exist
+2016-01-02 12:41:58,534 - WARNING: Failed Auth. Zone for 4c35c32d-e912-46c9-b does not exist
+2016-01-02 12:46:20,616 - WARNING: Failed Auth. Zone for 4c35c32d-e912-46c9-b does not exist
+2016-01-02 12:50:15,673 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-01-02 12:50:15,679 - WARNING: Running with 500 CCU limit
+2016-01-02 12:50:21,257 - WARNING: Failed to resume sessiongh
+2016-01-02 13:13:32,599 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-01-02 13:13:32,605 - WARNING: Running with 500 CCU limit
+2016-01-02 13:19:40,919 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-01-02 13:19:40,923 - WARNING: Running with 500 CCU limit
+2016-01-02 13:19:46,515 - WARNING: Failed to resume sessiontg
+2016-01-02 16:14:37,503 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleUserSessionClosed(TurnBasedRoom.java:279)
+	at com.shephertz.app42.server.domain.Zone.removeUser(Zone.java:738)
+	at com.shephertz.app42.server.domain.Zone.handleUserSessionClosed(Zone.java:752)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:551)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
