@@ -4,6 +4,8 @@
  */
 package pokerserver;
 
+import pokerserver.zone.PokerZoneExtension;
+
 import com.shephertz.app42.server.idomain.BaseServerAdaptor;
 import com.shephertz.app42.server.idomain.IZone;
 
