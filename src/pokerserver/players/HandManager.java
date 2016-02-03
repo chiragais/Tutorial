@@ -1,108 +1,84 @@
 package pokerserver.players;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import pokerserver.cards.Card;
 import pokerserver.cards.PlayerCards;
 import pokerserver.utils.GameConstants;
-/**
- * Manage player cards and user hands
- * @author Chirag
- *
- */
-public class PlayerHand implements GameConstants {
 
+public class HandManager implements GameConstants{
 	
 	public HAND_RANK pokerHandRank;
-
-	public int getValue() {
-		return pokerHandRank.ordinal();
+	List<Card> defaultCards = new ArrayList<Card>();
+	private Card[] handBestCards = new Card[5];
+	
+	public HandManager(List<Card> defaultCards){
+		this.defaultCards.addAll(defaultCards);
+		System.out.println();
+		System.out.print("Default cards 0: "+ defaultCards.size());
 	}
-
-	private Card[] hand = new Card[2];
-	private Card[] PokerHandFinalCards = new Card[5];
-
-	public PlayerHand(PlayerCards plrCards) {
-		hand[0]=plrCards.getFirstCard();
-		hand[1]=plrCards.getSecondCard();
+	public Card[] getPlayerBestCards(){
+		
+		return handBestCards;
 	}
-
-	public PlayerHand(Card[] hand) {
-		this.hand = hand;
-	}
-
-	public Card[] getHand() {
-		return hand;
-	}
-
-	public void setHand(Card[] hand) {
-		this.hand = hand;
-	}
-
-	/**
-	 * It will check best rank for user
-	 * @param flop
-	 * @return
-	 */
-	public HAND_RANK determineHandRank(Card[] flop) {
-
-		Card[] allCards = new Card[hand.length + flop.length];
-
-		for (int i = 0; i < hand.length; i++) {
-			allCards[i] = hand[i];
+	public HAND_RANK findPlayerBestHand(PlayerCards playerCards){
+	
+		handBestCards = new Card[5];
+		List<Card> allCards = new ArrayList<Card>();
+		allCards.addAll(defaultCards);
+		allCards.add(playerCards.getFirstCard());
+		allCards.add(playerCards.getSecondCard());
+		allCards = shortingCards(allCards);
+		
+		Card[] newCards = new Card[allCards.size()];
+		for (int i = 0; i < allCards.size(); i++) {
+			System.out.println();
+			System.out.println("this is order  = " + allCards.get(i).getCardName());
+			newCards[i]=allCards.get(i);
 		}
-
-		for (int i = 0; i < flop.length; i++) {
-			allCards[hand.length + i] = flop[i];
-		}
-
-		allCards = sortingCards(allCards);
-
-		for (int j = 0; j < allCards.length; j++) {
-			System.out.println("this is list of cards " + j + " = "
-					+ allCards[j].getValue());
-		}
-
-		System.out.println("___________________________________________________");
-
-		if (isRoyalFlush(allCards)) {
+		
+		if (isRoyalFlush(newCards)) {
 			pokerHandRank = HAND_RANK.ROYAL_FLUSH;
-			return HAND_RANK.ROYAL_FLUSH;
-		} else if (isAStraightFlush(allCards)) {
+		} else if (isAStraightFlush(newCards)) {
 			pokerHandRank = HAND_RANK.STRAIGHT_FLUSH;
-			return HAND_RANK.STRAIGHT_FLUSH;
-		} else if (isFourOfAKind(allCards)) {
+		} else if (isFourOfAKind(newCards)) {
 			pokerHandRank = HAND_RANK.FOUR_OF_A_KIND;
-			return HAND_RANK.FOUR_OF_A_KIND;
-		} else if (isFullHouse(allCards)) {
+		} else if (isFullHouse(newCards)) {
 			pokerHandRank = HAND_RANK.FULL_HOUSE;
-			return HAND_RANK.FULL_HOUSE;
-		} else if (isFlush(allCards)) {
+		} else if (isFlush(newCards)) {
 			pokerHandRank = HAND_RANK.FLUSH;
-			return HAND_RANK.FLUSH;
-		} else if (isStraight(allCards)) {
+		} else if (isStraight(newCards)) {
 			pokerHandRank = HAND_RANK.STRAIGHT;
-			return HAND_RANK.STRAIGHT;
-		} else if (isAceStraight(allCards)) {
+		} else if (isAceStraight(newCards)) {
 			pokerHandRank = HAND_RANK.STRAIGHT;
-			return HAND_RANK.STRAIGHT;
-		} else if (isThreeOfAKind(allCards)) {
+		} else if (isThreeOfAKind(newCards)) {
 			pokerHandRank = HAND_RANK.THREE_OF_A_KIND;
-			return HAND_RANK.THREE_OF_A_KIND;
-		} else if (isTwoPair(allCards)) {
+		} else if (isTwoPair(newCards)) {
 			pokerHandRank = HAND_RANK.TWO_PAIR;
-			return HAND_RANK.TWO_PAIR;
-		} else if (isPair(allCards)) {
+		} else if (isPair(newCards)) {
 			pokerHandRank = HAND_RANK.PAIR;
-			return HAND_RANK.PAIR;
 		} else {
-			for (int i = 0; i < PokerHandFinalCards.length; i++) {
-				PokerHandFinalCards[i] = allCards[i];
+			for (int i = 0; i < handBestCards.length; i++) {
+				handBestCards[i] = allCards.get(i);
 			}
 			pokerHandRank = HAND_RANK.HIGH_CARD;
-			return HAND_RANK.HIGH_CARD;
 		}
-
+		return pokerHandRank;
+	}
+	
+	public List<Card> shortingCards(List<Card> allCards){
+		for (int i = 1; i <= allCards.size(); i++) {
+			for (int j = 0; j < allCards.size()- i; j++) {
+				if (allCards.get(j + 1).getValue() > allCards.get(j).getValue()) {
+					Card cTemp = allCards.get(j);
+					allCards.set(j, allCards.get(j + 1));
+					allCards.set(j + 1, cTemp);
+				}
+			}
+		}
+		
+		return allCards;
 	}
 
 	public Card[] sortingCards(Card[] cardArray) {
@@ -115,18 +91,14 @@ public class PlayerHand implements GameConstants {
 				}
 			}
 		}
-		for (int i = 0; i < cardArray.length; i++) {
-			System.out.println("this is order  = " + cardArray[i].getValue());
-		}
 		return cardArray;
 	}
-
 	public boolean isRoyalFlush(Card[] allCards) {
 
 		if (isFlush(allCards)) {
-			if (isStraight(PokerHandFinalCards)) {
+			if (isStraight(handBestCards)) {
 				boolean aceExists = false, kingExists = false, queenExists = false, jackExists = false, tenExists = false;
-				for (Card card : PokerHandFinalCards) {
+				for (Card card : handBestCards) {
 					switch (card.getRank().toString()) {
 					case RANK_ACE:
 						aceExists = true;
@@ -179,18 +151,18 @@ public class PlayerHand implements GameConstants {
 		}
 		if (isAStraight) {
 			System.out.println("this is pokerhand    "+"  "+allCards.length);
-			System.out.println("this is pokerhand    "+"  "+PokerHandFinalCards.length);
+			System.out.println("this is pokerhand    "+"  "+handBestCards.length);
 			
 			for (int i=0,j=0; i < allCards.length - 1; i++) {
 
 				if ((allCards[i].getValue() - allCards[i + 1].getValue()) == 1) {
-					PokerHandFinalCards[j] = allCards[i];
+					handBestCards[j] = allCards[i];
 					
-				    System.out.println("this is pokerhand    "+j+"  "+PokerHandFinalCards[j]);
+				    System.out.println("this is pokerhand    "+j+"  "+handBestCards[j]);
 					j++;
-					if(j==PokerHandFinalCards.length-1){
-						PokerHandFinalCards[j]=allCards[i+1];
-						 System.out.println("this is pokerhand    "+j+"  "+PokerHandFinalCards[j]);
+					if(j==handBestCards.length-1){
+						handBestCards[j]=allCards[i+1];
+						 System.out.println("this is pokerhand    "+j+"  "+handBestCards[j]);
 						break;
 					}
 				}
@@ -226,10 +198,10 @@ public class PlayerHand implements GameConstants {
 				}
 			}
 			if (aceExist && twoExist && threeExist && fourExist && fiveExist) {
-				for (int i = 1; i < PokerHandFinalCards.length; i++) {
-					PokerHandFinalCards[i - 1] = allCards[i];
+				for (int i = 1; i < handBestCards.length; i++) {
+					handBestCards[i - 1] = allCards[i];
 				}
-				PokerHandFinalCards[4] = allCards[0];
+				handBestCards[4] = allCards[0];
 			}
 			return (aceExist && twoExist && threeExist && fourExist && fiveExist);
 		} else {
@@ -264,9 +236,9 @@ public class PlayerHand implements GameConstants {
 			int j = 0;
 			for (int i = 0; i < allCards.length; i++) {
 				if (allCards[i].getSuit() == SUITS.club) {
-					PokerHandFinalCards[j] = allCards[i];
+					handBestCards[j] = allCards[i];
 					j++;
-					if (j == PokerHandFinalCards.length) {
+					if (j == handBestCards.length) {
 						return true;
 					}
 				}
@@ -275,9 +247,9 @@ public class PlayerHand implements GameConstants {
 			int j = 0;
 			for (int i = 0; i < allCards.length; i++) {
 				if (allCards[i].getSuit() == SUITS.spade) {
-					PokerHandFinalCards[j] = allCards[i];
+					handBestCards[j] = allCards[i];
 					j++;
-					if (j == PokerHandFinalCards.length) {
+					if (j == handBestCards.length) {
 						return true;
 					}
 				}
@@ -286,9 +258,9 @@ public class PlayerHand implements GameConstants {
 			int j = 0;
 			for (int i = 0; i < allCards.length; i++) {
 				if (allCards[i].getSuit() == SUITS.heart) {
-					PokerHandFinalCards[j] = allCards[i];
+					handBestCards[j] = allCards[i];
 					j++;
-					if (j == PokerHandFinalCards.length) {
+					if (j == handBestCards.length) {
 						return true;
 					}
 				}
@@ -297,9 +269,9 @@ public class PlayerHand implements GameConstants {
 			int j = 0;
 			for (int i = 0; i < allCards.length; i++) {
 				if (allCards[i].getSuit() == SUITS.diamond) {
-					PokerHandFinalCards[j] = allCards[i];
+					handBestCards[j] = allCards[i];
 					j++;
-					if (j == PokerHandFinalCards.length) {
+					if (j == handBestCards.length) {
 						return true;
 					}
 				}
@@ -321,7 +293,7 @@ public class PlayerHand implements GameConstants {
 				if (allCards[m].getValue() == allCards[n].getValue()) {
 					cardRepeats++;
 					if (cardRepeats == 3) {
-						PokerHandFinalCards[0] = allCards[n];
+						handBestCards[0] = allCards[n];
 						isThreeOfAKind = true;
 					}
 				}
@@ -336,19 +308,19 @@ public class PlayerHand implements GameConstants {
 	}
 
 	public void calculateFinalKindOfArray(int nPlace, Card[] allCards) {
-		Card cTemp = PokerHandFinalCards[0];
-		for (int i = 0; i < PokerHandFinalCards.length; i++) {
+		Card cTemp = handBestCards[0];
+		for (int i = 0; i < handBestCards.length; i++) {
 			if (i < nPlace) {
 				if (cTemp.getValue() < allCards[i].getValue()) {
-					PokerHandFinalCards[i] = allCards[i];
+					handBestCards[i] = allCards[i];
 				} else {
-					for (int j = 0; j < PokerHandFinalCards.length; j++) {
-						PokerHandFinalCards[j] = allCards[j];
+					for (int j = 0; j < handBestCards.length; j++) {
+						handBestCards[j] = allCards[j];
 					}
 					break;
 				}
 			} else {
-				PokerHandFinalCards[i] = cTemp;
+				handBestCards[i] = cTemp;
 			}
 		}
 	}
@@ -387,22 +359,22 @@ public class PlayerHand implements GameConstants {
 		}
 		if (isTwoPair) {
 			if (allCards[0].getValue() > cTemp1.getValue()) {
-				PokerHandFinalCards[0] = allCards[0];
-				PokerHandFinalCards[1] = cTemp1;
-				PokerHandFinalCards[2] = cTemp1;
-				PokerHandFinalCards[3] = cTemp2;
-				PokerHandFinalCards[4] = cTemp2;
+				handBestCards[0] = allCards[0];
+				handBestCards[1] = cTemp1;
+				handBestCards[2] = cTemp1;
+				handBestCards[3] = cTemp2;
+				handBestCards[4] = cTemp2;
 			} else {
-				PokerHandFinalCards[0] = cTemp1;
-				PokerHandFinalCards[1] = cTemp1;
+				handBestCards[0] = cTemp1;
+				handBestCards[1] = cTemp1;
 				if (allCards[2].getValue() > cTemp2.getValue()) {
-					PokerHandFinalCards[2] = allCards[2];
-					PokerHandFinalCards[3] = cTemp2;
-					PokerHandFinalCards[4] = cTemp2;
+					handBestCards[2] = allCards[2];
+					handBestCards[3] = cTemp2;
+					handBestCards[4] = cTemp2;
 				} else {
-					PokerHandFinalCards[2] = cTemp2;
-					PokerHandFinalCards[3] = cTemp2;
-					PokerHandFinalCards[4] = allCards[4];
+					handBestCards[2] = cTemp2;
+					handBestCards[3] = cTemp2;
+					handBestCards[4] = allCards[4];
 				}
 			}
 
@@ -425,7 +397,7 @@ public class PlayerHand implements GameConstants {
 					cardRepeats++;
 					if (cardRepeats == 2) {
 						isPair = true;
-						PokerHandFinalCards[0] = allCards[m];
+						handBestCards[0] = allCards[m];
 						break;
 					}
 				}
@@ -467,7 +439,7 @@ public class PlayerHand implements GameConstants {
 			}
 			if (isThreeOfAKind) {
 				for (int k = 0; k < 3; k++) {
-					PokerHandFinalCards[k] = cTemp;
+					handBestCards[k] = cTemp;
 				}
 				break;
 			}
@@ -493,10 +465,10 @@ public class PlayerHand implements GameConstants {
 					}
 				}
 				if (isTwoOfAKind) {
-					for (int k = 3; k < PokerHandFinalCards.length; k++) {
-						PokerHandFinalCards[k] = cTemp;
+					for (int k = 3; k < handBestCards.length; k++) {
+						handBestCards[k] = cTemp;
 					}
-					PokerHandFinalCards = sortingCards(PokerHandFinalCards);
+					handBestCards = sortingCards(handBestCards);
 					break;
 				}
 			}
@@ -518,7 +490,7 @@ public class PlayerHand implements GameConstants {
 				if (allCards[m].getValue() == allCards[n].getValue()) {
 					cardRepeats++;
 					if (cardRepeats == 4) {
-						PokerHandFinalCards[0] = allCards[n];
+						handBestCards[0] = allCards[n];
 						isFourOfAKind = true;
 					}
 				}
@@ -536,7 +508,7 @@ public class PlayerHand implements GameConstants {
 
 	private boolean isAStraightFlush(Card[] flop) {
 		if (isFlush(flop)) {
-			if (isStraight(PokerHandFinalCards)) {
+			if (isStraight(handBestCards)) {
 				return true;
 			} else {
 				return false;
@@ -549,7 +521,7 @@ public class PlayerHand implements GameConstants {
 //	public Card[] GetPokerHandArray() {
 	public ArrayList<Card> getPokerHandArray() {
 		ArrayList< Card> pokerHands=  new ArrayList<Card>();
-		for(Card c : PokerHandFinalCards){
+		for(Card c : handBestCards){
 			pokerHands.add(c);
 		}
 		return pokerHands;
@@ -558,11 +530,10 @@ public class PlayerHand implements GameConstants {
 	
 	public ArrayList<String> getWinnerHandCardNameList() {
 		ArrayList< String> pokerHands=  new ArrayList<String>();
-		for(Card c : PokerHandFinalCards){
+		for(Card c : handBestCards){
 			pokerHands.add(c.getCardName());
 		}
 		return pokerHands;
 	//	return this.PokerHandFinalCards;
 	}
-	
 }

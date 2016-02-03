@@ -1,17 +1,10 @@
 package pokerserver.players;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-import pokerserver.others.ComareObjects;
-import pokerserver.players.PlayerHand;
-import pokerserver.players.PlayersManager;
 import pokerserver.cards.Card;
 import pokerserver.cards.PlayerCards;
-import pokerserver.players.PlayerHand.PokerHandRank;
-import pokerserver.rounds.RoundManager;
 import pokerserver.utils.GameConstants;
 
 public class GamePlay implements GameConstants {
@@ -60,7 +53,7 @@ public class GamePlay implements GameConstants {
 										// table
 
 	private ArrayList<PlayerHand> AllPokerHandsList;
-	private ArrayList<PokerHandRank> AllPlayersRankArray;
+	private ArrayList<HAND_RANK> AllPlayersRankArray;
 	// private PokerHandRank[] AllPlayersRankArray;
 	private ArrayList<Integer> ActivePlayerList;
 	private ArrayList<Integer> WinnerList;
@@ -222,7 +215,7 @@ public class GamePlay implements GameConstants {
 		boolean flag = false;
 		int maxAmt = 0;
 		for (int i = 0; i < betAmtIntArray.length; i++) {
-			if (playerManager.getPlayer(i).getPlayerActive()) {
+			if (playerManager.getPlayer(i).isPlayerActive()) {
 				maxAmt = betAmtIntArray[i];
 				break;
 			}
@@ -233,7 +226,7 @@ public class GamePlay implements GameConstants {
 			}
 		}
 		for (int k = 0; k < betAmtIntArray.length; k++) {
-			if (playerManager.getPlayer(k).getPlayerActive()) {
+			if (playerManager.getPlayer(k).isPlayerActive()) {
 
 				if (maxAmt != betAmtIntArray[k]) {
 					flag = true;
@@ -314,7 +307,7 @@ public class GamePlay implements GameConstants {
 	// Determining the ranks(categoury) of all Pokerhands
 
 	public void DeterminePokerHands() {
-		AllPlayersRankArray = new ArrayList<PokerHandRank>();
+		AllPlayersRankArray = new ArrayList<HAND_RANK>();
 		for (int i = 0; i < nPlayer; i++) {
 			AllPlayersRankArray.add(AllPokerHandsList.get(i).determineHandRank(
 					allFinalTableCards));
@@ -499,7 +492,7 @@ public class GamePlay implements GameConstants {
 			curPlayerId = 0;
 			curTurnNo = 1;
 
-			if (!playerManager.getPlayer(curPlayerId).getPlayerActive()) {
+			if (!playerManager.getPlayer(curPlayerId).isPlayerActive()) {
 				curPlayerId++;
 			}
 
@@ -537,7 +530,7 @@ public class GamePlay implements GameConstants {
 		}
 
 		// to check if curplayer is Active or not
-		while (!playerManager.getPlayer(curPlayerId).getPlayerActive()) {
+		while (!playerManager.getPlayer(curPlayerId).isPlayerActive()) {
 			boolean checkAnyActive = false;
 			curPlayerId++;
 			if (curPlayerId > nPlayer - 1) {
@@ -547,7 +540,7 @@ public class GamePlay implements GameConstants {
 			// loop if all players are
 			// inactive
 			{
-				if (playerManager.getPlayer(i).getPlayerActive()) {
+				if (playerManager.getPlayer(i).isPlayerActive()) {
 					checkAnyActive = true;
 					break;
 				}

@@ -2,7 +2,7 @@ package pokerserver.rounds;
 
 import java.util.ArrayList;
 
-import pokerserver.players.Player;
+import pokerserver.players.PlayerBean;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
 
@@ -52,17 +52,13 @@ public class RoundManager implements GameConstants{
 		this.status = status;
 	}
 
-	public int getTotalPlayerBetAmount(Player player){
+	public int getTotalPlayerBetAmount(PlayerBean player){
 		int totalBet = 0;
-//		boolean playerTurnCompleted = false;
 		for(TurnManager turnManager:listTurn){
 			if(turnManager.getPlayer().getPlayeName().equals(player.getPlayeName())){
-//				playerTurnCompleted=true;				
 				totalBet+=turnManager.getBetAmount();
 			}
 		}
-//		if(!playerTurnCompleted)
-//			totalBet = 10;
 		return totalBet;
 	}
 	public int getTotalRoundBetAmount(){

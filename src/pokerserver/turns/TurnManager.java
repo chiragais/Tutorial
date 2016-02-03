@@ -1,6 +1,6 @@
 package pokerserver.turns;
 
-import pokerserver.players.Player;
+import pokerserver.players.PlayerBean;
 import pokerserver.utils.GameConstants;
 
 /**
@@ -13,12 +13,13 @@ public class TurnManager implements GameConstants{
 
 	
 	/** Player info regarding current turn*/
-	Player player;
+	PlayerBean player;
 	/** Call,Fold etc...*/
 	int playerAction;
 	int betAmount;
 	
-	public TurnManager(Player player,int playerAction,int betAmount) {
+	
+	public TurnManager(PlayerBean player,int playerAction,int betAmount) {
 		// TODO Auto-generated constructor stub
 		this.player=player;
 		this.playerAction = playerAction;
@@ -26,11 +27,11 @@ public class TurnManager implements GameConstants{
 	}
 
 	
-	public Player getPlayer() {
+	public PlayerBean getPlayer() {
 		return player;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(PlayerBean player) {
 		this.player = player;
 	}
 

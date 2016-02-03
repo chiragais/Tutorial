@@ -2,14 +2,13 @@ package pokerserver;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import pokerserver.others.ComareObjects;
 import pokerserver.cards.Card;
+import pokerserver.others.ComareObjects;
 import pokerserver.players.GamePlay;
-import pokerserver.players.Player;
+import pokerserver.players.HandManager;
+import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
 import pokerserver.rounds.RoundManager;
 import pokerserver.turns.TurnManager;
@@ -24,6 +23,7 @@ import pokerserver.utils.GameConstants;
 public class GameManager implements GameConstants {
 
 	PlayersManager playersManager;
+	HandManager handManager;
 	public GamePlay gamePlay;
 	ArrayList<Card> listDefaultCards = new ArrayList<Card>();
 	RoundManager preflopRound;
@@ -41,6 +41,7 @@ public class GameManager implements GameConstants {
 		playersManager = new PlayersManager();
 		// gamePlay=new GamePlay(playersManager);
 		generateDefaultCards();
+		handManager = new HandManager(listDefaultCards);
 	}
 
 	public void createGamePlat() {
@@ -64,14 +65,18 @@ public class GameManager implements GameConstants {
 		return null;
 	}
 
-	public void addNewPlayerToGame(Player player) {
+	public void addNewPlayerToGame(PlayerBean player) {
+//		handManager.findPlayerBestHand(player.getPlayerCards());
+		player.setPlayersBestHand(
+				handManager.findPlayerBestHand(player.getPlayerCards()), 
+				handManager.getPlayerBestCards());
 		this.playersManager.addNewPlayerInRoom(player);
 	}
 
-	public void leavePlayerToGame(Player player){
+	public void leavePlayerToGame(PlayerBean player){
 		this.playersManager.removePlayerFromRoom(player);
 	}
-	public Player getPlayerFromPosition(int position) {
+	public PlayerBean getPlayerFromPosition(int position) {
 		return this.playersManager.getPlayer(position);
 	}
 
@@ -158,33 +163,44 @@ public class GameManager implements GameConstants {
 		return riverRound;
 	}
 
-	public String getWinner() {
-		ArrayList<Integer> winnerList = gamePlay.getWinnerList();
-		return String.valueOf(winnerList.get(0));
+	public PlayerBean getWinnerPlayer() {
+		
+		/*for(Player player : playersManager.getAllAvailablePlayers()){
+			if(player.isPlayerActive()){
+				System.out.println();
+				System.out.print("Winner Player : "+player.getHandRank()+" <<<<<<<<<<<<");
+				for(Card card : player.getBestHandCards()){
+					System.out.println();
+					System.out.print("Cards : "+card.getCardName());	
+				}
+			}
+		}*/
+		Collections.sort(playersManager.getAllAvailablePlayers(),new Comparator<PlayerBean>() {
+			@Override
+			public int compare(PlayerBean paramT1, PlayerBean paramT2) {
+				return paramT1.getHandRank().compareTo(paramT2.getHandRank());
+			}
+		});
+		
+		PlayerBean winnerPlayer = null;
+		for(PlayerBean player : playersManager.getAllAvailablePlayers()){
+			System.out.println();
+			System.out.print("Winner Player : "+player.getPlayeName()+" >> Rank >> "+player.getHandRank()+" <<<<<<<<<<<<"+player.getHandRank().ordinal());
+			if(player.isPlayerActive() && winnerPlayer==null){
+				winnerPlayer = player;
+			}
+		}
+	
+		return winnerPlayer;
 	}
 
 	public ArrayList<String> getWinnerCards() {
 		return gamePlay.getWinnerCards();
 	}
 
-	public TurnManager managePlayerTurnData(JSONObject response)
-			throws JSONException {
-		// First check player is exit in room or not
-		TurnManager turnManager = null;
-		Player currentPlayer = getPlayerByName(response
-				.getString(TAG_PLAYER_NAME));
-		if (currentPlayer != null) {
-			RoundManager currentRoundManger = getCurrentRoundInfo();
-			turnManager = new TurnManager(currentPlayer,
-					response.getInt(TAG_ACTION),
-					response.getInt(TAG_BET_AMOUNT));
-			currentRoundManger.addTurnRecord(turnManager);
-		}
-		return turnManager;
-	}
 
-	public Player getPlayerByName(String name) {
-		for (Player player : playersManager.getAllAvailablePlayers()) {
+	public PlayerBean getPlayerByName(String name) {
+		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			if (player.getPlayeName().equals(name)) {
 				return player;
 			}
@@ -192,6 +208,16 @@ public class GameManager implements GameConstants {
 		return null;
 	}
 
+	public PlayerBean deductPlayerBetAmountFromBalance(String name,int amount){
+		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+			if (player.getPlayeName().equals(name)) 
+			{
+				player.deductBetAmount(amount);
+				return player;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * In this function, It will checking all player have equal bet amount on
@@ -204,8 +230,8 @@ public class GameManager implements GameConstants {
 		ArrayList<Integer> totalPlayerWiseBetAmount = new ArrayList<Integer>();
 		RoundManager currentRound = getCurrentRoundInfo();
 
-		for (Player player : playersManager.getAllAvailablePlayers()) {
-			if (player.getPlayerActive()) {
+		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+			if (player.isPlayerActive()) {
 				totalPlayerWiseBetAmount.add(currentRound
 						.getTotalPlayerBetAmount(player));
 			}
@@ -226,6 +252,16 @@ public class GameManager implements GameConstants {
 		return true;
 	}
 
+	public int getPlayerTotalBetAmount(String name){
+		PlayerBean player = getPlayerByName(name);
+		int totalBetAmount = 0;
+		totalBetAmount += preflopRound.getTotalPlayerBetAmount(player);
+		totalBetAmount += flopRound.getTotalPlayerBetAmount(player);
+		totalBetAmount += turnRound.getTotalPlayerBetAmount(player);
+		totalBetAmount += riverRound.getTotalPlayerBetAmount(player);
+		
+		return totalBetAmount;
+	}
 	public void updateGamePlay() {
 		//gamePlay.update();
 	}
@@ -251,7 +287,6 @@ public class GameManager implements GameConstants {
 
 	/** It will generate flop(3), turn(1) and river(1) cards. Total 5 cards */
 	public void generateDefaultCards() {
-
 		while (listDefaultCards.size() != 5) {
 			Card cardBean = new Card();
 			if (!isAlreadyDesributedCard(cardBean)) {
@@ -260,7 +295,6 @@ public class GameManager implements GameConstants {
 				listDefaultCards.add(cardBean);
 			}
 		}
-
 	}
 
 	/** Check card is already on table or not */
@@ -284,54 +318,39 @@ public class GameManager implements GameConstants {
 	}
 
 	/** Handles player's action taken by him */
-	public void managePlayerAction(String userName,int userAction, int betAmount) {
+	public TurnManager managePlayerAction(String userName,int userAction, int betAmount) {
 //		gamePlay.executePlayerAction(betAmount, userAction);
-		addCurrentActionToTurnManager(userName, betAmount,userAction);
+		return addCurrentActionToTurnManager(userName, betAmount,userAction);
 	}
 
 	public int getTotalTableAmount() {
-//		return gamePlay.getTotalTableAmount();
 		int totalBetAmount = 0;
-		if(preflopRound.getStatus()==ROUND_STATUS_FINISH){
 			totalBetAmount += preflopRound.getTotalRoundBetAmount();
-		}
-		if(flopRound.getStatus()==ROUND_STATUS_FINISH){
 			totalBetAmount += flopRound.getTotalRoundBetAmount();
-		}
-		if(turnRound.getStatus()==ROUND_STATUS_FINISH){
 			totalBetAmount += turnRound.getTotalRoundBetAmount();
-		}
-		if(riverRound.getStatus()==ROUND_STATUS_FINISH){
 			totalBetAmount += riverRound.getTotalRoundBetAmount();
-		}
+		System.out.println();
+		System.out.print("Total Bet Amount : "+ totalBetAmount);
 		return totalBetAmount;
 	}
 
-	private void addCurrentActionToTurnManager(String userName, int betAmount,int action) {
-		Player currentPlayer = getPlayerByName(userName);
+	private TurnManager addCurrentActionToTurnManager(String userName, int betAmount,int action) {
+		
+		TurnManager turnManager=null; 
+		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,betAmount);
 		if (currentPlayer != null) {
 			RoundManager currentRoundManger = getCurrentRoundInfo();
-			/*if(action==ACTION_FOLD){
-				currentPlayer.setPlayerActive(false);
-				currentPlayer.setPlayerFolded(true);
-				betAmount = 0;
-			}else if(action==ACTION_ALL_IN){
-//				currentPlayer.setPlayerActive(false);
-				currentPlayer.setPlayerAllIn(true);
-			}*/
-			TurnManager turnManager = new TurnManager(currentPlayer,
+			turnManager = new TurnManager(currentPlayer,
 					action,
 					betAmount);
 			currentRoundManger.addTurnRecord(turnManager);
-			currentPlayer.deductBetAmount(betAmount);
 			System.out.println();
 			System.out.print("Turn Manager # User: "+currentPlayer.getPlayerName()+" # Action: "+action+" # Bet: "+betAmount+" # Round: "+currentRoundManger.getRound());
-			
-			
 		}
+		return turnManager;
 	}
 
-	public int getWinnerTotalBalance() {
-		return getPlayerByName(getWinner()).getTotalBalance();
-	}
+//	public int getWinnerTotalBalance() {
+//		return getPlayerByName(getWinner().getPlayeName()).getTotalBalance();
+//	}
 }

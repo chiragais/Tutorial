@@ -16,6 +16,9 @@ public interface GameConstants {
 	public enum RANKS {
 		two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace
 	}
+	public enum HAND_RANK {
+		ROYAL_FLUSH, STRAIGHT_FLUSH, FOUR_OF_A_KIND, FULL_HOUSE, FLUSH, STRAIGHT, THREE_OF_A_KIND, TWO_PAIR, PAIR, HIGH_CARD
+	}
 
 	public String SUIT_HEART = "heart";
 	public String SUIT_SPADE = "spade";
@@ -24,7 +27,7 @@ public interface GameConstants {
 
 	public static int maxPlayers = 6;
 
-	public int MIN_PLAYER_TO_START_GAME = 2;
+	public int MIN_PLAYER_TO_START_GAME = 3;
 
 	// All Round constants
 	public int ROUND_PREFLOP = 0;
@@ -125,9 +128,11 @@ public interface GameConstants {
 	String TAG_PLAYER_ACTIVE = "Player_Active";
 
 	String TAG_SMALL_BLIEND_AMOUNT = "SBAmount";
-	String TAG_WINER = "winner";
+	String TAG_WINNER = "winner";
+	String TAG_WINNER_NAME = "Winner_Name";
+	String TAG_WINNER_RANK = "Winner_Rank";
 	
-	String TAG_WINER_TOTAL_BALENCE = "winner_balance";
+	String TAG_WINNER_TOTAL_BALENCE = "winner_balance";
 
 	int SBAmount = 10;
 }

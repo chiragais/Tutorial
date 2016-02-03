@@ -4,28 +4,28 @@ import java.util.ArrayList;
 
 public class PlayersManager {
 
-	public ArrayList<Player> roomPlayersList = new ArrayList<>(); // all player container list
+	public ArrayList<PlayerBean> roomPlayersList = new ArrayList<>(); // all player container list
 
 	public PlayersManager() {
 
 	}
 
-	public void addNewPlayerInRoom(Player player) {
+	public void addNewPlayerInRoom(PlayerBean player) {
 		this.roomPlayersList.add(player);
 	}
 
-	public ArrayList<Player> getAllAvailablePlayers(){
+	public ArrayList<PlayerBean> getAllAvailablePlayers(){
 		return roomPlayersList;
 	}
 	public int getTotalRoomPlayers() {
 		return roomPlayersList.size();
 	}
 
-	public Player getPlayer(int plrId) {
+	public PlayerBean getPlayer(int plrId) {
 		return roomPlayersList.get(plrId);
 	}
 	
-	public void removePlayerFromRoom(Player player) {
+	public void removePlayerFromRoom(PlayerBean player) {
 		this.roomPlayersList.remove(player);
 	}
 	public void removeAllPlayers(){
