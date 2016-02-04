@@ -135,6 +135,7 @@ public interface GameConstants {
 	String TAG_WINNER = "winner";
 	String TAG_WINNER_NAME = "Winner_Name";
 	String TAG_WINNER_RANK = "Winner_Rank";
+	String TAG_WINNER_BEST_CARDS = "Winner_Best_Cards";
 	
 	String TAG_WINNER_TOTAL_BALENCE = "winner_balance";
 

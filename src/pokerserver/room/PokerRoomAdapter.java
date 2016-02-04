@@ -237,7 +237,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				iUser.SendChatNotification(SERVER_NAME, user.getName()
 						+ " is left room", gameRoom);
 			}
-			handleFinishGame("Chirag", null);
+//			handleFinishGame("Chirag", null);
 		}
 	}
 
@@ -247,17 +247,14 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 */
 	private void handleFinishGame(String winningUser, ArrayList<String> cards) {
 
-		System.out.println("this are winner  " + winningUser);
-		for (String s : cards) {
-			System.out.println("this are cards  " + s);
-		}
-
 		try {
 			JSONObject object = new JSONObject();
 			object.put("win", winningUser);
 			object.put("cards", cards);
 			
 			gameRoom.BroadcastChat(SERVER_NAME, RESULT_GAME_OVER + "#" + object);
+			System.out.println();
+			System.out.print("Game OVer : "+object);
 			gameRoom.setAdaptor(null);
 			izone.deleteRoom(gameRoom.getId());
 			gameRoom.stopGame(SERVER_NAME);
@@ -418,14 +415,16 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void broadcastGameCompleteToAllPlayers() {
 		JSONObject cardsObject = new JSONObject();
 		try {
+			PlayerBean winnerPlayer = gameManager.getWinnerPlayer();
 			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
 //			cardsObject.put(TAG_WINER_TOTAL_BALENCE,
 //					gameManager.getWinnerTotalBalance());
 			cardsObject.put(TAG_WINNER_TOTAL_BALENCE,1000);
-			cardsObject.put(TAG_WINNER_NAME, gameManager.getWinnerPlayer().getPlayeName());
-			cardsObject.put(TAG_WINNER_RANK, gameManager.getWinnerPlayer().getHandRank().ordinal());
+			cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayeName());
+			cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getHandRank().ordinal());
+			cardsObject.put(TAG_WINNER_BEST_CARDS, winnerPlayer.getBestHandCards());
 
 			// cardsObject.put(TAG_PLAYER, player.getPlayeName());
 			gameRoom.BroadcastChat(SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
