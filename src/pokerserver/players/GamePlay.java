@@ -141,7 +141,6 @@ public class GamePlay implements GameConstants {
 						curPlayerBalance);
 
 				ChangePlayerTurn();
-
 			}
 		}
 	}

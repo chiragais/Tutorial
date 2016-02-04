@@ -30,7 +30,7 @@ public class GameManager implements GameConstants {
 	RoundManager flopRound;
 	RoundManager turnRound;
 	RoundManager riverRound;
-	int currentRound=0;
+	int currentRound = 0;
 
 	public GameManager() {
 		// TODO Auto-generated constructor stub
@@ -45,11 +45,11 @@ public class GameManager implements GameConstants {
 	}
 
 	public void createGamePlat() {
-//		gamePlay = new GamePlay(playersManager);
+		// gamePlay = new GamePlay(playersManager);
 	}
 
 	public void setTableCards() {
-//		gamePlay.setTableCards(listDefaultCards);
+		// gamePlay.setTableCards(listDefaultCards);
 	}
 
 	public RoundManager getCurrentRoundInfo() {
@@ -66,16 +66,17 @@ public class GameManager implements GameConstants {
 	}
 
 	public void addNewPlayerToGame(PlayerBean player) {
-//		handManager.findPlayerBestHand(player.getPlayerCards());
+		// handManager.findPlayerBestHand(player.getPlayerCards());
 		player.setPlayersBestHand(
-				handManager.findPlayerBestHand(player.getPlayerCards()), 
+				handManager.findPlayerBestHand(player.getPlayerCards()),
 				handManager.getPlayerBestCards());
 		this.playersManager.addNewPlayerInRoom(player);
 	}
 
-	public void leavePlayerToGame(PlayerBean player){
+	public void leavePlayerToGame(PlayerBean player) {
 		this.playersManager.removePlayerFromRoom(player);
 	}
+
 	public PlayerBean getPlayerFromPosition(int position) {
 		return this.playersManager.getPlayer(position);
 	}
@@ -96,9 +97,9 @@ public class GameManager implements GameConstants {
 		return currentRound;
 	}
 
-//	public void setCurrentPlayerId(int curId) {
-//		gamePlay.setCurrentPlayerId(curId);
-//	}
+	// public void setCurrentPlayerId(int curId) {
+	// gamePlay.setCurrentPlayerId(curId);
+	// }
 
 	/**
 	 * Start pre flop round and set other round status as a pending
@@ -164,40 +165,41 @@ public class GameManager implements GameConstants {
 	}
 
 	public PlayerBean getWinnerPlayer() {
-		
-		/*for(Player player : playersManager.getAllAvailablePlayers()){
-			if(player.isPlayerActive()){
-				System.out.println();
-				System.out.print("Winner Player : "+player.getHandRank()+" <<<<<<<<<<<<");
-				for(Card card : player.getBestHandCards()){
-					System.out.println();
-					System.out.print("Cards : "+card.getCardName());	
-				}
-			}
-		}*/
-		Collections.sort(playersManager.getAllAvailablePlayers(),new Comparator<PlayerBean>() {
-			@Override
-			public int compare(PlayerBean paramT1, PlayerBean paramT2) {
-				return paramT1.getHandRank().compareTo(paramT2.getHandRank());
-			}
-		});
-		
+
+		/*
+		 * for(Player player : playersManager.getAllAvailablePlayers()){
+		 * if(player.isPlayerActive()){ System.out.println();
+		 * System.out.print("Winner Player : "
+		 * +player.getHandRank()+" <<<<<<<<<<<<"); for(Card card :
+		 * player.getBestHandCards()){ System.out.println();
+		 * System.out.print("Cards : "+card.getCardName()); } } }
+		 */
+		Collections.sort(playersManager.getAllAvailablePlayers(),
+				new Comparator<PlayerBean>() {
+					@Override
+					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
+						return paramT1.getHandRank().compareTo(
+								paramT2.getHandRank());
+					}
+				});
+
 		PlayerBean winnerPlayer = null;
-		for(PlayerBean player : playersManager.getAllAvailablePlayers()){
+		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			System.out.println();
-			System.out.print("Winner Player : "+player.getPlayeName()+" >> Rank >> "+player.getHandRank()+" <<<<<<<<<<<<"+player.getHandRank().ordinal());
-			if(player.isPlayerActive() && winnerPlayer==null){
+			System.out.print("Winner Player : " + player.getPlayeName()
+					+ " >> Rank >> " + player.getHandRank() + " <<<<<<<<<<<<"
+					+ player.getHandRank().ordinal());
+			if (player.isPlayerActive() && winnerPlayer == null) {
 				winnerPlayer = player;
 			}
 		}
-	
+
 		return winnerPlayer;
 	}
 
 	public ArrayList<String> getWinnerCards() {
 		return gamePlay.getWinnerCards();
 	}
-
 
 	public PlayerBean getPlayerByName(String name) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
@@ -208,17 +210,21 @@ public class GameManager implements GameConstants {
 		return null;
 	}
 
-	public PlayerBean deductPlayerBetAmountFromBalance(String name,int amount){
+	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
+			int action) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.getPlayeName().equals(name)) 
-			{
-				player.deductBetAmount(amount);
+			if (player.getPlayeName().equals(name)) {
+				if (action == ACTION_FOLD) {
+					player.setPlayerActive(false);
+				} else if (player.isPlayerActive()) {
+					player.deductBetAmount(amount);
+				}
 				return player;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * In this function, It will checking all player have equal bet amount on
 	 * table. If yes then you have to start new round.
@@ -239,7 +245,7 @@ public class GameManager implements GameConstants {
 
 		Collections.sort(totalPlayerWiseBetAmount, new ComareObjects());
 		for (Integer c : totalPlayerWiseBetAmount) {
-			System.out.println("card is  " + c);
+			System.out.println("Total Player bet amount :  " + c);
 		}
 
 		int lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
@@ -252,18 +258,19 @@ public class GameManager implements GameConstants {
 		return true;
 	}
 
-	public int getPlayerTotalBetAmount(String name){
+	public int getPlayerTotalBetAmount(String name) {
 		PlayerBean player = getPlayerByName(name);
 		int totalBetAmount = 0;
 		totalBetAmount += preflopRound.getTotalPlayerBetAmount(player);
 		totalBetAmount += flopRound.getTotalPlayerBetAmount(player);
 		totalBetAmount += turnRound.getTotalPlayerBetAmount(player);
 		totalBetAmount += riverRound.getTotalPlayerBetAmount(player);
-		
+
 		return totalBetAmount;
 	}
+
 	public void updateGamePlay() {
-		//gamePlay.update();
+		// gamePlay.update();
 	}
 
 	public void moveToNextRound() {
@@ -318,27 +325,29 @@ public class GameManager implements GameConstants {
 	}
 
 	/** Handles player's action taken by him */
-	public TurnManager managePlayerAction(String userName,int userAction, int betAmount) {
-//		gamePlay.executePlayerAction(betAmount, userAction);
-		return addCurrentActionToTurnManager(userName, betAmount,userAction);
+	public TurnManager managePlayerAction(String userName, int userAction,
+			int betAmount) {
+		// gamePlay.executePlayerAction(betAmount, userAction);
+		return addCurrentActionToTurnManager(userName, betAmount, userAction);
 	}
 
 	public int getTotalTableAmount() {
 		int totalBetAmount = 0;
-			totalBetAmount += preflopRound.getTotalRoundBetAmount();
-			totalBetAmount += flopRound.getTotalRoundBetAmount();
-			totalBetAmount += turnRound.getTotalRoundBetAmount();
-			totalBetAmount += riverRound.getTotalRoundBetAmount();
+		totalBetAmount += preflopRound.getTotalRoundBetAmount();
+		totalBetAmount += flopRound.getTotalRoundBetAmount();
+		totalBetAmount += turnRound.getTotalRoundBetAmount();
+		totalBetAmount += riverRound.getTotalRoundBetAmount();
 		System.out.println();
-		System.out.print("Total Bet Amount : "+ totalBetAmount);
+		System.out.print("Total Bet Amount : " + totalBetAmount);
 		return totalBetAmount;
 	}
 
 	private TurnManager addCurrentActionToTurnManager(String userName, int betAmount,int action) {
 		
 		TurnManager turnManager=null; 
-		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,betAmount);
+		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,betAmount,action);
 		if (currentPlayer != null) {
+			
 			RoundManager currentRoundManger = getCurrentRoundInfo();
 			turnManager = new TurnManager(currentPlayer,
 					action,
@@ -349,8 +358,7 @@ public class GameManager implements GameConstants {
 		}
 		return turnManager;
 	}
-
-//	public int getWinnerTotalBalance() {
-//		return getPlayerByName(getWinner().getPlayeName()).getTotalBalance();
-//	}
+	// public int getWinnerTotalBalance() {
+	// return getPlayerByName(getWinner().getPlayeName()).getTotalBalance();
+	// }
 }

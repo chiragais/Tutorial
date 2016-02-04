@@ -129,7 +129,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			e.printStackTrace();
 		}
 
-		if (gameManager.checkEveryPlayerHaveSameBetAmount()) {
+		if (playerAction != ACTION_DEALER && gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			// if (gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
@@ -373,13 +373,19 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			int totalPlayerInRoom = gameManager.getPlayersManager().getAllAvailablePlayers().size();
 			System.out.println();
 			System.out.print("Total Players : " + totalPlayerInRoom);
+			
 			if(totalPlayerInRoom>0){
-				cardsObject.put(TAG_PLAYER_SMALL_BLIND, gameManager.getPlayersManager().getAllAvailablePlayers().get(0).getPlayerName());	
+				cardsObject.put(TAG_PLAYER_DEALER, gameManager.getPlayersManager().getAllAvailablePlayers().get(0).getPlayerName());	
+			}else{
+				cardsObject.put(TAG_PLAYER_DEALER, RESPONSE_DATA_SEPRATOR);
+			}
+			if(totalPlayerInRoom>1){
+				cardsObject.put(TAG_PLAYER_SMALL_BLIND, gameManager.getPlayersManager().getAllAvailablePlayers().get(1).getPlayerName());	
 			}else{
 				cardsObject.put(TAG_PLAYER_SMALL_BLIND, RESPONSE_DATA_SEPRATOR);
 			}
-			if(totalPlayerInRoom>1){
-				cardsObject.put(TAG_PLAYER_BIG_BLIND, gameManager.getPlayersManager().getAllAvailablePlayers().get(1).getPlayerName());
+			if(totalPlayerInRoom>2){
+				cardsObject.put(TAG_PLAYER_BIG_BLIND, gameManager.getPlayersManager().getAllAvailablePlayers().get(2).getPlayerName());
 			}else{
 				cardsObject.put(TAG_PLAYER_BIG_BLIND, RESPONSE_DATA_SEPRATOR);
 			}

@@ -93,6 +93,9 @@ public interface GameConstants {
 	public int ACTION_CHECK = 6;
 	/** If player time is out for select action */
 	public int ACTION_TIMEOUT = 7;
+	
+	public int ACTION_DEALER = 8;
+	public int ACTION_FOLDED = 9;
 
 	// Round status
 	int ROUND_STATUS_ACTIVE = 1;
@@ -126,6 +129,7 @@ public interface GameConstants {
 	String TAG_PLAYER_SMALL_BLIND = "Small_Blind";
 	String TAG_PLAYER_BIG_BLIND = "Big_Blind";
 	String TAG_PLAYER_ACTIVE = "Player_Active";
+	String TAG_PLAYER_DEALER = "Player_Dealer";
 
 	String TAG_SMALL_BLIEND_AMOUNT = "SBAmount";
 	String TAG_WINNER = "winner";

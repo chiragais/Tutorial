@@ -33,8 +33,8 @@ public class HandManager implements GameConstants{
 		
 		Card[] newCards = new Card[allCards.size()];
 		for (int i = 0; i < allCards.size(); i++) {
-			System.out.println();
-			System.out.println("this is order  = " + allCards.get(i).getCardName());
+//			System.out.println();
+//			System.out.println("this is order  = " + allCards.get(i).getCardName());
 			newCards[i]=allCards.get(i);
 		}
 		
