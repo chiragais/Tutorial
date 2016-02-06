@@ -47,7 +47,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 //		System.out.print("Room : onTimerTick : Status : "+GAME_STATUS+" >> NoOfUser: "+gameRoom.getJoinedUsers().size());
 		if (GAME_STATUS == STOPPED && gameRoom.getJoinedUsers().size() >= MIN_PLAYER_TO_START_GAME) {
 			
-//			distributeCarsToPlayerFromDelear();
+//			/distributeCarsToPlayerFromDelear();
 			gameManager.initGameRounds();
 			gameManager.startPreFlopRound();
 			gameRoom.startGame(SERVER_NAME);

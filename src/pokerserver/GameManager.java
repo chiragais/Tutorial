@@ -44,7 +44,7 @@ public class GameManager implements GameConstants {
 
 	public void initGameRounds(){
 		System.out.println();
-		System.out.print("========//=========//======== Game is initalia");
+		System.out.print("========//=========//======== Game is init");
 		generateDefaultCards();
 		
 		preflopRound = new RoundManager(ROUND_PREFLOP);
@@ -115,7 +115,7 @@ public class GameManager implements GameConstants {
 	 * Start pre flop round and set other round status as a pending
 	 */
 	public void startPreFlopRound() {
-		initGameRounds();
+	
 		currentRound = ROUND_PREFLOP;
 		// gamePlay.setCurrentRoundIndex(ROUND_PREFLOP);
 		System.out.println();
