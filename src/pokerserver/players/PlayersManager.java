@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 public class PlayersManager {
 
-	public ArrayList<PlayerBean> roomPlayersList = new ArrayList<>(); // all player container list
+	public ArrayList<PlayerBean> roomPlayersList; // all player container list
 
 	public PlayersManager() {
-
+		
+		 roomPlayersList = new ArrayList<>();
 	}
 
 	public void addNewPlayerInRoom(PlayerBean player) {

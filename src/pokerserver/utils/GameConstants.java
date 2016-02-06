@@ -77,6 +77,7 @@ public interface GameConstants {
 	public int PAUSED = 73;
 	public int RESUMED = 74;
 	public int FINISHED = 75;
+	public int CARD_DISTRIBUTE = 76;
 
 	// Player actions
 	/** Betting the same amount as BB */
@@ -111,6 +112,8 @@ public interface GameConstants {
 	String RESPONSE_FOR_ROUND_COMPLETE = 5 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_GAME_COMPLETE = 7 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_BLIEND_PLAYER = 8 + RESPONSE_DATA_SEPRATOR;
+	String RESPONSE_FOR_DESTRIBUTE_CARD = 9 + RESPONSE_DATA_SEPRATOR;
+	
 
 	String TAG_ACTION = "Action";
 	String TAG_BET_AMOUNT = "Bet_Amount";

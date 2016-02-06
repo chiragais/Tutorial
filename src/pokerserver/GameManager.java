@@ -34,16 +34,26 @@ public class GameManager implements GameConstants {
 
 	public GameManager() {
 		// TODO Auto-generated constructor stub
+		playersManager = new PlayersManager();
+		initGameRounds();
+		//playersManager = new PlayersManager();
+		// gamePlay=new GamePlay(playersManager);
+//		generateDefaultCards();
+//		handManager = new HandManager(listDefaultCards);
+	}
+
+	public void initGameRounds(){
+		System.out.println();
+		System.out.print("========//=========//======== Game is initalia");
+		generateDefaultCards();
+		
 		preflopRound = new RoundManager(ROUND_PREFLOP);
 		flopRound = new RoundManager(ROUND_FLOP);
 		turnRound = new RoundManager(ROUND_TURN);
 		riverRound = new RoundManager(ROUND_RIVER);
-		playersManager = new PlayersManager();
-		// gamePlay=new GamePlay(playersManager);
-		generateDefaultCards();
+		
 		handManager = new HandManager(listDefaultCards);
 	}
-
 	public void createGamePlat() {
 		// gamePlay = new GamePlay(playersManager);
 	}
@@ -105,6 +115,7 @@ public class GameManager implements GameConstants {
 	 * Start pre flop round and set other round status as a pending
 	 */
 	public void startPreFlopRound() {
+		initGameRounds();
 		currentRound = ROUND_PREFLOP;
 		// gamePlay.setCurrentRoundIndex(ROUND_PREFLOP);
 		System.out.println();
@@ -294,6 +305,7 @@ public class GameManager implements GameConstants {
 
 	/** It will generate flop(3), turn(1) and river(1) cards. Total 5 cards */
 	public void generateDefaultCards() {
+		listDefaultCards.clear();
 		while (listDefaultCards.size() != 5) {
 			Card cardBean = new Card();
 			if (!isAlreadyDesributedCard(cardBean)) {

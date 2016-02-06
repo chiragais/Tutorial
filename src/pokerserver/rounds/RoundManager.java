@@ -10,12 +10,13 @@ public class RoundManager implements GameConstants{
 	/**Current status of round. e.g active, finish, pending*/
 	int status;
 	/** Track all player action in round */
-	ArrayList<TurnManager> listTurn = new ArrayList<TurnManager>();
+	ArrayList<TurnManager> listTurn ;
 	int currentRound;
 	
 	public RoundManager(int currentRound) {
 		// TODO Auto-generated constructor stub
 		this.currentRound=currentRound;
+		this.listTurn = new ArrayList<TurnManager>();
 	}
 	/**
 	 * Add turn record when player performed his action
