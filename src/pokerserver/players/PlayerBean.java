@@ -1,5 +1,8 @@
 package pokerserver.players;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pokerserver.cards.Card;
 import pokerserver.cards.PlayerCards;
 import pokerserver.utils.GameConstants.HAND_RANK;
@@ -142,5 +145,13 @@ public class PlayerBean {
 	}
 	public Card[] getBestHandCards(){
 		return handBestCards;
+	}
+	
+	public List<String> getBestHandCardsName(){
+		List<String> listCard = new ArrayList<String>();
+		for(Card card : handBestCards){
+			listCard.add(card.getCardName());
+		}
+		return listCard;
 	}
 }
