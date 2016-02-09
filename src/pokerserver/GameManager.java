@@ -80,6 +80,10 @@ public class GameManager implements GameConstants {
 		player.setPlayersBestHand(
 				handManager.findPlayerBestHand(player.getPlayerCards()),
 				handManager.getPlayerBestCards());
+		for(Card card : player.getBestHandCards()){
+			System.out.println();
+			System.out.print("Player Best Cards : "+ card.getCardName() );	
+		}
 		this.playersManager.addNewPlayerInRoom(player);
 	}
 

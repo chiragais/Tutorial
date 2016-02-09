@@ -281,7 +281,7 @@ public class HandManager implements GameConstants{
 	}
 
 	private boolean isThreeOfAKind(Card[] allCards) {
-
+		int lastSameRankOffset=0;
 		int cardRepeats = 1;
 		boolean isThreeOfAKind = false;
 		int m = 0;
@@ -294,6 +294,7 @@ public class HandManager implements GameConstants{
 					cardRepeats++;
 					if (cardRepeats == 3) {
 						handBestCards[0] = allCards[n];
+						lastSameRankOffset=n;
 						isThreeOfAKind = true;
 					}
 				}
@@ -302,12 +303,15 @@ public class HandManager implements GameConstants{
 			m++;
 		}
 		if (isThreeOfAKind) {
-			calculateFinalKindOfArray(2, allCards);
+			calculateFinalKindOfArray(2, allCards,lastSameRankOffset);
 		}
 		return isThreeOfAKind;
 	}
 
-	public void calculateFinalKindOfArray(int nPlace, Card[] allCards) {
+	
+	
+	
+	public void calculateFinalKindOfArray(int nPlace, Card[] allCards,int offset) {
 		Card cTemp = handBestCards[0];
 		for (int i = 0; i < handBestCards.length; i++) {
 			if (i < nPlace) {
@@ -320,13 +324,16 @@ public class HandManager implements GameConstants{
 					break;
 				}
 			} else {
-				handBestCards[i] = cTemp;
+				handBestCards[i] = allCards[offset--];
 			}
 		}
 	}
-
+	
 	private boolean isTwoPair(Card[] allCards) {
-
+        
+		int lastSameOffsetOne=0;
+		int lastSameOffsetSecond=0;
+		
 		Card cTemp1 = null, cTemp2 = null;
 		int cardRepeats = 1;
 		int noOfCardRepeats = 0;
@@ -343,10 +350,12 @@ public class HandManager implements GameConstants{
 						cardRepeats = 1;
 						noOfCardRepeats++;
 						if (noOfCardRepeats == 1) {
-							cTemp1 = allCards[m];
+							cTemp1 = allCards[n];
+							lastSameOffsetOne=n;
 						}
 						if (noOfCardRepeats == 2) {
-							cTemp2 = allCards[m];
+							cTemp2 = allCards[n];
+							lastSameOffsetSecond=n;
 							isTwoPair = true;
 
 						}
@@ -360,20 +369,20 @@ public class HandManager implements GameConstants{
 		if (isTwoPair) {
 			if (allCards[0].getValue() > cTemp1.getValue()) {
 				handBestCards[0] = allCards[0];
-				handBestCards[1] = cTemp1;
-				handBestCards[2] = cTemp1;
-				handBestCards[3] = cTemp2;
-				handBestCards[4] = cTemp2;
+				handBestCards[1] =  allCards[lastSameOffsetOne--];
+				handBestCards[2] =  allCards[lastSameOffsetOne--];
+				handBestCards[3] =  allCards[lastSameOffsetSecond--];
+				handBestCards[4] =  allCards[lastSameOffsetSecond--];
 			} else {
-				handBestCards[0] = cTemp1;
-				handBestCards[1] = cTemp1;
+				handBestCards[0] =  allCards[lastSameOffsetOne--];
+				handBestCards[1] =  allCards[lastSameOffsetOne--];
 				if (allCards[2].getValue() > cTemp2.getValue()) {
 					handBestCards[2] = allCards[2];
-					handBestCards[3] = cTemp2;
-					handBestCards[4] = cTemp2;
+					handBestCards[3] =  allCards[lastSameOffsetSecond--];
+					handBestCards[4] =  allCards[lastSameOffsetSecond--];
 				} else {
-					handBestCards[2] = cTemp2;
-					handBestCards[3] = cTemp2;
+					handBestCards[2] =  allCards[lastSameOffsetSecond--];
+					handBestCards[3] =  allCards[lastSameOffsetSecond--];
 					handBestCards[4] = allCards[4];
 				}
 			}
@@ -384,7 +393,7 @@ public class HandManager implements GameConstants{
 	}
 
 	private boolean isPair(Card[] allCards) {
-
+		int lastSameRankOffset=0;
 		int cardRepeats = 1;
 		boolean isPair = false;
 		int m = 0;
@@ -397,7 +406,8 @@ public class HandManager implements GameConstants{
 					cardRepeats++;
 					if (cardRepeats == 2) {
 						isPair = true;
-						handBestCards[0] = allCards[m];
+						handBestCards[0] = allCards[n];
+						lastSameRankOffset=n;
 						break;
 					}
 				}
@@ -407,13 +417,14 @@ public class HandManager implements GameConstants{
 			m++;
 		}
 		if (isPair) {
-			calculateFinalKindOfArray(3, allCards);
+			calculateFinalKindOfArray(3, allCards,lastSameRankOffset);
 		}
 		return isPair;
 	}
 
 	private boolean isFullHouse(Card[] allCards) {
-
+        
+		int lastSameRankOffset=0;
 		Card cTemp = null;
 		int ThreeOfKindCardValue = 0;
 		int noOfRepeats = 1;
@@ -430,7 +441,7 @@ public class HandManager implements GameConstants{
 						ThreeOfKindCardValue = allCards[i].getValue();
 						isThreeOfAKind = true;
 						cTemp = allCards[j];
-						// PokerHandFinalCards[0]=allCards[j];
+						lastSameRankOffset=j;
 						noOfRepeats = 1;
 						break;
 					}
@@ -439,7 +450,8 @@ public class HandManager implements GameConstants{
 			}
 			if (isThreeOfAKind) {
 				for (int k = 0; k < 3; k++) {
-					handBestCards[k] = cTemp;
+					handBestCards[k] = allCards[lastSameRankOffset--];
+					
 				}
 				break;
 			}
@@ -457,6 +469,7 @@ public class HandManager implements GameConstants{
 								ThreeOfKindCardValue = allCards[j].getValue();
 								isTwoOfAKind = true;
 								cTemp = allCards[j];
+								lastSameRankOffset=j;
 								noOfRepeats = 1;
 								break;
 							}
@@ -466,7 +479,8 @@ public class HandManager implements GameConstants{
 				}
 				if (isTwoOfAKind) {
 					for (int k = 3; k < handBestCards.length; k++) {
-						handBestCards[k] = cTemp;
+						
+						handBestCards[k] =  allCards[lastSameRankOffset--];
 					}
 					handBestCards = sortingCards(handBestCards);
 					break;
@@ -478,7 +492,7 @@ public class HandManager implements GameConstants{
 	}
 
 	public boolean isFourOfAKind(Card[] allCards) {
-
+		int lastSameRankOffset=0;
 		int cardRepeats = 1;
 		boolean isFourOfAKind = false;
 		int m = 0;
@@ -491,6 +505,7 @@ public class HandManager implements GameConstants{
 					cardRepeats++;
 					if (cardRepeats == 4) {
 						handBestCards[0] = allCards[n];
+						lastSameRankOffset=n;
 						isFourOfAKind = true;
 					}
 				}
@@ -499,7 +514,7 @@ public class HandManager implements GameConstants{
 			m++;
 		}
 		if (isFourOfAKind) {
-			calculateFinalKindOfArray(1, allCards);
+			calculateFinalKindOfArray(1, allCards,lastSameRankOffset);
 
 		}
 
