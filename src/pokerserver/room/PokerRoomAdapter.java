@@ -133,7 +133,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			e.printStackTrace();
 		}
 
-		if (playerAction != ACTION_DEALER
+		if (playerAction != ACTION_DEALER 
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			// if (gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			isRoundCompelete = true;

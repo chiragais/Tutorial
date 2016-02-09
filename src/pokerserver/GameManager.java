@@ -243,28 +243,49 @@ public class GameManager implements GameConstants {
 	 * @return
 	 */
 	public boolean checkEveryPlayerHaveSameBetAmount() {
-
-		ArrayList<Integer> totalPlayerWiseBetAmount = new ArrayList<Integer>();
+		
+		ArrayList<PlayerBetBean> totalPlayerWiseBetAmount = new ArrayList<PlayerBetBean>();
 		RoundManager currentRound = getCurrentRoundInfo();
-
+		
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			if (player.isPlayerActive()) {
-				totalPlayerWiseBetAmount.add(currentRound
-						.getTotalPlayerBetAmount(player));
+				
+				totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
+						.getTotalPlayerBetAmount(player),currentRound.getPlayerLastAction(player)));
 			}
 		}
+		
+//		Collections.sort(totalPlayerWiseBetAmount, new ComareObjects());
+		Collections.sort(totalPlayerWiseBetAmount,
+				new Comparator<PlayerBetBean>() {
+					@Override
+					public int compare(PlayerBetBean paramT1, PlayerBetBean paramT2) {
+						return Integer.compare(paramT1.getBetAmount(),
+								paramT2.getBetAmount());
+					}
+				});
 
-		Collections.sort(totalPlayerWiseBetAmount, new ComareObjects());
-		for (Integer c : totalPlayerWiseBetAmount) {
-			System.out.println("Total Player bet amount :  " + c);
+		boolean allPlayerHaveTurn=true;
+		// Checking all players checked
+		for (PlayerBetBean c : totalPlayerWiseBetAmount) {
+			System.out.println();
+			System.out.print("<<<<>>>> All Player turn: " + c.getLastAction());
+			if(c.getLastAction() == ACTION_PENDING){
+				allPlayerHaveTurn = false;
+			}
 		}
-
-		int lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
+		PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
 		totalPlayerWiseBetAmount.remove(0);
-		for (int currentPlayerBetAmt : totalPlayerWiseBetAmount) {
-			if (currentPlayerBetAmt != lastPlayerBetAmt) {
+		// Checking all players have same bet amount
+		for (PlayerBetBean currentPlayerBetAmt : totalPlayerWiseBetAmount) {
+			if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt.getBetAmount()) {
 				return false;
 			}
+		}
+		System.out.println();
+		System.out.print("<<<<>>>> All Player turn: " + allPlayerHaveTurn);
+		if(!allPlayerHaveTurn){
+			return false;
 		}
 		return true;
 	}
@@ -373,4 +394,18 @@ public class GameManager implements GameConstants {
 	// public int getWinnerTotalBalance() {
 	// return getPlayerByName(getWinner().getPlayeName()).getTotalBalance();
 	// }
+	class PlayerBetBean{
+		int betAmount= 0;
+		int lastAction=ACTION_PENDING;
+		public PlayerBetBean(int totalBet,int lastAction){
+			this.betAmount = totalBet;
+			this.lastAction = lastAction;
+		}
+		public int getBetAmount(){
+			return betAmount;
+		}
+		public int getLastAction(){
+			return lastAction;
+		}
+	}
 }

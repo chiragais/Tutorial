@@ -62,6 +62,18 @@ public class RoundManager implements GameConstants{
 		}
 		return totalBet;
 	}
+	
+	public int getPlayerLastAction(PlayerBean player){
+		int lastAction = ACTION_PENDING;
+		
+		for(TurnManager turnManager:listTurn){
+			if(turnManager.getPlayer().getPlayeName().equals(player.getPlayeName())){
+				lastAction=turnManager.getPlayerAction();
+			}
+		}
+		return lastAction;
+	}
+	
 	public int getTotalRoundBetAmount(){
 		int totalBet = 0;
 		for(TurnManager turnManager:listTurn){

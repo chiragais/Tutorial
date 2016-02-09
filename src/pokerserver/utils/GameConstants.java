@@ -97,6 +97,8 @@ public interface GameConstants {
 	
 	public int ACTION_DEALER = 8;
 	public int ACTION_FOLDED = 9;
+	public int ACTION_PENDING= 10;
+	
 
 	// Round status
 	int ROUND_STATUS_ACTIVE = 1;

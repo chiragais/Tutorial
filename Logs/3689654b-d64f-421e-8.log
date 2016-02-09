@@ -4347,3 +4347,107 @@
 2016-02-08 19:22:00,909 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.199:56575
 2016-02-08 19:22:00,909 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.199:56578
 2016-02-08 19:22:00,944 - WARNING: already stopped
+2016-02-08 21:11:55,026 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-08 21:12:05,900 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-08 21:12:16,801 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-08 21:12:43,982 - WARNING: exceptionCaught cause An established connection was aborted by the software in your host machine remote /192.168.1.199:58229
+2016-02-08 21:12:43,984 - WARNING: exceptionCaught cause null remote /192.168.1.199:58229
+2016-02-08 21:12:43,984 - WARNING: exceptionCaught cause null remote /192.168.1.199:58231
+2016-02-08 21:12:44,468 - WARNING: already stopped
+2016-02-09 08:38:47,040 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:38:56,202 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:39:11,083 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:44:10,781 - WARNING: Room Created: id= 896789012
+2016-02-09 08:44:10,803 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:44:18,092 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:44:35,670 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:54:28,068 - WARNING: closing idle session /192.168.1.101:59066
+2016-02-09 08:54:28,122 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59064
+2016-02-09 08:54:28,125 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59065
+2016-02-09 08:54:28,127 - WARNING: exceptionCaught cause null remote /192.168.1.101:59065
+2016-02-09 08:54:28,282 - WARNING: already stopped
+2016-02-09 08:55:00,972 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:55:08,221 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:55:24,776 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 08:57:00,937 - WARNING: closing idle session /192.168.1.101:59109
+2016-02-09 08:57:00,951 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59110
+2016-02-09 08:57:00,954 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59108
+2016-02-09 08:57:00,978 - WARNING: already stopped
+2016-02-09 09:09:14,213 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:09:26,233 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:09:38,061 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:10:58,408 - WARNING: closing idle session /192.168.1.101:59143
+2016-02-09 09:10:58,413 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59144
+2016-02-09 09:10:58,416 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59145
+2016-02-09 09:10:58,861 - WARNING: already stopped
+2016-02-09 09:15:37,022 - WARNING: Room Created: id= 48451812
+2016-02-09 09:15:37,043 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:15:44,688 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:15:59,329 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:50:42,734 - WARNING: Room Created: id= 849112204
+2016-02-09 09:50:42,742 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:50:50,885 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:51:06,277 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:54:30,189 - WARNING: Room Created: id= 1543710299
+2016-02-09 09:54:30,204 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:54:39,469 - WARNING: exceptionCaught cause null remote /192.168.1.101:59487
+2016-02-09 09:54:53,714 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:55:02,230 - WARNING: closing idle session /192.168.1.101:59491
+2016-02-09 09:55:12,901 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:55:20,317 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:55:37,178 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:56:15,795 - WARNING: exceptionCaught cause null remote /192.168.1.101:59492
+2016-02-09 09:56:20,183 - WARNING: got out of turn request
+2016-02-09 09:56:21,762 - WARNING: got out of turn request
+2016-02-09 09:56:21,774 - WARNING: got out of turn request
+2016-02-09 09:56:37,092 - WARNING: closing idle session /192.168.1.101:59494
+2016-02-09 09:56:37,107 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59493
+2016-02-09 09:56:52,615 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:56:59,476 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:57:08,610 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:57:26,845 - WARNING: exceptionCaught cause null remote /192.168.1.101:59523
+2016-02-09 09:57:58,770 - WARNING: got out of turn request
+2016-02-09 09:57:58,774 - WARNING: got out of turn request
+2016-02-09 09:58:05,235 - WARNING: closing idle session /192.168.1.101:59524
+2016-02-09 09:58:05,240 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59522
+2016-02-09 09:59:27,794 - WARNING: Room Created: id= 1452292038
+2016-02-09 09:59:27,809 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:59:35,139 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 09:59:48,538 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:01:34,627 - WARNING: Room Created: id= 1837532135
+2016-02-09 10:01:34,640 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:01:43,320 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:01:58,522 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:04:17,242 - WARNING: Room Created: id= 1750383514
+2016-02-09 10:04:17,247 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:04:24,890 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:04:35,903 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:08:59,795 - WARNING: Room Created: id= 56719376
+2016-02-09 10:08:59,817 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:09:09,529 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:09:22,020 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:14:57,510 - WARNING: Room Created: id= 792103749
+2016-02-09 10:14:57,521 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:15:07,200 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:15:20,540 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:17:30,602 - WARNING: Room Created: id= 1299804059
+2016-02-09 10:17:30,620 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:17:38,369 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:17:47,916 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:19:48,312 - WARNING: Room Created: id= 69557716
+2016-02-09 10:19:48,333 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:19:57,551 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:20:11,964 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:21:43,158 - WARNING: closing idle session /192.168.1.101:59949
+2016-02-09 10:21:50,515 - WARNING: Room Created: id= 805238854
+2016-02-09 10:21:50,525 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:21:57,515 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:22:08,172 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:23:00,160 - WARNING: Room Created: id= 445364610
+2016-02-09 10:23:00,172 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:23:10,359 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:23:21,607 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-02-09 10:24:23,215 - WARNING: closing idle session /192.168.1.101:59984
+2016-02-09 10:24:23,232 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59983
+2016-02-09 10:24:23,236 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.101:59985
+2016-02-09 10:24:23,453 - WARNING: already stopped
