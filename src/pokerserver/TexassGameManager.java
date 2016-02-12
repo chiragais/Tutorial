@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import pokerserver.cards.Card;
-import pokerserver.others.ComareObjects;
 import pokerserver.players.GamePlay;
 import pokerserver.players.HandManager;
 import pokerserver.players.PlayerBean;
@@ -20,7 +19,7 @@ import pokerserver.utils.GameConstants;
  * @author Chirag
  * 
  */
-public class GameManager implements GameConstants {
+public class TexassGameManager implements GameConstants {
 
 	PlayersManager playersManager;
 	HandManager handManager;
@@ -32,27 +31,23 @@ public class GameManager implements GameConstants {
 	RoundManager riverRound;
 	int currentRound = 0;
 
-	public GameManager() {
+	public TexassGameManager() {
 		// TODO Auto-generated constructor stub
 		playersManager = new PlayersManager();
 		initGameRounds();
-		//playersManager = new PlayersManager();
-		// gamePlay=new GamePlay(playersManager);
-//		generateDefaultCards();
-//		handManager = new HandManager(listDefaultCards);
 	}
 
 	public void initGameRounds(){
 		System.out.println();
-		System.out.print("========//=========//======== Game is init");
+		System.out.print("================== WA Game started ==================");
+		
 		generateDefaultCards();
-		
-		preflopRound = new RoundManager(ROUND_PREFLOP);
-		flopRound = new RoundManager(ROUND_FLOP);
-		turnRound = new RoundManager(ROUND_TURN);
-		riverRound = new RoundManager(ROUND_RIVER);
-		
+		preflopRound = new RoundManager(TEXASS_ROUND_PREFLOP);
+		flopRound = new RoundManager(TEXASS_ROUND_FLOP);
+		turnRound = new RoundManager(TEXASS_ROUND_TURN);
+		riverRound = new RoundManager(TEXASS_ROUND_RIVER);
 		handManager = new HandManager(listDefaultCards);
+		startPreFlopRound();
 	}
 	public void createGamePlat() {
 		// gamePlay = new GamePlay(playersManager);
@@ -111,17 +106,11 @@ public class GameManager implements GameConstants {
 		return currentRound;
 	}
 
-	// public void setCurrentPlayerId(int curId) {
-	// gamePlay.setCurrentPlayerId(curId);
-	// }
-
 	/**
 	 * Start pre flop round and set other round status as a pending
 	 */
 	public void startPreFlopRound() {
-	
-		currentRound = ROUND_PREFLOP;
-		// gamePlay.setCurrentRoundIndex(ROUND_PREFLOP);
+		currentRound = TEXASS_ROUND_PREFLOP;
 		System.out.println();
 		System.out.print(">>>>>>>>>>> Preflop Round started");
 		preflopRound.setStatus(ROUND_STATUS_ACTIVE);
@@ -131,8 +120,7 @@ public class GameManager implements GameConstants {
 	}
 
 	public void startFlopRound() {
-		currentRound = ROUND_FLOP;
-		// gamePlay.setCurrentRoundIndex(ROUND_FLOP);
+		currentRound = TEXASS_ROUND_FLOP;
 		System.out.println();
 		System.out.print(">>>>>>>>>>> Flop Round started  ");
 		preflopRound.setStatus(ROUND_STATUS_FINISH);
@@ -142,8 +130,7 @@ public class GameManager implements GameConstants {
 	}
 
 	public void startTurnRound() {
-		currentRound = ROUND_TURN;
-		// gamePlay.setCurrentRoundIndex(ROUND_TURN);
+		currentRound = TEXASS_ROUND_TURN;
 		System.out.println();
 		System.out.print(">>>>>>>>>>> Turn Round started  ");
 		preflopRound.setStatus(ROUND_STATUS_FINISH);
@@ -153,8 +140,7 @@ public class GameManager implements GameConstants {
 	}
 
 	public void startRiverRound() {
-		currentRound = ROUND_RIVER;
-		// gamePlay.setCurrentRoundIndex(ROUND_RIVER);
+		currentRound = TEXASS_ROUND_RIVER;
 		System.out.println();
 		System.out.print(">>>>>>>>>>> River Round started  ");
 		preflopRound.setStatus(ROUND_STATUS_FINISH);
@@ -181,14 +167,6 @@ public class GameManager implements GameConstants {
 
 	public PlayerBean getWinnerPlayer() {
 
-		/*
-		 * for(Player player : playersManager.getAllAvailablePlayers()){
-		 * if(player.isPlayerActive()){ System.out.println();
-		 * System.out.print("Winner Player : "
-		 * +player.getHandRank()+" <<<<<<<<<<<<"); for(Card card :
-		 * player.getBestHandCards()){ System.out.println();
-		 * System.out.print("Cards : "+card.getCardName()); } } }
-		 */
 		Collections.sort(playersManager.getAllAvailablePlayers(),
 				new Comparator<PlayerBean>() {
 					@Override
@@ -200,10 +178,6 @@ public class GameManager implements GameConstants {
 
 		PlayerBean winnerPlayer = null;
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			System.out.println();
-			System.out.print("Winner Player : " + player.getPlayeName()
-					+ " >> Rank >> " + player.getHandRank() + " <<<<<<<<<<<<"
-					+ player.getHandRank().ordinal());
 			if (player.isPlayerActive() && winnerPlayer == null) {
 				winnerPlayer = player;
 			}
@@ -259,7 +233,6 @@ public class GameManager implements GameConstants {
 			}
 		}
 		
-//		Collections.sort(totalPlayerWiseBetAmount, new ComareObjects());
 		Collections.sort(totalPlayerWiseBetAmount,
 				new Comparator<PlayerBetBean>() {
 					@Override
@@ -272,8 +245,6 @@ public class GameManager implements GameConstants {
 		boolean allPlayerHaveTurn=true;
 		// Checking all players checked
 		for (PlayerBetBean c : totalPlayerWiseBetAmount) {
-			System.out.println();
-			System.out.print("<<<<>>>> All Player turn: " + c.getLastAction());
 			if(c.getLastAction() == ACTION_PENDING){
 				allPlayerHaveTurn = false;
 			}
@@ -286,8 +257,6 @@ public class GameManager implements GameConstants {
 				return false;
 			}
 		}
-		System.out.println();
-		System.out.print("<<<<>>>> All Player turn: " + allPlayerHaveTurn);
 		if(!allPlayerHaveTurn){
 			return false;
 		}
@@ -305,24 +274,18 @@ public class GameManager implements GameConstants {
 		return totalBetAmount;
 	}
 
-	public void updateGamePlay() {
-		// gamePlay.update();
-	}
-
 	public void moveToNextRound() {
 		switch (currentRound) {
-		case ROUND_PREFLOP:
+		case TEXASS_ROUND_PREFLOP:
 			startFlopRound();
 			break;
-		case ROUND_FLOP:
+		case TEXASS_ROUND_FLOP:
 			startTurnRound();
 			break;
-		case ROUND_TURN:
+		case TEXASS_ROUND_TURN:
 			startRiverRound();
 			break;
-		case ROUND_RIVER:
-			// riverRound.setStatus(ROUND_STATUS_FINISH);
-			// gamePlay.setCurrentRoundIndex(ROUND_RIVER);
+		case TEXASS_ROUND_RIVER:
 			break;
 		}
 
@@ -374,8 +337,6 @@ public class GameManager implements GameConstants {
 		totalBetAmount += flopRound.getTotalRoundBetAmount();
 		totalBetAmount += turnRound.getTotalRoundBetAmount();
 		totalBetAmount += riverRound.getTotalRoundBetAmount();
-		System.out.println();
-		System.out.print("Total Bet Amount : " + totalBetAmount);
 		return totalBetAmount;
 	}
 
@@ -395,9 +356,6 @@ public class GameManager implements GameConstants {
 		}
 		return turnManager;
 	}
-	// public int getWinnerTotalBalance() {
-	// return getPlayerByName(getWinner().getPlayeName()).getTotalBalance();
-	// }
 	class PlayerBetBean{
 		int betAmount= 0;
 		int lastAction=ACTION_PENDING;

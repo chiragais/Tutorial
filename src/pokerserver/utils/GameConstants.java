@@ -29,11 +29,18 @@ public interface GameConstants {
 
 	public int MIN_PLAYER_TO_START_GAME = 3;
 
-	// All Round constants
-	public int ROUND_PREFLOP = 0;
-	public int ROUND_FLOP = 1;
-	public int ROUND_TURN = 2;
-	public int ROUND_RIVER = 3;
+	// All Texass Rounds constants
+	public int TEXASS_ROUND_PREFLOP = 0;
+	public int TEXASS_ROUND_FLOP = 1;
+	public int TEXASS_ROUND_TURN = 2;
+	public int TEXASS_ROUND_RIVER = 3;
+	
+	// All WhoopAss round 
+	public int WA_ROUND_START= 1;
+	public int WA_ROUND_FIRST_FLOP =2;
+	public int WA_ROUND_SECOND_FLOP = 3;
+	public int WA_ROUND_WHOOPASS =4;
+	public int WA_ROUND_THIRD_FLOP = 5;
 
 	public String RANK_TWO = "two";
 	public String RANK_THREE = "three";
@@ -49,13 +56,24 @@ public interface GameConstants {
 	public String RANK_KING = "king";
 	public String RANK_ACE = "ace";
 
+	// For texass game
 	public int INDEX_FLOP_1 = 0;
 	public int INDEX_FLOP_2 = 1;
 	public int INDEX_FLOP_3 = 2;
 	public int INDEX_TURN = 3;
 	public int INDEX_RIVER = 4;
 
-	String SERVER_NAME = "AppWarpS2";
+	// For WA game
+	public int INDEX_FIRST_FLOP_1 = 0;
+	public int INDEX_FIRST_FLOP_2 = 1;
+	public int INDEX_SECOND_FLOP_1 = 2;
+	public int INDEX_SECOND_FLOP_2 = 3;
+	public int INDEX_THIRD_FLOP_1 = 4;
+	public int INDEX_THIRD_FLOP_2 = 5;
+	
+	
+	String TEXASS_SERVER_NAME = "TexassAppWarpS2";
+	String WA_SERVER_NAME = "WAAppWarpS2";
 
 	public static final byte MAX_CARD = 52;
 	// Message Constants
@@ -98,7 +116,9 @@ public interface GameConstants {
 	public int ACTION_DEALER = 8;
 	public int ACTION_FOLDED = 9;
 	public int ACTION_PENDING= 10;
-	
+	public int ACTION_WA_UP = 10;
+	public int ACTION_WA_DOWN = 11;
+	public int ACTION_WA_NO = 12;
 
 	// Round status
 	int ROUND_STATUS_ACTIVE = 1;
@@ -123,13 +143,23 @@ public interface GameConstants {
 	String TAG_ROUND = "Round";
 	String TAG_PLAYER_NAME = "Player_Name";
 	String TAG_PLAYER = "Player";
+	// Texass Game
 	String TAG_CARD_FLOP_1 = "Flop1";
 	String TAG_CARD_FLOP_2 = "Flop2";
 	String TAG_CARD_FLOP_3 = "Flop3";
 	String TAG_CARD_TURN = "Turn";
 	String TAG_CARD_RIVER = "River";
+	// WA Game
+	String TAG_CARD_FIRST_FLOP_1 = "FirstFlop1";
+	String TAG_CARD_FIRST_FLOP_2 = "FirstFlop2";
+	String TAG_CARD_SECOND_FLOP_1 = "SecondFlop1";
+	String TAG_CARD_SECOND_FLOP_2 = "SecondFlop2";
+	String TAG_CARD_THIRD_FLOP_1 = "ThirdFlop1";
+	String TAG_CARD_THIRD_FLOP_2 = "ThirdFlop2";
+	
 	String TAG_CARD_PLAYER_1 = "Card1";
 	String TAG_CARD_PLAYER_2 = "Card2";
+	String TAG_CARD_WA = "WACard";
 	String TAG_PLAYER_BALANCE = "Player_Balance";
 	String TAG_PLAYER_SMALL_BLIND = "Small_Blind";
 	String TAG_PLAYER_BIG_BLIND = "Big_Blind";
@@ -145,4 +175,7 @@ public interface GameConstants {
 	String TAG_WINNER_TOTAL_BALENCE = "winner_balance";
 
 	int SBAmount = 10;
+	
+	String WA_APP_KEY = "4318ddad-038a-409d-8";
+	String TEXASS_APP_KEY = "3689654b-d64f-421e-8";
 }

@@ -297,22 +297,22 @@ public 	void  update() {
 	public void nextRoundPreset() {
 		switch (curRound) {
 
-		case ROUND_PREFLOP:
+		case TEXASS_ROUND_PREFLOP:
 		//	curRound = ROUND_FLOP;
 			FlopRoundCommCards();
 			ResetForNextRound();
 			break;
-		case ROUND_FLOP:
+		case TEXASS_ROUND_FLOP:
 		//	curRound = ROUND_TURN;
 			TurnRoundCommCards();
 			ResetForNextRound();
 			break;
-		case ROUND_TURN:
+		case TEXASS_ROUND_TURN:
 		//	curRound = ROUND_RIVER;
 			RiverRoundCommCards();
 			ResetForNextRound();
 			break;
-		case ROUND_RIVER:
+		case TEXASS_ROUND_RIVER:
 		//	curRound = -1;
 			SetAllUserCardList();
 			SetTableCardArray();

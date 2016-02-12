@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import pokerserver.GameManager;
+import pokerserver.TexassGameManager;
 import pokerserver.players.PlayerBean;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
@@ -20,49 +20,38 @@ import com.shephertz.app42.server.idomain.IZone;
  * 
  * @author Chirag
  */
-public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
+public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		GameConstants {
 
 	private IZone izone;
 	private ITurnBasedRoom gameRoom;
 	private byte GAME_STATUS;
-	GameManager gameManager;
+	TexassGameManager gameManager;
 
-	public PokerRoomAdapter(IZone izone, ITurnBasedRoom room) {
+	public TexassPokerRoomAdapter(IZone izone, ITurnBasedRoom room) {
 		this.izone = izone;
 		this.gameRoom = room;
 		GAME_STATUS = STOPPED;
-		this.gameManager = new GameManager();
+		this.gameManager = new TexassGameManager();
 		System.out.println();
 		System.out.print("Room : PokerRoomAdapter : Room : " + room.getName());
 	}
 
 	@Override
 	public void onTimerTick(long time) {
-		/*
-		 * A game when room full or we can say max users are equals to joined
-		 * users
-		 */
-		// System.out.println();
-		// System.out.print("Room : onTimerTick : Status : "+GAME_STATUS+" >> NoOfUser: "+gameRoom.getJoinedUsers().size());
 		if (GAME_STATUS == STOPPED
 				&& gameRoom.getJoinedUsers().size() >= MIN_PLAYER_TO_START_GAME) {
-
 			// /distributeCarsToPlayerFromDelear();
 			gameManager.initGameRounds();
-			gameManager.startPreFlopRound();
-			gameRoom.startGame(SERVER_NAME);
+			gameRoom.startGame(TEXASS_SERVER_NAME);
 			GAME_STATUS = RUNNING;
-			gameRoom.BroadcastChat(SERVER_NAME, "Game is stated");
-			System.out.println();
-			System.out.print("Room : onTimerTick : Start Game : ");
 		} else if (GAME_STATUS == RESUMED) {
 			GAME_STATUS = RUNNING;
-			gameRoom.startGame(SERVER_NAME);
+			gameRoom.startGame(TEXASS_SERVER_NAME);
 		} else if (GAME_STATUS == RUNNING
 				&& gameRoom.getJoinedUsers().size() < MIN_PLAYER_TO_START_GAME) {
 			GAME_STATUS = STOPPED;
-			gameRoom.stopGame(SERVER_NAME);
+			gameRoom.stopGame(TEXASS_SERVER_NAME);
 		}
 
 	}
@@ -85,7 +74,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			gameRoom.BroadcastChat(SERVER_NAME, RESPONSE_FOR_PLAYERS_INFO
+			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_PLAYERS_INFO
 					+ cardsObject.toString());
 		}
 	}
@@ -115,13 +104,9 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 		JSONObject responseJson = null;
 		moveData = moveData.replace(REQUEST_FOR_ACTION, "");
-		// String[] st = moveData.split("#");
-		// moveData = st[1];
-		// System.out.print("Room : handleMoveRequest : Sender User : "
-		// + sender.getName() + " : After : " + moveData);
+	
 		try {
 			responseJson = new JSONObject(moveData);
-			// gameManager.managePlayerTurnData(responseJson);
 			playerAction = responseJson.getInt(TAG_ACTION);
 			TurnManager turnManager = gameManager.managePlayerAction(
 					sender.getName(), playerAction,
@@ -135,15 +120,12 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 		if (playerAction != ACTION_DEALER 
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
-			// if (gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
-					&& gameManager.getCurrentRoundIndex() == ROUND_RIVER) {
+					&& gameManager.getCurrentRoundIndex() == TEXASS_ROUND_RIVER) {
 
 				gameManager.getCurrentRoundInfo()
 						.setStatus(ROUND_STATUS_FINISH);
-				// gameManager.gamePlay.setCurrentRoundIndex(ROUND_RIVER);
-				// gameManager.updateGamePlay();
 				broadcastRoundCompeleteToAllPlayers();
 				broadcastGameCompleteToAllPlayers();
 				handleFinishGame(gameManager.getWinnerPlayer().getPlayeName(),
@@ -151,7 +133,6 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				izone.deleteRoom(gameRoom.getId());
 			} else {
 				gameManager.moveToNextRound();
-				gameManager.updateGamePlay();
 				broadcastRoundCompeleteToAllPlayers();
 			}
 		}
@@ -239,10 +220,6 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			System.out.println();
 			System.out.print("Room : Game Over ..... ");
 
-			// for (IUser iUser : gameRoom.getJoinedUsers()) {
-			// iUser.SendChatNotification(SERVER_NAME, user.getName()
-			// + " is left room", gameRoom);
-			// }
 			gameManager.getPlayersManager().removeAllPlayers();
 			// handleFinishGame("Chirag", null);
 		}
@@ -255,17 +232,9 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void handleFinishGame(String winningUser, ArrayList<String> cards) {
 
 		try {
-			// JSONObject object = new JSONObject();
-			// object.put("win", winningUser);
-			// object.put("cards", cards);
-			//
-			// gameRoom.BroadcastChat(SERVER_NAME, RESULT_GAME_OVER + "#" +
-			// object);
-			// System.out.println();
-			// System.out.print("Game OVer : "+object);
 			gameRoom.setAdaptor(null);
 			izone.deleteRoom(gameRoom.getId());
-			gameRoom.stopGame(SERVER_NAME);
+			gameRoom.stopGame(TEXASS_SERVER_NAME);
 			GAME_STATUS = FINISHED;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -311,15 +280,20 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		System.out.println();
 		System.out.print("Room : handleUserJoinRequest :  User : "
 				+ user.getName());
-
 		// Handle player request
-
+		addNewPlayerCards(user);
 		sendDefaultCards(user);
 		broadcastPlayerCardsInfo();
 		broadcastBlindPlayerDatas();
-
 	}
-
+	private void addNewPlayerCards(IUser user) {
+		PlayerBean player = new PlayerBean(
+				gameRoom.getJoinedUsers().size() - 1, user.getName());
+		// Generate player cards
+		player.setCards(gameManager.generatePlayerCards(),
+				gameManager.generatePlayerCards(),gameManager.generatePlayerCards());
+		gameManager.addNewPlayerToGame(player);		
+	}
 	public void onUserPaused(IUser user) {
 
 	}
@@ -337,7 +311,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 						gameManager.getPlayersManager()
 								.getAllAvailablePlayers().get(0)
 								.getPlayerName())) {
-					user.SendChatNotification(SERVER_NAME,
+					user.SendChatNotification(TEXASS_SERVER_NAME,
 							RESPONSE_FOR_DESTRIBUTE_CARD, gameRoom);
 					return;
 				}
@@ -347,13 +321,6 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 	/** Manage default and player hand cards */
 	public void sendDefaultCards(IUser user) {
-
-		PlayerBean player = new PlayerBean(
-				gameRoom.getJoinedUsers().size() - 1, user.getName());
-		// Generate player cards
-		player.setCards(gameManager.generatePlayerCards(),
-				gameManager.generatePlayerCards());
-		gameManager.addNewPlayerToGame(player);
 		JSONObject cardsObject = new JSONObject();
 		try {
 			cardsObject.put(TAG_CARD_FLOP_1,
@@ -372,19 +339,11 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			cardsObject.put(TAG_CARD_RIVER,
 					gameManager.getDefaultCards().get(INDEX_RIVER)
 							.getCardName());
-			// cardsObject.put(TAG_CARD_PLAYER_1, player.getFirstCard()
-			// .getCardName());
-			// cardsObject.put(TAG_CARD_PLAYER_2, player.getSecondCard()
-			// .getCardName());
-			System.out.print("New player cards : " + cardsObject.toString());
-			user.SendChatNotification(SERVER_NAME, RESPONSE_FOR_DEFAULT_CARDS
+			user.SendChatNotification(TEXASS_SERVER_NAME, RESPONSE_FOR_DEFAULT_CARDS
 					+ cardsObject.toString(), gameRoom);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-		// broadcastNewPlayerJoinedToOtherPlayers(player);
-
 	}
 
 	private void broadcastBlindPlayerDatas() {
@@ -423,7 +382,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				System.out.println();
 				System.out.print("Blind Player Details : "
 						+ cardsObject.toString());
-				gameRoom.BroadcastChat(SERVER_NAME, RESPONSE_FOR_BLIEND_PLAYER
+				gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_BLIEND_PLAYER
 						+ cardsObject.toString());
 			}
 		} catch (Exception e) {
@@ -438,14 +397,12 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-			// cardsObject.put(TAG_ACTION,playerAction);
-			// cardsObject.put(TAG_PLAYER, player.getPlayeName());
 			System.out.println();
 			System.out.print("Round done " + cardsObject.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		gameRoom.BroadcastChat(SERVER_NAME, RESPONSE_FOR_ROUND_COMPLETE
+		gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_ROUND_COMPLETE
 				+ cardsObject.toString());
 	}
 
@@ -456,8 +413,6 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-			// cardsObject.put(TAG_WINER_TOTAL_BALENCE,
-			// gameManager.getWinnerTotalBalance());
 			winnerPlayer.setTotalBalance(winnerPlayer.getTotalBalance()
 					+ gameManager.getTotalTableAmount());
 			cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
@@ -468,8 +423,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			cardsObject.put(TAG_WINNER_BEST_CARDS,
 					winnerPlayer.getBestHandCardsName());
 
-			// cardsObject.put(TAG_PLAYER, player.getPlayeName());
-			gameRoom.BroadcastChat(SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
 					+ cardsObject.toString());
 			System.out.println();
 			System.out.print("Winner Player : " + cardsObject.toString());
@@ -483,7 +437,6 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 		JSONObject cardsObject = new JSONObject();
 		try {
-			// cardsObject.put(TAG_BET_AMOUNT, player.getPlayerBetAmount());
 			cardsObject.put(TAG_BET_AMOUNT, turnManager.getBetAmount());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
@@ -492,7 +445,7 @@ public class PokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					.getPlayeName());
 			cardsObject.put(TAG_PLAYER_BALANCE, turnManager.getPlayer()
 					.getTotalBalance());
-			gameRoom.BroadcastChat(SERVER_NAME, RESPONSE_FOR_ACTION_DONE
+			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_ACTION_DONE
 					+ cardsObject.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();

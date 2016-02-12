@@ -1,6 +1,7 @@
 package pokerserver.zone;
 
-import pokerserver.room.PokerRoomAdapter;
+
+import pokerserver.room.WAPokerRoomAdapter;
 
 import com.shephertz.app42.server.idomain.BaseZoneAdaptor;
 import com.shephertz.app42.server.idomain.HandlingResult;
@@ -17,11 +18,11 @@ import com.shephertz.app42.server.idomain.IZone;
 /**
  * @author Chirag
  */
-public class PokerZoneExtension extends BaseZoneAdaptor {
+public class WAPokerZoneExtension extends BaseZoneAdaptor {
 
 	private IZone izone;
 
-	public PokerZoneExtension(IZone izone) {
+	public WAPokerZoneExtension(IZone izone) {
 		System.out.println();
     	System.out.print("Zone : "+izone.getName());
 		this.izone = izone;
@@ -39,7 +40,7 @@ public class PokerZoneExtension extends BaseZoneAdaptor {
 		System.out.print("CD >> Room Name : " + room.getName()
 				+ " >> Max User : " + room.getMaxUsers() + " >> User Name : "
 				+ user.getName());
-		room.setAdaptor(new PokerRoomAdapter(izone, (ITurnBasedRoom) room));
+		room.setAdaptor(new WAPokerRoomAdapter(izone, (ITurnBasedRoom) room));
 	}
 
 	/*
@@ -52,7 +53,7 @@ public class PokerZoneExtension extends BaseZoneAdaptor {
 		if (user.getLocation() == null) {
 			return;
 		}
-		PokerRoomAdapter extension = (PokerRoomAdapter) user.getLocation()
+		WAPokerRoomAdapter extension = (WAPokerRoomAdapter) user.getLocation()
 				.getAdaptor();
 		extension.onUserPaused(user);
 	}
@@ -67,7 +68,7 @@ public class PokerZoneExtension extends BaseZoneAdaptor {
 		if (user.getLocation() == null) {
 			return;
 		}
-		PokerRoomAdapter extension = (PokerRoomAdapter) user.getLocation()
+		WAPokerRoomAdapter extension = (WAPokerRoomAdapter) user.getLocation()
 				.getAdaptor();
 		extension.onUserResume(user);
 	}

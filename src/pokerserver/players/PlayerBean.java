@@ -18,6 +18,7 @@ public class PlayerBean {
 	private int totalBalance =1000;
 	private boolean isActivePlayer = true;
 	private PlayerCards cards;
+	private Card waCard;
 	private boolean isSmalBlind;
 	private boolean isBigBlind;
 	private boolean isAllInPlayer;
@@ -76,7 +77,9 @@ public class PlayerBean {
 //	public int  getPlayerBetAmount(){
 //		return this.betAmount;
 //	}
-	
+	public Card getWACard(){
+		return waCard;
+	}
 	public int getTotalBalance() {
 		return this.totalBalance;
 	}
@@ -85,10 +88,12 @@ public class PlayerBean {
 		this.isActivePlayer = isActive;
 	}
 
-	public void setCards(Card card1, Card card2) {
+	public void setCards(Card card1, Card card2,Card waCard) {
 		this.cards = new PlayerCards(card1, card2);
+		this.waCard = waCard;
 		System.out.println("Default card 1: "+getPlayeName()+" = " + card1.getCardName());
 		System.out.println("Default card 2: "+getPlayeName()+" = " + card2.getCardName());
+		System.out.println("WA Card : "+ waCard.getCardName());
 	}
 
 	public PlayerCards  getPlayerCards(){
