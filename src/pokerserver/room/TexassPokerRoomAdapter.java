@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import pokerserver.TexassGameManager;
 import pokerserver.players.PlayerBean;
+import pokerserver.players.Winner;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
 
@@ -123,9 +124,10 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 					&& gameManager.getCurrentRoundIndex() == TEXASS_ROUND_RIVER) {
-
+				gameManager.calculatePotAmountForAllInMembers();
 				gameManager.getCurrentRoundInfo()
 						.setStatus(ROUND_STATUS_FINISH);
+				gameManager.findAllWinnerPlayers();
 				broadcastRoundCompeleteToAllPlayers();
 				broadcastGameCompleteToAllPlayers();
 				handleFinishGame(gameManager.getWinnerPlayer().getPlayeName(),
@@ -409,7 +411,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void broadcastGameCompleteToAllPlayers() {
 		JSONObject cardsObject = new JSONObject();
 		try {
-			PlayerBean winnerPlayer = gameManager.getWinnerPlayer();
+			/*PlayerBean winnerPlayer = gameManager.getWinnerPlayer();
 			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
@@ -426,7 +428,44 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
 					+ cardsObject.toString());
 			System.out.println();
-			System.out.print("Winner Player : " + cardsObject.toString());
+			System.out.print("Winner Player : " + cardsObject.toString());*/
+			
+			
+		//   for(Winner winnerPlayer:gameManager.getAllWinnerPlayers()){
+		//   // Winner winnerPlayer = gameManager.getTopWinner();
+//		    JSONObject winnerObject = new JSONObject();
+//		    winnerObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
+//		    winnerObject
+//		      .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
+		//    
+//		    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
+//		      winnerPlayer.getPlayer().getTotalBalance());
+//		    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+//		    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+//		      .ordinal());
+//		    winnerObject.put(TAG_WINNER_BEST_CARDS,
+//		      winnerPlayer.getPlayer().getBestHandCardsName());
+//		    winnerArray.put(winnerObject);
+		//   }
+			
+			Winner winnerPlayer = gameManager.getTopWinner();
+			   cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
+			   cardsObject
+			     .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
+			   
+			   cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
+			     winnerPlayer.getPlayer().getTotalBalance());
+			   cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+			   cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+			     .ordinal());
+			   cardsObject.put(TAG_WINNER_BEST_CARDS,
+			     winnerPlayer.getPlayer().getBestHandCardsName());
+			   
+
+			   // cardsObject.put(TAG_PLAYER, player.getPlayeName());
+			   gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+			     + cardsObject.toString());
+			   System.out.println();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

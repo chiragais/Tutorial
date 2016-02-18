@@ -5,10 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import pokerserver.cards.Card;
+import pokerserver.players.AllInPlayer;
 import pokerserver.players.GamePlay;
 import pokerserver.players.HandManager;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
+import pokerserver.players.Winner;
+import pokerserver.players.WinnerManager;
 import pokerserver.rounds.RoundManager;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
@@ -30,17 +33,20 @@ public class TexassGameManager implements GameConstants {
 	RoundManager turnRound;
 	RoundManager riverRound;
 	int currentRound = 0;
+	WinnerManager winnerManager;
 
 	public TexassGameManager() {
 		// TODO Auto-generated constructor stub
 		playersManager = new PlayersManager();
+
 		initGameRounds();
 	}
 
-	public void initGameRounds(){
+	public void initGameRounds() {
 		System.out.println();
-		System.out.print("================== WA Game started ==================");
-		
+		System.out
+				.print("================== WA Game started ==================");
+		winnerManager = new WinnerManager(playersManager);
 		generateDefaultCards();
 		preflopRound = new RoundManager(TEXASS_ROUND_PREFLOP);
 		flopRound = new RoundManager(TEXASS_ROUND_FLOP);
@@ -49,6 +55,7 @@ public class TexassGameManager implements GameConstants {
 		handManager = new HandManager(listDefaultCards);
 		startPreFlopRound();
 	}
+
 	public void createGamePlat() {
 		// gamePlay = new GamePlay(playersManager);
 	}
@@ -75,9 +82,9 @@ public class TexassGameManager implements GameConstants {
 		player.setPlayersBestHand(
 				handManager.findPlayerBestHand(player.getPlayerCards()),
 				handManager.getPlayerBestCards());
-		for(Card card : player.getBestHandCards()){
+		for (Card card : player.getBestHandCards()) {
 			System.out.println();
-			System.out.print("Player Best Cards : "+ card.getCardName() );	
+			System.out.print("Player Best Cards : " + card.getCardName());
 		}
 		this.playersManager.addNewPlayerInRoom(player);
 	}
@@ -203,6 +210,9 @@ public class TexassGameManager implements GameConstants {
 			int action) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			if (player.getPlayeName().equals(name)) {
+				if (action == ACTION_ALL_IN) {
+					player.setPlayerAllIn(true);
+				}
 				if (action == ACTION_FOLD) {
 					player.setPlayerActive(false);
 				} else if (player.isPlayerActive()) {
@@ -221,31 +231,33 @@ public class TexassGameManager implements GameConstants {
 	 * @return
 	 */
 	public boolean checkEveryPlayerHaveSameBetAmount() {
-		
+
 		ArrayList<PlayerBetBean> totalPlayerWiseBetAmount = new ArrayList<PlayerBetBean>();
 		RoundManager currentRound = getCurrentRoundInfo();
-		
+
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			if (player.isPlayerActive()) {
-				
+
 				totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
-						.getTotalPlayerBetAmount(player),currentRound.getPlayerLastAction(player)));
+						.getTotalPlayerBetAmount(player), currentRound
+						.getPlayerLastAction(player)));
 			}
 		}
-		
+
 		Collections.sort(totalPlayerWiseBetAmount,
 				new Comparator<PlayerBetBean>() {
 					@Override
-					public int compare(PlayerBetBean paramT1, PlayerBetBean paramT2) {
+					public int compare(PlayerBetBean paramT1,
+							PlayerBetBean paramT2) {
 						return Integer.compare(paramT1.getBetAmount(),
 								paramT2.getBetAmount());
 					}
 				});
 
-		boolean allPlayerHaveTurn=true;
+		boolean allPlayerHaveTurn = true;
 		// Checking all players checked
 		for (PlayerBetBean c : totalPlayerWiseBetAmount) {
-			if(c.getLastAction() == ACTION_PENDING){
+			if (c.getLastAction() == ACTION_PENDING) {
 				allPlayerHaveTurn = false;
 			}
 		}
@@ -253,11 +265,12 @@ public class TexassGameManager implements GameConstants {
 		totalPlayerWiseBetAmount.remove(0);
 		// Checking all players have same bet amount
 		for (PlayerBetBean currentPlayerBetAmt : totalPlayerWiseBetAmount) {
-			if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt.getBetAmount()) {
+			if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
+					.getBetAmount()) {
 				return false;
 			}
 		}
-		if(!allPlayerHaveTurn){
+		if (!allPlayerHaveTurn) {
 			return false;
 		}
 		return true;
@@ -277,12 +290,15 @@ public class TexassGameManager implements GameConstants {
 	public void moveToNextRound() {
 		switch (currentRound) {
 		case TEXASS_ROUND_PREFLOP:
+			calculatePotAmountForAllInMembers();
 			startFlopRound();
 			break;
 		case TEXASS_ROUND_FLOP:
+			calculatePotAmountForAllInMembers();
 			startTurnRound();
 			break;
 		case TEXASS_ROUND_TURN:
+			calculatePotAmountForAllInMembers();
 			startRiverRound();
 			break;
 		case TEXASS_ROUND_RIVER:
@@ -331,43 +347,142 @@ public class TexassGameManager implements GameConstants {
 		return addCurrentActionToTurnManager(userName, betAmount, userAction);
 	}
 
+	// public int getTotalTableAmount() {
+	// int totalBetAmount = 0;
+	// totalBetAmount += preflopRound.getTotalRoundBetAmount();
+	// totalBetAmount += flopRound.getTotalRoundBetAmount();
+	// totalBetAmount += turnRound.getTotalRoundBetAmount();
+	// totalBetAmount += riverRound.getTotalRoundBetAmount();
+	// return totalBetAmount;
+	// }
+
+	private TurnManager addCurrentActionToTurnManager(String userName,
+			int betAmount, int action) {
+
+		TurnManager turnManager = null;
+		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,
+				betAmount, action);
+		if (currentPlayer != null) {
+
+			RoundManager currentRoundManger = getCurrentRoundInfo();
+			turnManager = new TurnManager(currentPlayer, action, betAmount);
+			currentRoundManger.addTurnRecord(turnManager);
+			System.out.println();
+			System.out.print("Turn Manager # User: "
+					+ currentPlayer.getPlayerName() + " # Action: " + action
+					+ " # Bet: " + betAmount + " # Round: "
+					+ currentRoundManger.getRound());
+		}
+		return turnManager;
+	}
+
+	class PlayerBetBean {
+		int betAmount = 0;
+		int lastAction = ACTION_PENDING;
+
+		public PlayerBetBean(int totalBet, int lastAction) {
+			this.betAmount = totalBet;
+			this.lastAction = lastAction;
+		}
+
+		public int getBetAmount() {
+			return betAmount;
+		}
+
+		public int getLastAction() {
+			return lastAction;
+		}
+	}
+
+	public Winner getTopWinner() {
+		return winnerManager.getTopWinner();
+	}
+
+	public ArrayList<String> getAllWinnerName() {
+		ArrayList<String> listWinners = new ArrayList<String>();
+		for (Winner winner : winnerManager.getWinnerList()) {
+			listWinners.add(winner.getPlayer().getPlayeName());
+		}
+		return listWinners;
+	}
+
+	public ArrayList<Winner> getAllWinnerPlayers() {
+		return winnerManager.getWinnerList();
+	}
+
+	public void findAllWinnerPlayers() {
+		winnerManager.findWinnerPlayers();
+	}
+
+	public void calculatePotAmountForAllInMembers() {
+		int allInBetTotalAmount = 0;
+		int tempCurrentRound = 0;
+		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
+			PlayerBean player = playersManager.getAllAvailablePlayers().get(i);
+			boolean isAllIn = player.isPlayrAllIn();
+			int lastAction = getCurrentRoundInfo().getPlayerLastAction(player);
+			if (isAllIn
+					&& winnerManager.getAllInPotAmount(player.getPlayeName()) == 0) {
+
+				int allInBetAmt = getCurrentRoundInfo()
+						.getPlayerBetAmountAtActionAllIn(player);
+				for (int j = 0; j < playersManager.getAllAvailablePlayers()
+						.size(); j++) {
+					if (allInBetAmt < getCurrentRoundInfo()
+							.getTotalPlayerBetAmount(
+									playersManager.getAllAvailablePlayers()
+											.get(j))) {
+						// allInAmountArray[i] = allInAmountArray[i] +
+						// allInBetAmt;
+						allInBetTotalAmount = allInBetTotalAmount + allInBetAmt;
+
+					} else {
+						allInBetTotalAmount = allInBetTotalAmount
+								+ getCurrentRoundInfo()
+										.getTotalPlayerBetAmount(
+												playersManager
+														.getAllAvailablePlayers()
+														.get(j));
+
+					}
+				}
+
+				if (preflopRound.getRound() < getCurrentRoundInfo().getRound())
+					allInBetTotalAmount += preflopRound
+							.getTotalRoundBetAmount();
+				if (flopRound.getRound() < getCurrentRoundInfo().getRound())
+					allInBetTotalAmount += flopRound.getTotalRoundBetAmount();
+				if (turnRound.getRound() < getCurrentRoundInfo().getRound())
+					allInBetTotalAmount += turnRound.getTotalRoundBetAmount();
+				AllInPlayer allInPlayer = new AllInPlayer(
+						player.getPlayeName(), allInBetTotalAmount);
+				winnerManager.addAllInTotalPotAmount(allInPlayer);
+
+			}
+
+		}
+
+	}
+
+	public void setTotalTableBetAmount() {
+		int totalBetAmount = 0;
+		totalBetAmount += preflopRound.getTotalRoundBetAmount();
+		totalBetAmount += flopRound.getTotalRoundBetAmount();
+		totalBetAmount += turnRound.getTotalRoundBetAmount();
+		totalBetAmount += riverRound.getTotalRoundBetAmount();
+		winnerManager.setTotalTableAmount(totalBetAmount);
+	}
+
 	public int getTotalTableAmount() {
 		int totalBetAmount = 0;
 		totalBetAmount += preflopRound.getTotalRoundBetAmount();
 		totalBetAmount += flopRound.getTotalRoundBetAmount();
 		totalBetAmount += turnRound.getTotalRoundBetAmount();
 		totalBetAmount += riverRound.getTotalRoundBetAmount();
-		return totalBetAmount;
-	}
 
-	private TurnManager addCurrentActionToTurnManager(String userName, int betAmount,int action) {
-		
-		TurnManager turnManager=null; 
-		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,betAmount,action);
-		if (currentPlayer != null) {
-			
-			RoundManager currentRoundManger = getCurrentRoundInfo();
-			turnManager = new TurnManager(currentPlayer,
-					action,
-					betAmount);
-			currentRoundManger.addTurnRecord(turnManager);
-			System.out.println();
-			System.out.print("Turn Manager # User: "+currentPlayer.getPlayerName()+" # Action: "+action+" # Bet: "+betAmount+" # Round: "+currentRoundManger.getRound());
-		}
-		return turnManager;
-	}
-	class PlayerBetBean{
-		int betAmount= 0;
-		int lastAction=ACTION_PENDING;
-		public PlayerBetBean(int totalBet,int lastAction){
-			this.betAmount = totalBet;
-			this.lastAction = lastAction;
-		}
-		public int getBetAmount(){
-			return betAmount;
-		}
-		public int getLastAction(){
-			return lastAction;
-		}
+		winnerManager.setTotalTableAmount(totalBetAmount);
+		System.out.println();
+		System.out.print("Total Bet Amount : " + totalBetAmount);
+		return totalBetAmount;
 	}
 }

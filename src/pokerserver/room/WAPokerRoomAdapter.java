@@ -27,12 +27,14 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private ITurnBasedRoom gameRoom;
 	private byte GAME_STATUS;
 	WAGameManager gameManager;
+	private boolean isFirstTime = true;
 
 	public WAPokerRoomAdapter(IZone izone, ITurnBasedRoom room) {
 		this.izone = izone;
 		this.gameRoom = room;
 		GAME_STATUS = STOPPED;
 		this.gameManager = new WAGameManager();
+		gameManager.initGameRounds();
 
 		System.out.println();
 		System.out.print("Room : PokerRoomAdapter : Room : " + room.getName());
@@ -42,8 +44,13 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	public void onTimerTick(long time) {
 		if (GAME_STATUS == STOPPED
 				&& gameRoom.getJoinedUsers().size() >= MIN_PLAYER_TO_START_GAME) {
+
 			// /distributeCarsToPlayerFromDelear();
-			gameManager.initGameRounds();
+			if (isFirstTime) {
+				isFirstTime = false;
+			} else {
+				gameManager.initGameRounds();
+			}
 			gameRoom.startGame(WA_SERVER_NAME);
 			GAME_STATUS = RUNNING;
 		} else if (GAME_STATUS == RESUMED) {
@@ -127,9 +134,13 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 						&& gameManager.getCurrentRoundIndex() == WA_ROUND_THIRD_FLOP) {
 
+					gameManager.findBestPlayerHand();
+
 					gameManager.getCurrentRoundInfo().setStatus(
 							ROUND_STATUS_FINISH);
+
 					broadcastRoundCompeleteToAllPlayers();
+
 					broadcastGameCompleteToAllPlayers();
 					handleFinishGame(gameManager.getWinnerPlayer()
 							.getPlayeName(), gameManager.getWinnerCards());
@@ -296,6 +307,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, user.getName());
 		// Generate player cards
+
 		player.setCards(gameManager.generatePlayerCards(),
 				gameManager.generatePlayerCards(),
 				gameManager.generatePlayerCards());

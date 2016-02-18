@@ -116,9 +116,9 @@ public interface GameConstants {
 	public int ACTION_DEALER = 8;
 	public int ACTION_FOLDED = 9;
 	public int ACTION_PENDING= 10;
-	public int ACTION_WA_UP = 10;
-	public int ACTION_WA_DOWN = 11;
-	public int ACTION_WA_NO = 12;
+	public int ACTION_WA_UP = 11;
+	public int ACTION_WA_DOWN = 12;
+	public int ACTION_WA_NO = 13;
 
 	// Round status
 	int ROUND_STATUS_ACTIVE = 1;
