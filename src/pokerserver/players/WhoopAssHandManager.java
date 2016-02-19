@@ -323,6 +323,13 @@
 			return isAStraight;
 		}
 
+//		public void makeStraightWithPlayerCards(List<Card> playerList){
+//			for(int i=0;i<playerList.size();i++){
+//				
+//			}
+//		}
+		
+		
 		public boolean isAceStraight(Card[] allCards,List<Card> playerHandList) {
 			if (allCards[0].getRank() == RANKS.ace) {
 				boolean aceExist = false, twoExist = false, threeExist = false, fourExist = false, fiveExist = false;
@@ -397,7 +404,11 @@
 						handBestCards[j] = allCards[i];
 						j++;
 						if (j == handBestCards.length) {
-							return true;
+							if(makeFlushWithPlayerHandCards(playerHandList)){
+								return true;
+							}else{
+								return false;
+							}
 						}
 					}
 				}
@@ -408,7 +419,11 @@
 						handBestCards[j] = allCards[i];
 						j++;
 						if (j == handBestCards.length) {
-							return true;
+							if(makeFlushWithPlayerHandCards(playerHandList)){
+								return true;
+							}else{
+								return false;
+							}
 						}
 					}
 				}
@@ -419,7 +434,11 @@
 						handBestCards[j] = allCards[i];
 						j++;
 						if (j == handBestCards.length) {
-							return true;
+							if(makeFlushWithPlayerHandCards(playerHandList)){
+								return true;
+							}else{
+								return false;
+							}
 						}
 					}
 				}
@@ -430,14 +449,40 @@
 						handBestCards[j] = allCards[i];
 						j++;
 						if (j == handBestCards.length) {
-							return true;
+							if(makeFlushWithPlayerHandCards(playerHandList)){
+								return true;
+							}else{
+								return false;
+							}
 						}
 					}
 				}
 			}
+			
+			
+			
 			return false;
 		}
 
+		public boolean makeFlushWithPlayerHandCards(List<Card> playerCardList){
+			int count=0;
+			int sizeOfBestHand=handBestCards.length;
+			String flushSuit=handBestCards[0].getSuit().toString();
+			for(int i=0;i<playerCardList.size();i++){
+				if(playerCardList.get(i).getSuit().toString()==flushSuit){
+					handBestCards[--sizeOfBestHand]=playerCardList.get(i);
+					count++;
+					if(count==2){
+						return true;
+					}
+				}
+			
+			}
+			 return false; 
+		}
+		
+		
+		
 //		private boolean isThreeOfAKind(Card[] allCards) {
 //			int lastSameRankOffset=0;
 //			int cardRepeats = 1;
@@ -621,9 +666,11 @@
 					return isTwoPair;
 				}else if(checkPairInPlayerList(playerHandList)){
 					return isTwoPair;
-				}else if(checkForSinglePlayerCards(allCards,playerHandList)){
-					return isTwoPair;
-				}else{
+				}
+//				else if(checkForSinglePlayerCards(allCards,playerHandList)){
+//					return isTwoPair;
+//				}
+				else{
 					return false;
 				}
 		 	}
@@ -634,22 +681,38 @@
 		
 		public boolean checkForSinglePlayerCards(Card[] allCards,List<Card> playerHandList){
 		List<Card> 	playerDefaultList=sortingCardsList(defaultCards);
+		boolean flag=false;
 		int k=0;
-		    Card[] bestCardList = new Card[5];
+		//    Card[] bestCardList = new Card[5];
+		    List<Card> bestCardList=new ArrayList<Card>();
 				for(int i=0;i<playerHandList.size();i++){
 					for(int j=0;j<playerDefaultList.size();j++){
 					if(playerHandList.get(i).getValue()==playerDefaultList.get(j).getValue()){
-						bestCardList[k]=playerHandList.get(i);
-						bestCardList[++k]=playerDefaultList.get(j);
-						if(k==bestCardList.length-1){
-							bestCardList[k]=handBestCards[0];
-							for(int m=0;m<bestCardList.length;m++){
-								handBestCards[m]=bestCardList[m];
+						
+						bestCardList.add(k, playerHandList.get(i));
+						bestCardList.add(++k, playerDefaultList.get(j));
+						
+						if(k==handBestCards.length-1){
+							for(int m=0;m<handBestCards.length;m++){
+								for(int n=0;n<bestCardList.size();n++){
+									if(handBestCards[m].getCardName().equals(bestCardList.get(n).cardName)){
+									    flag=true;  
+									}
+								}
+								if(!flag){
+									bestCardList.set(k, handBestCards[m]);
+									break;
+								}
+								
+							}
+							
+							for(int p=0;p<bestCardList.size();p++){
+								handBestCards[p]=bestCardList.get(p);
 							}
 							handBestCards=sortingCardsArray(handBestCards);
 						 return true;
 						}
-						continue;
+					//	continue;
 					}
 						
 				}
@@ -668,8 +731,56 @@
 					return true;
 				}
 			}
-			return false;
+		
+    		return false;
 			
+		}
+		
+		public boolean makePairWithPlayerCards(List<Card> playerHandList){
+			List<Card> 	playerDefaultList=sortingCardsList(defaultCards);
+			boolean flag=false;
+			int k=0;
+			//    Card[] bestCardList = new Card[5];
+			    List<Card> bestCardList=new ArrayList<Card>();
+					for(int i=0;i<playerHandList.size();i++){
+						for(int j=0;j<playerDefaultList.size();j++){
+						if(playerHandList.get(i).getValue()==playerDefaultList.get(j).getValue()){
+							
+							bestCardList.add(k, playerHandList.get(i));
+							bestCardList.add(++k, playerDefaultList.get(j));
+							
+							if(k==handBestCards.length-3){
+								for(int m=0;m<handBestCards.length;m++){
+									for(int n=0;n<bestCardList.size();n++){
+										if(handBestCards[m].getCardName().equals(bestCardList.get(n).cardName)){
+										    flag=true;  
+										}
+									}
+									if(!flag){
+										bestCardList.set(k, handBestCards[m]);
+										flag=false;
+										k++;
+										if(k==handBestCards.length){
+											break;
+										}
+									}
+									
+								}
+								
+								for(int p=0;p<bestCardList.size();p++){
+									handBestCards[p]=bestCardList.get(p);
+								}
+								handBestCards=sortingCardsArray(handBestCards);
+							 return true;
+							}
+						//	continue;
+						}
+							
+					}
+					
+				}
+					return false;
+				
 		}
 		
 		
@@ -703,9 +814,10 @@
 				{
 					return isPair;
 				}else{
-				if(checkPairInPlayerList(playerHandList)){
+				if(makePairWithPlayerCards(playerHandList)){
 					return isPair;
-				}else{
+				}
+				else{
 					return false;
 				}
 			   }

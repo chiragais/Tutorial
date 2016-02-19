@@ -241,8 +241,10 @@ public class WAGameManager implements GameConstants {
 				winnerPlayer = player;
 			}
 		}
-
-		return winnerPlayer;
+  
+		return	playersManager.getAllAvailablePlayers().get(0);
+		
+		//return winnerPlayer;
 	}
 	
 	
