@@ -432,8 +432,7 @@ public class TexassGameManager implements GameConstants {
 							.getTotalPlayerBetAmount(
 									playersManager.getAllAvailablePlayers()
 											.get(j))) {
-						// allInAmountArray[i] = allInAmountArray[i] +
-						// allInBetAmt;
+						
 						allInBetTotalAmount = allInBetTotalAmount + allInBetAmt;
 
 					} else {

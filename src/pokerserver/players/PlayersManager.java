@@ -18,6 +18,12 @@ public class PlayersManager {
 	public ArrayList<PlayerBean> getAllAvailablePlayers(){
 		return roomPlayersList;
 	}
+	
+	public void setAllAvailablePlayers(ArrayList<PlayerBean> playerList){
+		roomPlayersList.clear();
+		roomPlayersList.addAll(playerList);
+		
+	}
 	public int getTotalRoomPlayers() {
 		return roomPlayersList.size();
 	}

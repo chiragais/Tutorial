@@ -2,6 +2,7 @@ package pokerserver.room;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -291,6 +292,8 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void addNewPlayerCards(IUser user) {
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, user.getName());
+	//	player.setTotalBalance(gameRoom.getJoinedUsers().size()*500);
+		
 		// Generate player cards
 		player.setCards(gameManager.generatePlayerCards(),
 				gameManager.generatePlayerCards(),gameManager.generatePlayerCards());
@@ -409,7 +412,8 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	}
 
 	private void broadcastGameCompleteToAllPlayers() {
-		JSONObject cardsObject = new JSONObject();
+		  JSONArray   winnerArray=new JSONArray();
+			//	JSONObject cardsObject = new JSONObject();
 		try {
 			/*PlayerBean winnerPlayer = gameManager.getWinnerPlayer();
 			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
@@ -431,44 +435,30 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			System.out.print("Winner Player : " + cardsObject.toString());*/
 			
 			
-		//   for(Winner winnerPlayer:gameManager.getAllWinnerPlayers()){
-		//   // Winner winnerPlayer = gameManager.getTopWinner();
-//		    JSONObject winnerObject = new JSONObject();
-//		    winnerObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
-//		    winnerObject
-//		      .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-		//    
-//		    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
-//		      winnerPlayer.getPlayer().getTotalBalance());
-//		    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
-//		    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
-//		      .ordinal());
-//		    winnerObject.put(TAG_WINNER_BEST_CARDS,
-//		      winnerPlayer.getPlayer().getBestHandCardsName());
-//		    winnerArray.put(winnerObject);
-		//   }
-			
-			Winner winnerPlayer = gameManager.getTopWinner();
-			   cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
-			   cardsObject
-			     .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-			   
-			   cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
-			     winnerPlayer.getPlayer().getTotalBalance());
-			   cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
-			   cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
-			     .ordinal());
-			   cardsObject.put(TAG_WINNER_BEST_CARDS,
-			     winnerPlayer.getPlayer().getBestHandCardsName());
-			   
-
-			   // cardsObject.put(TAG_PLAYER, player.getPlayeName());
-			   gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
-			     + cardsObject.toString());
-			   System.out.println();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		   for(Winner winnerPlayer:gameManager.getAllWinnerPlayers()){
+		   // Winner winnerPlayer = gameManager.getTopWinner();
+		    JSONObject winnerObject = new JSONObject();
+		    winnerObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
+		    winnerObject
+		      .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
+		    
+		    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
+		      winnerPlayer.getPlayer().getTotalBalance());
+		    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+		    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+		      .ordinal());
+		    winnerObject.put(TAG_WINNER_BEST_CARDS,
+		      winnerPlayer.getPlayer().getBestHandCardsName());
+		    winnerArray.put(winnerObject);
+		    winnerObject.put(TAG_WINNERS_WINNING_AMOUNT,
+				      winnerPlayer.getWinningAmount());
+		   }
+		   gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+				     + winnerArray.toString());
+				   System.out.println("winner array is  "+winnerArray.toString());
+				   } catch (JSONException e) {
+						e.printStackTrace();
+				}
 
 	}
 

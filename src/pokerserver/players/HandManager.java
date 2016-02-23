@@ -175,33 +175,48 @@ public class HandManager implements GameConstants{
 
 	public boolean isAceStraight(Card[] allCards) {
 		if (allCards[0].getRank() == RANKS.ace) {
+			int i=0;
 			boolean aceExist = false, twoExist = false, threeExist = false, fourExist = false, fiveExist = false;
 			for (Card card : allCards) {
 
 				switch (card.getRank().toString()) {
 				case RANK_ACE:
-					aceExist = true;
+					if(!aceExist){
+						handBestCards[i]=card;
+						i++;
+						aceExist = true;
+					}
 					break;
 				case RANK_TWO:
-					twoExist = true;
+					if(!twoExist){
+						handBestCards[i]=card;
+						i++;
+						twoExist = true;
+					}
 					break;
 				case RANK_THREE:
-					threeExist = true;
+					if(!threeExist){
+						handBestCards[i]=card;
+						i++;
+						threeExist = true;
+					}
 					break;
 				case RANK_FOUR:
-					fourExist = true;
+					if(!fourExist){
+						handBestCards[i]=card;
+						i++;
+						fourExist = true;
+					}
 					break;
 				case RANK_FIVE:
-					fiveExist = true;
+					if(!fiveExist){
+						handBestCards[i]=card;
+						i++;
+						fiveExist = true;
+					}
 					break;
 
 				}
-			}
-			if (aceExist && twoExist && threeExist && fourExist && fiveExist) {
-				for (int i = 1; i < handBestCards.length; i++) {
-					handBestCards[i - 1] = allCards[i];
-				}
-				handBestCards[4] = allCards[0];
 			}
 			return (aceExist && twoExist && threeExist && fourExist && fiveExist);
 		} else {

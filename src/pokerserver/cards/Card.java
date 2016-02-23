@@ -13,12 +13,16 @@ public class Card implements GameConstants {
 	public Card() {
 		generateRandomCard();
 	}
-
+	public Card(String suit,String rank){
+		this.cardName = suit+"_"+rank;
+		SetSuit(suit);
+		SetRank(rank);
+	}
 	public void generateRandomCard() {
 		generateRandomSuitIndex();
 		generateRandomRankIndex();
 	}
-
+	
 	public void SetSuit(String suit) {
 		switch (suit) {
 		case SUIT_HEART:

@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import pokerserver.cards.Card;
+import pokerserver.players.AllInPlayer;
 import pokerserver.players.GamePlay;
 import pokerserver.players.HandManager;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
 import pokerserver.players.WhoopAssHandManager;
+import pokerserver.players.Winner;
 import pokerserver.players.WinnerManager;
 import pokerserver.rounds.RoundManager;
 import pokerserver.turns.TurnManager;
@@ -100,6 +102,76 @@ public class WAGameManager implements GameConstants {
 		
 	}
 	
+	public Winner getTopWinner() {
+		return winnerManager.getTopWinner();
+	}
+	
+	public ArrayList<String> getAllWinnerName() {
+		ArrayList<String> listWinners = new ArrayList<String>();
+		for (Winner winner : winnerManager.getWinnerList()) {
+			listWinners.add(winner.getPlayer().getPlayeName());
+		}
+		return listWinners;
+	}
+
+	public ArrayList<Winner> getAllWinnerPlayers() {
+		return winnerManager.getWinnerList();
+	}
+
+	public void findAllWinnerPlayers() {
+		winnerManager.findWinnerPlayers();
+	}
+
+	public void calculatePotAmountForAllInMembers() {
+		int allInBetTotalAmount = 0;
+	
+		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
+		    allInBetTotalAmount=0;
+			PlayerBean player = playersManager.getAllAvailablePlayers().get(i);
+			boolean isAllIn = player.isPlayrAllIn();
+			int lastAction = getCurrentRoundInfo().getPlayerLastAction(player);
+			if (isAllIn
+					&& winnerManager.getAllInPotAmount(player.getPlayeName()) == 0) {
+
+				int allInBetAmt = getCurrentRoundInfo()
+						.getPlayerBetAmountAtActionAllIn(player);
+				for (int j = 0; j < playersManager.getAllAvailablePlayers()
+						.size(); j++) {
+					if (allInBetAmt < getCurrentRoundInfo()
+							.getTotalPlayerBetAmount(
+									playersManager.getAllAvailablePlayers()
+											.get(j))) {
+						// allInAmountArray[i] = allInAmountArray[i] +
+						// allInBetAmt;
+						allInBetTotalAmount = allInBetTotalAmount + allInBetAmt;
+
+					} else {
+						allInBetTotalAmount = allInBetTotalAmount
+								+ getCurrentRoundInfo()
+										.getTotalPlayerBetAmount(
+												playersManager
+														.getAllAvailablePlayers()
+														.get(j));
+
+					}
+				}
+
+				if (startRound.getRound() < getCurrentRoundInfo().getRound())
+					allInBetTotalAmount += startRound
+							.getTotalRoundBetAmount();
+				if (firstFlopRound.getRound() < getCurrentRoundInfo().getRound())
+					allInBetTotalAmount += firstFlopRound.getTotalRoundBetAmount();
+				if (secondFlopRound.getRound() < getCurrentRoundInfo().getRound())
+					allInBetTotalAmount += secondFlopRound.getTotalRoundBetAmount();
+				AllInPlayer allInPlayer = new AllInPlayer(
+						player.getPlayeName(), allInBetTotalAmount);
+				System.out.println("\n this is all in amount of player  "+allInPlayer.getPlayeName()+"  is =  "+allInPlayer.getTotalAllInPotAmount());
+				winnerManager.addAllInTotalPotAmount(allInPlayer);
+			}
+
+		}
+
+	}
 	
 	public void leavePlayerToGame(PlayerBean player) {
 		this.playersManager.removePlayerFromRoom(player);
@@ -204,9 +276,6 @@ public class WAGameManager implements GameConstants {
 	}
 	
 	
-	
-	
-
 	public PlayerBean getWinnerPlayer() {
 
 		Collections.sort(playersManager.getAllAvailablePlayers(),
@@ -218,34 +287,56 @@ public class WAGameManager implements GameConstants {
 					}
 				});
 
-		
-		  for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-				
-				System.out.println("\n winner are =     "+player.getHandRank());   
-			}
-	        System.out.println("\n ---------------------------------");   
-	        findSameRankWinners();
-	        
-	  for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-				
-				System.out.println("\n winner are =     "+player.getHandRank());   
-			}
-	        
-	        System.out.println("\n ---------------------------------");   
-		
-		
-		
 		PlayerBean winnerPlayer = null;
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			if (player.isPlayerActive() && winnerPlayer == null) {
 				winnerPlayer = player;
 			}
 		}
-  
-		return	playersManager.getAllAvailablePlayers().get(0);
-		
-		//return winnerPlayer;
+
+		return winnerPlayer;
 	}
+	
+
+//	public PlayerBean getWinnerPlayer() {
+//
+//		Collections.sort(playersManager.getAllAvailablePlayers(),
+//				new Comparator<PlayerBean>() {
+//					@Override
+//					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
+//						return paramT1.getHandRank().compareTo(
+//								paramT2.getHandRank());
+//					}
+//				});
+//
+//		
+//		  for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+//				
+//				System.out.println("\n winner are =     "+player.getHandRank());   
+//			}
+//	        System.out.println("\n ---------------------------------");   
+//	        findSameRankWinners();
+//	        
+//	  for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+//				
+//				System.out.println("\n winner are =     "+player.getHandRank());   
+//			}
+//	        
+//	        System.out.println("\n ---------------------------------");   
+//		
+//		
+//		
+//		PlayerBean winnerPlayer = null;
+//		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+//			if (player.isPlayerActive() && winnerPlayer == null) {
+//				winnerPlayer = player;
+//			}
+//		}
+//  
+//		return	playersManager.getAllAvailablePlayers().get(0);
+//		
+//		//return winnerPlayer;
+//	}
 	
 	
 	 public void findSameRankWinners(){
@@ -283,6 +374,10 @@ public class WAGameManager implements GameConstants {
 			int action) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			if (player.getPlayeName().equals(name)) {
+				
+				if (action == ACTION_ALL_IN) {
+					player.setPlayerAllIn(true);
+				}
 				if (action == ACTION_FOLD) {
 					player.setPlayerActive(false);
 				} else if (player.isPlayerActive()) {
@@ -319,7 +414,7 @@ public class WAGameManager implements GameConstants {
 		} else {
 
 			for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-				if (player.isPlayerActive()) {
+				if (player.isPlayerActive() && !player.isPlayrAllIn()) {
 					totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 							.getTotalPlayerBetAmount(player), currentRound
 							.getPlayerLastAction(player)));
@@ -381,15 +476,19 @@ public class WAGameManager implements GameConstants {
 	public void moveToNextRound() {
 		switch (currentRound) {
 		case WA_ROUND_START:
+			calculatePotAmountForAllInMembers();
 			startFirstFlopRound();
 			break;
 		case WA_ROUND_FIRST_FLOP:
+		    calculatePotAmountForAllInMembers();
 			startSecondFlopRound();
 			break;
 		case WA_ROUND_SECOND_FLOP:
+			calculatePotAmountForAllInMembers();
 			startWhoopAssRound();
 			break;
 		case WA_ROUND_WHOOPASS:
+			calculatePotAmountForAllInMembers();
 			startThirdFlopRound();
 			break;
 		case WA_ROUND_THIRD_FLOP:
@@ -415,6 +514,7 @@ public class WAGameManager implements GameConstants {
 	/** Check card is already on table or not */
 	public boolean isAlreadyDesributedCard(Card cardBean) {
 		for (Card cardBean2 : listDefaultCards) {
+//			if (cardBean.getRank()==cardBean2.getRank() || cardBean.getSuit()==cardBean2.getSuit()) {
 			if (cardBean.getCardName().equals(cardBean2.getCardName())) {
 				return true;
 			}
@@ -439,12 +539,25 @@ public class WAGameManager implements GameConstants {
 		return addCurrentActionToTurnManager(userName, betAmount, userAction);
 	}
 
+	public void setTotalTableBetAmount() {
+		int totalBetAmount = 0;
+		totalBetAmount += startRound.getTotalRoundBetAmount();
+		totalBetAmount += firstFlopRound.getTotalRoundBetAmount();
+		totalBetAmount += secondFlopRound.getTotalRoundBetAmount();
+		totalBetAmount += thirdRound.getTotalRoundBetAmount();
+		winnerManager.setTotalTableAmount(totalBetAmount);
+	}
+	
 	public int getTotalTableAmount() {
 		int totalBetAmount = 0;
 		totalBetAmount += startRound.getTotalRoundBetAmount();
 		totalBetAmount += firstFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += secondFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += thirdRound.getTotalRoundBetAmount();
+		
+		winnerManager.setTotalTableAmount(totalBetAmount);
+		System.out.println();
+		System.out.print("Total Bet Amount : " + totalBetAmount);
 		return totalBetAmount;
 	}
 

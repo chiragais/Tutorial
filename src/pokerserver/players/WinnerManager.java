@@ -13,13 +13,18 @@ public class WinnerManager {
 	PlayersManager playerManager;
 	ArrayList<Winner> listWinners ;
 	ArrayList<AllInPlayer> listAllinPotAmounts ;
+	ArrayList<PlayerBean> listAllSortedRankPlayers ;
+	ArrayList<PlayerBean> listAllFinalizePlayers ;
 	int totalTableAmount=0;
+	int remainingAmount=0;
   
    public	WinnerManager(PlayersManager playerMgr){
 	  
 	   this.playerManager=playerMgr;
 	   listWinners= new ArrayList<Winner>();
 	   listAllinPotAmounts=new ArrayList<AllInPlayer>();
+	   listAllFinalizePlayers=new ArrayList<PlayerBean>();
+	   listAllSortedRankPlayers=new ArrayList<PlayerBean>();
 	  
    }
 	
@@ -75,48 +80,84 @@ public class WinnerManager {
 	}
    
    public void findWinnerPlayers() {
-
-		Collections.sort(playerManager.getAllAvailablePlayers(),
-				new Comparator<PlayerBean>() {
-					@Override
-					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
-						return paramT1.getHandRank().compareTo(
-								paramT2.getHandRank());
-					}
-				});
-
-        for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
-			
-			System.out.println("\n winner are =     "+player.getHandRank());   
-		}
-        System.out.println("\n ---------------------------------");   
-        findSameRankWinners();
-        
-  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
-			
-			System.out.println("\n winner are =     "+player.getHandRank());   
-		}
-        
-        System.out.println("\n ---------------------------------");   
-        
-		// by nilesh to compare wiiners		
-		CompareWinners();
+	   boolean findFinalWinner=false;
+//		Collections.sort(playerManager.getAllAvailablePlayers(),
+//				new Comparator<PlayerBean>() {
+//					@Override
+//					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
+//						return paramT1.getHandRank().compareTo(
+//								paramT2.getHandRank());
+//					}
+//				});
+//
+//		listAllSortedRankPlayers=playerManager.getAllAvailablePlayers();
+//		
+//        for (PlayerBean player : listAllSortedRankPlayers) {
+//			
+//			System.out.println("\n winner are =     "+player.getHandRank());   
+//		}
+//        System.out.println("\n ---------------------------------");   
+//        
+//        
+//        
+//        findSameRankWinners();
+//         
+//  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
+//			
+//			System.out.println("\n winner are =     "+player.getHandRank());   
+//		}
+//        
+//        System.out.println("\n ---------------------------------");   
+//        
+//		// by nilesh to compare wiiners	
+//
+//		CompareWinners();
 		
-		for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
-								
+		while(!findFinalWinner){
+			
+			find();
+		  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
+		           if( player.isPlayerActive()	&& !player.isPlayrAllIn()){
+		        	   findFinalWinner=true;
+		            }
+		      listAllFinalizePlayers.add(player);
+		      listAllSortedRankPlayers.remove(player);
+		  }
+		    if(!findFinalWinner){
+		          playerManager.setAllAvailablePlayers(listAllSortedRankPlayers);  
+		       }
+		  
+	  
+		}
+		  
+		for (PlayerBean player : listAllFinalizePlayers) {
+					
 			if (player.isPlayerActive()) {
 				if(!player.isPlayrAllIn()){
 				    Winner winner = new Winner(player,totalTableAmount );
 				    winner.getPlayer().setTotalBalance(winner.getPlayer().getTotalBalance()+winner.getWinningAmount());
+				    totalTableAmount=0;
 				    listWinners.add(winner);
 				    break;
 				  }else{
+					 if(getAllInPotAmount(player.getPlayeName())<totalTableAmount){
 				    Winner winner = new Winner(player,getAllInPotAmount(player.getPlayeName()) );
 				    winner.getPlayer().setTotalBalance(winner.getPlayer().getTotalBalance()+winner.getWinningAmount());
 				    totalTableAmount-=getAllInPotAmount(player.getPlayeName());
 					listWinners.add(winner);
+					}else{
+				     	  Winner winner = new Winner(player,totalTableAmount);
+						  winner.getPlayer().setTotalBalance(winner.getPlayer().getTotalBalance()+winner.getWinningAmount());
+					      totalTableAmount=0;
+						  listWinners.add(winner);
+						  break;
+					  }
 				}
 			}
+		}
+		
+		if(totalTableAmount!=0){
+			remainingAmount=totalTableAmount;
 		}
 		
 		  System.out.println("\n ---------------------------------");   
@@ -126,6 +167,45 @@ public class WinnerManager {
 			}
 
 	}
+   
+   
+   public void find(){
+	   Collections.sort(playerManager.getAllAvailablePlayers(),
+				new Comparator<PlayerBean>() {
+					@Override
+					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
+						return paramT1.getHandRank().compareTo(
+								paramT2.getHandRank());
+					}
+				});
+
+	   
+	    listAllSortedRankPlayers.clear();
+	    listAllSortedRankPlayers.addAll(playerManager.getAllAvailablePlayers());
+	
+		
+       for (PlayerBean player : listAllSortedRankPlayers) {
+			
+			System.out.println("\n winner are =     "+player.getHandRank());   
+		}
+       System.out.println("\n ---------------------------------");   
+       
+       
+       
+       findSameRankWinners();
+        
+ for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
+			
+			System.out.println("\n winner are =     "+player.getHandRank());   
+		}
+       
+       System.out.println("\n ---------------------------------");   
+       
+		// by nilesh to compare wiiners	
+
+		CompareWinners();
+   }
+   
    
 //   public void distributeWinningAmountToAllWinners(){
 //	   for(Winner winner: listWinners){

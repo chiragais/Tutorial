@@ -2,11 +2,13 @@ package pokerserver.room;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pokerserver.WAGameManager;
 import pokerserver.players.PlayerBean;
+import pokerserver.players.Winner;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
 
@@ -136,11 +138,12 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 					gameManager.findBestPlayerHand();
 
+					gameManager.calculatePotAmountForAllInMembers();
 					gameManager.getCurrentRoundInfo().setStatus(
 							ROUND_STATUS_FINISH);
 
+					gameManager.findAllWinnerPlayers();
 					broadcastRoundCompeleteToAllPlayers();
-
 					broadcastGameCompleteToAllPlayers();
 					handleFinishGame(gameManager.getWinnerPlayer()
 							.getPlayeName(), gameManager.getWinnerCards());
@@ -306,6 +309,16 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void addNewPlayerCards(IUser user) {
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, user.getName());
+		if(gameRoom.getJoinedUsers().size()==0){
+			player.setTotalBalance(100);
+		}else if(gameRoom.getJoinedUsers().size()==1){
+			player.setTotalBalance(200);
+		}else if(gameRoom.getJoinedUsers().size()==2){
+			player.setTotalBalance(400);
+		}
+		
+	//	player.setTotalBalance((gameRoom.getJoinedUsers().size()+1)*500);
+	
 		// Generate player cards
 
 		player.setCards(gameManager.generatePlayerCards(),
@@ -426,30 +439,59 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	}
 
 	private void broadcastGameCompleteToAllPlayers() {
-		JSONObject cardsObject = new JSONObject();
+        JSONArray   winnerArray=new JSONArray();
+	//	JSONObject cardsObject = new JSONObject();
 		try {
-			PlayerBean winnerPlayer = gameManager.getWinnerPlayer();
-			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
-			cardsObject
-					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-			winnerPlayer.setTotalBalance(winnerPlayer.getTotalBalance()
-					+ gameManager.getTotalTableAmount());
-			cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
-					winnerPlayer.getTotalBalance());
-			cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayeName());
-			cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getHandRank()
-					.ordinal());
-			cardsObject.put(TAG_WINNER_BEST_CARDS,
-					winnerPlayer.getBestHandCardsName());
+			
+			
+		   for(Winner winnerPlayer:gameManager.getAllWinnerPlayers()){
+			   // Winner winnerPlayer = gameManager.getTopWinner();
+			    JSONObject winnerObject = new JSONObject();
+			    winnerObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
+			    winnerObject
+			      .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
+			    
+			    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
+			      winnerPlayer.getPlayer().getTotalBalance());
+			    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+			    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+			      .ordinal());
+			    winnerObject.put(TAG_WINNERS_WINNING_AMOUNT,
+					      winnerPlayer.getWinningAmount());
+			    
+			    winnerObject.put(TAG_WINNER_BEST_CARDS,
+			      winnerPlayer.getPlayer().getBestHandCardsName());
+			    winnerArray.put(winnerObject);
+		     }
+		
+		   gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+		     + winnerArray.toString());
+		   System.out.println("winner array is  "+winnerArray.toString());
+		   } catch (JSONException e) {
+				e.printStackTrace();
+			}
+		
+			/**			Winner winnerPlayer = gameManager.getTopWinner();
+			   cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
+			   cardsObject
+			     .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
+			   
+			   cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
+			     winnerPlayer.getPlayer().getTotalBalance());
+			   cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+			   cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+			     .ordinal());
+			   cardsObject.put(TAG_WINNER_BEST_CARDS,
+			     winnerPlayer.getPlayer().getBestHandCardsName());
+			   
 
-			gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
-					+ cardsObject.toString());
-			System.out.println();
-			System.out.print("Winner Player : " + cardsObject.toString());
+			   // cardsObject.put(TAG_PLAYER, player.getPlayeName());
+			   gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+			     + cardsObject.toString());
+			   System.out.println();
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
-
+		}*/
 	}
 
 	private void broadcastPlayerActionDoneToOtherPlayers(TurnManager turnManager) {
