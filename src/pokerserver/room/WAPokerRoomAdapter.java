@@ -38,8 +38,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		this.gameManager = new WAGameManager();
 		gameManager.initGameRounds();
 
-		System.out.println();
-		System.out.print("Room : PokerRoomAdapter : Room : " + room.getName());
+		System.out.println("PokerRoomAdapter : Room : " + room.getName());
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			if (isFirstTime) {
 				isFirstTime = false;
 			} else {
-				gameManager.initGameRounds();
+//				gameManager.initGameRounds();
 			}
 			gameRoom.startGame(WA_SERVER_NAME);
 			GAME_STATUS = RUNNING;
@@ -109,8 +108,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	public void handleMoveRequest(IUser sender, String moveData,
 			HandlingResult result) {
 		if (moveData.contains(REQUEST_FOR_ACTION)) {
-			System.out.println();
-			System.out.print("Room : handleMoveRequest : Sender User : "
+			System.out.println("MoveRequest : Sender : "
 					+ sender.getName() + " : Data : " + moveData);
 			int playerAction = 0;
 
@@ -170,9 +168,8 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 *            use this to override the default behavior
 	 */
 	public void handleStartGameRequest(IUser sender, HandlingResult result) {
-		System.out.println();
 
-		System.out.print("Room : handleStartGameRequest : Sender User : "
+		System.out.println("StartGameRequest : Sender User : "
 				+ sender.getName());
 		result.doDefaultTurnLogic = false;
 	}
@@ -191,8 +188,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 *            use this to override the default behavior
 	 */
 	public void handleStopGameRequest(IUser sender, HandlingResult result) {
-		System.out.println();
-		System.out.print("Room : handleStopGameRequest : Sender User : "
+		System.out.println("StopGameRequest : Sender User : "
 				+ sender.getName());
 	}
 
@@ -210,8 +206,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 */
 	public void onTurnExpired(IUser turn, HandlingResult result) {
 
-		System.out.println();
-		System.out.print("Room : onTurnExpired : Turn User : ");
+		System.out.println("onTurnExpired : Turn User : ");
 
 	}
 
@@ -228,16 +223,14 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 *            use this to override the default behavior
 	 */
 	public void handleUserLeavingTurnRoom(IUser user, HandlingResult result) {
-		System.out.println();
-		System.out.print("Room : handleUserLeavingTurnRoom :  User : "
+		System.out.println("UserLeavingTurnRoom :  User : "
 				+ user.getName());
 		gameManager.leavePlayerToGame(gameManager.getPlayerByName(user
 				.getName()));
 		broadcastBlindPlayerDatas();
 		// This will be changed.
 		if (GAME_STATUS == RUNNING && gameRoom.getJoinedUsers().size() == 0) {
-			System.out.println();
-			System.out.print("Room : Game Over ..... ");
+			System.out.println("\n\n Room : Game Over .....\n\n ");
 
 			gameManager.getPlayersManager().removeAllPlayers();
 			// handleFinishGame("Chirag", null);
@@ -276,8 +269,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 */
 	public void handleChatRequest(IUser sender, String message,
 			HandlingResult result) {
-		System.out.println();
-		System.out.print("Room : handleChatRequest :  User : "
+		System.out.println("ChatRequest :  User : "
 				+ sender.getName() + " : Message : " + message);
 	}
 
@@ -296,10 +288,12 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 *            use this to override the default behavior
 	 */
 	public void handleUserJoinRequest(IUser user, HandlingResult result) {
-		System.out.println();
-		System.out.print("Room : handleUserJoinRequest :  User : "
+		System.out.println("UserJoinRequest :  User : "
 				+ user.getName());
 		// Handle player request
+		if(gameManager.getPlayersManager().getAllAvailablePlayers().isEmpty()){
+			gameManager.initGameRounds();
+		}
 		addNewPlayerCards(user);
 		sendDefaultCards(user);
 		broadcastPlayerCardsInfo();
@@ -309,13 +303,13 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void addNewPlayerCards(IUser user) {
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, user.getName());
-		if(gameRoom.getJoinedUsers().size()==0){
-			player.setTotalBalance(100);
-		}else if(gameRoom.getJoinedUsers().size()==1){
-			player.setTotalBalance(200);
-		}else if(gameRoom.getJoinedUsers().size()==2){
-			player.setTotalBalance(400);
-		}
+//		if(gameRoom.getJoinedUsers().size()==0){
+//			player.setTotalBalance(1000);
+//		}else if(gameRoom.getJoinedUsers().size()==1){
+//			player.setTotalBalance(1000);
+//		}else if(gameRoom.getJoinedUsers().size()==2){
+//			player.setTotalBalance(1000);
+//		}
 		
 	//	player.setTotalBalance((gameRoom.getJoinedUsers().size()+1)*500);
 	
@@ -373,6 +367,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			user.SendChatNotification(WA_SERVER_NAME,
 					RESPONSE_FOR_DEFAULT_CARDS + cardsObject.toString(),
 					gameRoom);
+			System.out.println("Default Cards : "+ cardsObject.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -385,8 +380,6 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					.isEmpty()) {
 				int totalPlayerInRoom = gameManager.getPlayersManager()
 						.getAllAvailablePlayers().size();
-				System.out.println();
-				System.out.print("Total Players : " + totalPlayerInRoom);
 
 				if (totalPlayerInRoom > 0) {
 					cardsObject.put(TAG_PLAYER_DEALER, gameManager
@@ -411,8 +404,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					cardsObject.put(TAG_PLAYER_BIG_BLIND,
 							RESPONSE_DATA_SEPRATOR);
 				}
-				System.out.println();
-				System.out.print("Blind Player Details : "
+				System.out.println("Blind Player Details : "
 						+ cardsObject.toString());
 				gameRoom.BroadcastChat(WA_SERVER_NAME,
 						RESPONSE_FOR_BLIEND_PLAYER + cardsObject.toString());
@@ -429,8 +421,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-			System.out.println();
-			System.out.print("Round done " + cardsObject.toString());
+			System.out.println("Round done : " + cardsObject.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -439,8 +430,10 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	}
 
 	private void broadcastGameCompleteToAllPlayers() {
-        JSONArray   winnerArray=new JSONArray();
-	//	JSONObject cardsObject = new JSONObject();
+     
+			JSONObject cardsObject = new JSONObject();
+	/**	JSONArray   winnerArray=new JSONArray();
+
 		try {
 			
 			
@@ -466,32 +459,34 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		
 		   gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
 		     + winnerArray.toString());
-		   System.out.println("winner array is  "+winnerArray.toString());
+		//   System.out.println("winner array is  "+winnerArray.toString());
+		   System.out.println("\n winner cards are  "+winnerArray.toString());
 		   } catch (JSONException e) {
 				e.printStackTrace();
-			}
-		
-			/**			Winner winnerPlayer = gameManager.getTopWinner();
+			}*/
+			try {
+					//Winner winnerPlayer = gameManager.getTopWinner();
+					PlayerBean winnerPlayer = gameManager.getTopWinner();
 			   cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			   cardsObject
 			     .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
 			   
 			   cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
-			     winnerPlayer.getPlayer().getTotalBalance());
-			   cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
-			   cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+			     winnerPlayer.getTotalBalance());
+			   cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayeName());
+			   cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getHandRank()
 			     .ordinal());
 			   cardsObject.put(TAG_WINNER_BEST_CARDS,
-			     winnerPlayer.getPlayer().getBestHandCardsName());
-			   
-
+			     winnerPlayer.getBestHandCardsName());
+			  
+			   System.out.println("\n winner cards are  "+cardsObject.toString());
 			   // cardsObject.put(TAG_PLAYER, player.getPlayeName());
 			   gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
 			     + cardsObject.toString());
 			   System.out.println();
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	private void broadcastPlayerActionDoneToOtherPlayers(TurnManager turnManager) {

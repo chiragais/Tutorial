@@ -18,25 +18,28 @@ import com.shephertz.app42.server.AppWarpServer;
  */
 
 public class Main implements GameConstants {
-	static WhoopAssHandManager handManager;
-	 static ArrayList<Card> listDefaultCards = new ArrayList<Card>();
+//	static WhoopAssHandManager handManager;
+//	 static ArrayList<Card> listDefaultCards = new ArrayList<Card>();
 	 
 	public static void main(String[] args) throws Exception {
 
-/*		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_FIVE));
-		  listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_QUEEN));
-		  listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_NINE));
-		  listDefaultCards.add(new Card(SUIT_HEART, RANK_QUEEN));
-		  listDefaultCards.add(new Card(SUIT_HEART, RANK_KING));
-		  listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_KING));
-
-		  PlayerCards playerCards = new PlayerCards(
-				  new Card(SUIT_DIAMOND, RANK_NINE), 
-				  new Card(SUIT_CLUB, RANK_EIGHT));
-		  Card WACard = new Card(SUIT_HEART, RANK_FIVE);
-
-		  handManager = new WhoopAssHandManager(listDefaultCards);
-		  System.out.println("Player Hand : "+handManager.findPlayerBestHand(playerCards, WACard, ACTION_WA_UP));*/
+//		  listDefaultCards.add(new Card(SUIT_CLUB, RANK_NINE));
+//		  listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_NINE));
+//		  listDefaultCards.add(new Card(SUIT_HEART,RANK_NINE ));
+//		  listDefaultCards.add(new Card(SUIT_HEART, RANK_TEN));
+//		  listDefaultCards.add(new Card(SUIT_CLUB, RANK_SIX));
+//		  listDefaultCards.add(new Card(SUIT_SPADE, RANK_QUEEN));
+//		  
+//		  PlayerCards playerCards = new PlayerCards(
+//				  new Card(SUIT_DIAMOND, RANK_FOUR), 
+//				  new Card(SUIT_HEART, RANK_THREE));
+//		  Card WACard = new Card(SUIT_SPADE, RANK_TWO);
+//
+//		  handManager = new WhoopAssHandManager(listDefaultCards);
+//		  System.out.println("Player Hand : "+handManager.findPlayerBestHand(playerCards, WACard, ACTION_WA_UP));
+//		  
+		  
+		  
 		String appconfigPath = System.getProperty("user.dir")
 				+ System.getProperty("file.separator") + "AppConfig.json";
 		System.out.print("AppConfig : " + appconfigPath);
@@ -53,5 +56,4 @@ public class Main implements GameConstants {
 			System.out.print("Main : Server Started ");
 		}
 	}
-
 }

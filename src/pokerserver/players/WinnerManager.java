@@ -81,54 +81,32 @@ public class WinnerManager {
    
    public void findWinnerPlayers() {
 	   boolean findFinalWinner=false;
-//		Collections.sort(playerManager.getAllAvailablePlayers(),
-//				new Comparator<PlayerBean>() {
-//					@Override
-//					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
-//						return paramT1.getHandRank().compareTo(
-//								paramT2.getHandRank());
-//					}
-//				});
-//
-//		listAllSortedRankPlayers=playerManager.getAllAvailablePlayers();
-//		
-//        for (PlayerBean player : listAllSortedRankPlayers) {
-//			
-//			System.out.println("\n winner are =     "+player.getHandRank());   
-//		}
-//        System.out.println("\n ---------------------------------");   
-//        
-//        
-//        
-//        findSameRankWinners();
-//         
-//  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
-//			
-//			System.out.println("\n winner are =     "+player.getHandRank());   
-//		}
-//        
-//        System.out.println("\n ---------------------------------");   
-//        
-//		// by nilesh to compare wiiners	
-//
-//		CompareWinners();
 		
-		while(!findFinalWinner){
-			
-			find();
-		  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
-		           if( player.isPlayerActive()	&& !player.isPlayrAllIn()){
-		        	   findFinalWinner=true;
-		            }
-		      listAllFinalizePlayers.add(player);
-		      listAllSortedRankPlayers.remove(player);
-		  }
-		    if(!findFinalWinner){
-		          playerManager.setAllAvailablePlayers(listAllSortedRankPlayers);  
-		       }
-		  
-	  
-		}
+	   find();
+	   listAllFinalizePlayers.add(playerManager.getAllAvailablePlayers().get(0));
+	   System.out.println("winner name is----------------"+playerManager.getAllAvailablePlayers().get(0).getPlayeName());
+//	   
+//		while(!findFinalWinner){
+//			
+//			find();
+//			 for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
+//					
+//					System.out.println("\n Winner List is  =  "+player.getPlayeName()+"  Rank is =  "+player.getHandRank().toString());   
+//				}
+//			
+//		  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
+//		           if( player.isPlayerActive()	&& !player.isPlayrAllIn()){
+//		        	   findFinalWinner=true;
+//		            }
+//		      listAllFinalizePlayers.add(player);
+//		      listAllSortedRankPlayers.remove(player);
+//		  }
+//		    if(!findFinalWinner){
+//		          playerManager.setAllAvailablePlayers(listAllSortedRankPlayers);  
+//		       }
+//		  
+//	  
+//		}
 		  
 		for (PlayerBean player : listAllFinalizePlayers) {
 					
@@ -196,7 +174,11 @@ public class WinnerManager {
         
  for (PlayerBean player : playerManager.getAllAvailablePlayers()) {
 			
-			System.out.println("\n winner are =     "+player.getHandRank());   
+			System.out.println("\n winner are =     "+player.getHandRank()+"player name=   "+player.getPlayeName());   
+			for (String card : player.getBestHandCardsName()) {
+				
+				System.out.println("\n winner cards are  =     "+card);   
+		    	}
 		}
        
        System.out.println("\n ---------------------------------");   
@@ -270,12 +252,24 @@ public class WinnerManager {
    
    
    public ArrayList<Winner> getWinnerList(){
+	   
+	for (Winner player : listWinners) {
+			
+			System.out.println("\n winner name is =     "+player.getPlayer().getPlayeName());   
+			for (String card : player.getPlayer().getBestHandCardsName()) {
+			
+			System.out.println("\n winner cards are  =     "+card);   
+	    	}
+	}
+	   
 	   return listWinners;
    }
    
-   public Winner getTopWinner(){
-	   return listWinners.get(0);
+//   public Winner getTopWinner(){
+//	   return listWinners.get(0);
+//   }
+   public PlayerBean getTopWinner(){
+	   return playerManager.getAllAvailablePlayers().get(0);
    }
-   
   
 }

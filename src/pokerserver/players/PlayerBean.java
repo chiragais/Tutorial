@@ -158,10 +158,7 @@ public class PlayerBean {
 		this.handBestCards = listCard;
 		// System.out.println();
 		// System.out.print("Player Hand : "+ handRank);
-		// for(Card card : handBestCards){
-		// System.out.println();
-		// System.out.print("Cards : "+card.getCardName());
-		// }
+		
 	}
 
 	public HAND_RANK getHandRank() {

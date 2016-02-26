@@ -1,1126 +1,1365 @@
-package pokerserver.players;
+	package pokerserver.players;
 
-import java.util.ArrayList;
+	import java.util.ArrayList;
 import java.util.List;
 
-import pokerserver.cards.Card;
+	import pokerserver.cards.Card;
 import pokerserver.cards.PlayerCards;
 import pokerserver.utils.GameConstants;
+import pokerserver.utils.GameConstants.RANKS;
+import pokerserver.utils.GameConstants.SUITS;
 
-public class WhoopAssHandManager implements GameConstants {
-
-	public HAND_RANK pokerHandRank;
-	List<Card> defaultCards = new ArrayList<Card>();
-	private Card[] handBestCards = new Card[5];
-
-	public WhoopAssHandManager(List<Card> defaultCards) {
-		this.defaultCards.addAll(defaultCards);
-	}
-
-	public Card[] getPlayerBestCards() {
-
-		return handBestCards;
-	}
-
-	public HAND_RANK findPlayerBestHand(PlayerCards playerCards, Card wACard,
-			int wACardStatus) {
-
-		// handBestCards = new Card[5];
-		List<Card> allCards = new ArrayList<Card>();
-		allCards.addAll(defaultCards);
-		allCards.add(playerCards.getFirstCard());
-		allCards.add(playerCards.getSecondCard());
-		if (wACardStatus != GameConstants.ACTION_WA_NO) {
-			allCards.add(wACard);
-		}
-		allCards = sortingCardsList(allCards);
-		List<Card> playerHandList = getPlayerHandList(playerCards, wACard,
-				wACardStatus);
-
-		Card[] newCards = new Card[allCards.size()];
-		for (int i = 0; i < allCards.size(); i++) {
-			newCards[i] = allCards.get(i);
-		}
-		playerHandList = sortingCardsList(playerHandList);
+	public class WhoopAssHandManager implements GameConstants{
 		
-		if (isRoyalFlush(newCards, playerHandList)
-				&& isValidHandBestCards(playerHandList)) {
-			pokerHandRank = HAND_RANK.ROYAL_FLUSH;
-		} else if (isAStraightFlush(newCards, playerHandList)
-				&& isValidHandBestCards(playerHandList)) {
-			pokerHandRank = HAND_RANK.STRAIGHT_FLUSH;
-		} else if (isFourOfKindRank(newCards, playerHandList)) {
-			pokerHandRank = HAND_RANK.FOUR_OF_A_KIND;
-		} else if (isFullHouseRank(newCards, playerHandList)
-				&& isValidHandBestCards(playerHandList)) {
-			pokerHandRank = HAND_RANK.FULL_HOUSE;
-		} else if (isFlush(newCards, playerHandList)
-				&& isValidHandBestCards(playerHandList)) {
-			pokerHandRank = HAND_RANK.FLUSH;
-		} else if (isStraightRank(newCards, playerHandList)) {
-			pokerHandRank = HAND_RANK.STRAIGHT;
-		} else if (isAceStraight(newCards, playerHandList)) {
-			pokerHandRank = HAND_RANK.STRAIGHT;
-		} else if (isThreeOfKindRank(newCards, playerHandList)) {
-			pokerHandRank = HAND_RANK.THREE_OF_A_KIND;
-		} else if (isTwoPairRank(newCards, playerHandList)) {
-			pokerHandRank = HAND_RANK.TWO_PAIR;
-		} else if (isPairRank(newCards, playerHandList)) {
-			pokerHandRank = HAND_RANK.PAIR;
-		} else {
-			List<Card> highCardList = getHighCards(playerCards, wACard,
-					wACardStatus);
-			for (int i = 0; i < highCardList.size(); i++) {
-				handBestCards[i] = highCardList.get(i);
+		public HAND_RANK pokerHandRank;
+		List<Card> defaultCards = new ArrayList<Card>();
+		private Card[] handBestCards = new Card[5];
+		List<Card> currentDefaultCardsList = new ArrayList<Card>();
+		List<Card> currentPlayerCardList = new ArrayList<Card>();
+		public WhoopAssHandManager(List<Card> defaultCards){
+			this.defaultCards.addAll(defaultCards);
+		}
+		public Card[] getPlayerBestCards(){
+			
+			return handBestCards;
+		}
+		
+	
+		
+		public HAND_RANK findPlayerBestHand(PlayerCards playerCards,Card wACard,int wACardStatus){
+			currentDefaultCardsList=  new ArrayList<Card>();
+			   currentPlayerCardList = new ArrayList<Card>();
+			handBestCards = new Card[5];
+			List<Card> allCards = new ArrayList<Card>();
+			allCards.addAll(defaultCards);
+			allCards.add(playerCards.getFirstCard());
+			allCards.add(playerCards.getSecondCard());
+			if(wACardStatus!=GameConstants.ACTION_WA_NO){
+				allCards.add(wACard);
 			}
-			pokerHandRank = HAND_RANK.HIGH_CARD;
-		}
-		return pokerHandRank;
-	}
-
-	public List<Card> getHighCards(PlayerCards playerCards, Card wACard,
-			int wACardStatus) {
-
-		List<Card> playerHandList = new ArrayList<Card>();
-		List<Card> playerDefaultList = new ArrayList<Card>();
-		if (wACardStatus == GameConstants.ACTION_WA_UP) {
-			playerHandList.add(playerCards.getFirstCard());
-			playerHandList.add(playerCards.getSecondCard());
-			playerDefaultList.addAll(defaultCards);
-			playerDefaultList.add(wACard);
-		} else if (wACardStatus == GameConstants.ACTION_WA_DOWN) {
-			playerHandList.add(playerCards.getFirstCard());
-			playerHandList.add(playerCards.getSecondCard());
-			playerHandList.add(wACard);
-			playerDefaultList.addAll(defaultCards);
-		} else if (wACardStatus == GameConstants.ACTION_WA_NO) {
-			playerHandList.add(playerCards.getFirstCard());
-			playerHandList.add(playerCards.getSecondCard());
-			playerDefaultList.addAll(defaultCards);
-		}
-		playerHandList = sortingCardsList(playerHandList);
-		playerDefaultList = sortingCardsList(playerDefaultList);
-
-		List<Card> playerHighCardList = new ArrayList<Card>();
-		playerHighCardList.add(playerHandList.get(0));
-		playerHighCardList.add(playerHandList.get(1));
-		playerHighCardList.add(playerDefaultList.get(0));
-		playerHighCardList.add(playerDefaultList.get(1));
-		playerHighCardList.add(playerDefaultList.get(2));
-		playerHighCardList = sortingCardsList(playerHighCardList);
-
-		return playerHighCardList;
-
-	}
-
-	public List<Card> getPlayerHandList(PlayerCards playerCards, Card wACard,
-			int wACardStatus) {
-		List<Card> playerHandList = new ArrayList<Card>();
-		if (wACardStatus == GameConstants.ACTION_WA_UP
-				|| wACardStatus == GameConstants.ACTION_WA_NO) {
-			playerHandList.add(playerCards.getFirstCard());
-			playerHandList.add(playerCards.getSecondCard());
-
-		} else if (wACardStatus == GameConstants.ACTION_WA_DOWN) {
-			playerHandList.add(playerCards.getFirstCard());
-			playerHandList.add(playerCards.getSecondCard());
-			playerHandList.add(wACard);
-		}
-
-		playerHandList = sortingCardsList(playerHandList);
-
-		return playerHandList;
-	}
-
-	public boolean isValidHandBestCards(List<Card> playerHandList) {
-
-		if (checkCardsOccurance(playerHandList)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public boolean checkCardsOccurance(List<Card> playerHandList) {
-		int noOfMatchCount = 0;
-		for (Card cH : playerHandList) {
-			for (Card cP : handBestCards) {
-				if (cH.getCardName().equals(cP.getCardName())) {
-					noOfMatchCount++;
-				}
+			allCards = sortingCardsList(allCards);
+			declareCardListsAccordingToAction(playerCards, wACard, wACardStatus);
+			
+			List<Card> playerHandList=getPlayerHandList(playerCards, wACard, wACardStatus);
+			
+			Card[] newCards = new Card[allCards.size()];
+			for (int i = 0; i < allCards.size(); i++) {
+//				System.out.println();
+//				System.out.println("this is order  = " + allCards.get(i).getCardName());
+				newCards[i]=allCards.get(i);
 			}
-		}
-		if (noOfMatchCount == 2) {
-			handBestCards = sortingCardsArray(handBestCards);
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	public List<Card> sortingCardsList(List<Card> allCards) {
-		for (int i = 1; i <= allCards.size(); i++) {
-			for (int j = 0; j < allCards.size() - i; j++) {
-				if (allCards.get(j + 1).getValue() > allCards.get(j).getValue()) {
-					Card cTemp = allCards.get(j);
-					allCards.set(j, allCards.get(j + 1));
-					allCards.set(j + 1, cTemp);
-				}
-			}
-		}
-
-		return allCards;
-	}
-
-	public Card[] sortingCardsArray(Card[] cardArray) {
-		for (int i = 1; i <= cardArray.length; i++) {
-			for (int j = 0; j < cardArray.length - i; j++) {
-				if (cardArray[j + 1].getValue() > cardArray[j].getValue()) {
-					Card cTemp = cardArray[j];
-					cardArray[j] = cardArray[j + 1];
-					cardArray[j + 1] = cTemp;
-				}
-			}
-		}
-		return cardArray;
-	}
-
-	public boolean isRoyalFlush(Card[] allCards, List<Card> playerHandList) {
-
-		if (isFlush(allCards, playerHandList)) {
-			if (isStraightRank(handBestCards, playerHandList)) {
-				boolean aceExists = false, kingExists = false, queenExists = false, jackExists = false, tenExists = false;
-				for (Card card : handBestCards) {
-					switch (card.getRank().toString()) {
-					case RANK_ACE:
-						aceExists = true;
-						break;
-					case RANK_KING:
-						kingExists = true;
-						break;
-					case RANK_QUEEN:
-						queenExists = true;
-						break;
-					case RANK_JACK:
-						jackExists = true;
-						break;
-					case RANK_TEN:
-						tenExists = true;
-						break;
-					}
-				}
-
-				if (isValidHandBestCards(playerHandList)) {
-					return (aceExists && kingExists && queenExists
-							&& jackExists && tenExists);
-
-				} else {
-					return false;
-				}
+			
+			if (isRoyalFlush(newCards,playerHandList) && isValidHandBestCards(playerHandList) ) {
+				pokerHandRank = HAND_RANK.ROYAL_FLUSH;
+			} else if (isAStraightFlush(newCards,playerHandList) && isValidHandBestCards(playerHandList)) {
+				pokerHandRank = HAND_RANK.STRAIGHT_FLUSH;
+			} else if (isFourOfAKind(newCards,playerHandList,wACard)) {
+				pokerHandRank = HAND_RANK.FOUR_OF_A_KIND;
+			} else if (isFullHouse(newCards,playerHandList) && isValidHandBestCards(playerHandList)) {
+				pokerHandRank = HAND_RANK.FULL_HOUSE;
+			} else if (isFlush(newCards,playerHandList) && isValidHandBestCards(playerHandList)) {
+				pokerHandRank = HAND_RANK.FLUSH;
+			} else if (isStraight(newCards,playerHandList)) {
+				pokerHandRank = HAND_RANK.STRAIGHT;
+			} else if (isAceStraight(newCards,playerHandList)) {
+				pokerHandRank = HAND_RANK.STRAIGHT;
+			} else if (isThreeOfAKind(newCards,playerHandList)) {
+				pokerHandRank = HAND_RANK.THREE_OF_A_KIND;
+			} else if (isTwoPair(newCards,playerHandList)) {
+				pokerHandRank = HAND_RANK.TWO_PAIR;
+			} else if (isPair(newCards,playerHandList)) {
+				pokerHandRank = HAND_RANK.PAIR;
 			} else {
-				return false;
+				 List<Card> highCardList=getHighCards(playerCards, wACard, wACardStatus);
+				for (int i = 0; i < highCardList.size(); i++) {
+					handBestCards[i] = highCardList.get(i);
+				}
+				pokerHandRank = HAND_RANK.HIGH_CARD;
 			}
-		} else {
-			return false;
-		}
-	}
-
-	private boolean isAStraightFlush(Card[] allCards, List<Card> playerHandList) {
-		if (isFlush(allCards, playerHandList)) {
-			if (isStraightRank(handBestCards, playerHandList)) {
-				return true;
-			} else {
-				return false;
+			
+			System.out.println("====>>>>>>>> Player Rank <<<<<<<<=======");
+			System.out.println("====<<<<<<<< Player Cards");
+			for(Card card : currentPlayerCardList){
+				System.out.println(card.getCardName());	
 			}
-		} else {
-			return false;
-		}
-	}
-
-	public boolean isFlush(Card[] allCards, List<Card> playerHandList) {
-
-		int noOfClubs = 0;
-		int noOfSpades = 0;
-		int noOfHearts = 0;
-		int noOfDiamonds = 0;
-		for (Card c : allCards) {
-			switch (c.getSuit().toString()) {
-			case SUIT_HEART:
-				noOfHearts++;
-				break;
-			case SUIT_SPADE:
-				noOfSpades++;
-				break;
-			case SUIT_CLUB:
-				noOfClubs++;
-				break;
-			case SUIT_DIAMOND:
-				noOfDiamonds++;
-				break;
+			System.out.println("====<<<<<<<< Default Cards");
+			for(Card card : currentDefaultCardsList){
+				System.out.println(card.getCardName());	
 			}
+			
+			System.out.println("############>>>> Player Rank : "+pokerHandRank);
+			for(Card card : handBestCards){
+				System.out.println(card.getCardName());
+			}
+			System.out.println("########################");
+			return pokerHandRank;
 		}
-
-		if (noOfClubs >= 5) {
-			int j = 0;
-			for (int i = 0; i < allCards.length; i++) {
-				if (allCards[i].getSuit() == SUITS.club) {
-					handBestCards[j] = allCards[i];
-					j++;
-					if (j == handBestCards.length) {
-						if (makeFlushWithPlayerHandCards(playerHandList)) {
-							return true;
-						} else {
-							return false;
+		
+		
+        public List<Card> getHighCards(PlayerCards playerCards,Card wACard,int wACardStatus){
+			
+			List<Card> playerHandList= new ArrayList<Card>();
+			List<Card> playerDefaultList= new ArrayList<Card>();
+			if(wACardStatus==GameConstants.ACTION_WA_UP){
+				playerHandList.add(playerCards.getFirstCard());
+				playerHandList.add(playerCards.getSecondCard());
+				playerDefaultList.addAll(defaultCards);
+				playerDefaultList.add(wACard);
+			}else if(wACardStatus==GameConstants.ACTION_WA_DOWN){
+				playerHandList.add(playerCards.getFirstCard());
+				playerHandList.add(playerCards.getSecondCard());
+				playerHandList.add(wACard);
+				playerDefaultList.addAll(defaultCards);
+			}else if(wACardStatus==GameConstants.ACTION_WA_NO){
+				playerHandList.add(playerCards.getFirstCard());
+				playerHandList.add(playerCards.getSecondCard());
+				playerDefaultList.addAll(defaultCards);
+			}
+			playerHandList=sortingCardsList(playerHandList);
+			playerDefaultList=sortingCardsList(playerDefaultList);
+			
+			List<Card> playerHighCardList= new ArrayList<Card>();
+			playerHighCardList.add(playerHandList.get(0));
+			playerHighCardList.add(playerHandList.get(1));
+			playerHighCardList.add(playerDefaultList.get(0));
+			playerHighCardList.add(playerDefaultList.get(1));
+			playerHighCardList.add(playerDefaultList.get(2));
+			playerHighCardList=sortingCardsList(playerHighCardList);
+	
+			return playerHighCardList;
+			
+		}
+		
+        public List<Card> getPlayerHandList(PlayerCards playerCards,Card wACard,int wACardStatus){
+        	  List<Card> playerHandList= new ArrayList<Card>();
+  			if(wACardStatus==GameConstants.ACTION_WA_UP || wACardStatus==GameConstants.ACTION_WA_NO){
+  				playerHandList.add(playerCards.getFirstCard());
+  				playerHandList.add(playerCards.getSecondCard());
+  			    
+  			}else if(wACardStatus==GameConstants.ACTION_WA_DOWN){
+  				playerHandList.add(playerCards.getFirstCard());
+  				playerHandList.add(playerCards.getSecondCard());
+  				playerHandList.add(wACard);
+  			}
+  			 
+  			playerHandList=sortingCardsList(playerHandList);
+  			
+  			return playerHandList;
+        }
+        
+      public void declareCardListsAccordingToAction(PlayerCards playerCards,Card wACard,int wACardStatus){
+      	
+          currentPlayerCardList.add(playerCards.getFirstCard());
+		  currentPlayerCardList.add(playerCards.getSecondCard());
+		  currentDefaultCardsList.addAll(defaultCards);
+		  
+			if(wACardStatus==GameConstants.ACTION_WA_UP){
+	    			currentDefaultCardsList.add(wACard);
+    		}else if(wACardStatus==GameConstants.ACTION_WA_DOWN){
+	    			currentPlayerCardList.add(wACard);
+			}
+			currentPlayerCardList=sortingCardsList(currentPlayerCardList);
+			currentDefaultCardsList=sortingCardsList(currentDefaultCardsList);
+			
+      }
+        
+        
+		public boolean isValidHandBestCards(List<Card> playerHandList){
+							
+			if(getNoOfCardsOccurance()==2){
+		    	return true;
+		    }else{
+		    	return false;
+		    }
+		}
+		
+		public int getNoOfCardsOccurance(){
+			int noOfMatchCount=0;
+			for(Card cH : currentPlayerCardList){
+					for(Card cP : handBestCards){
+						if(cH.getCardName().equals(cP.getCardName())){
+							noOfMatchCount++;
 						}
+					  }
 					}
-				}
-			}
-		} else if (noOfSpades >= 5) {
-			int j = 0;
-			for (int i = 0; i < allCards.length; i++) {
-				if (allCards[i].getSuit() == SUITS.spade) {
-					handBestCards[j] = allCards[i];
-					j++;
-					if (j == handBestCards.length) {
-						if (makeFlushWithPlayerHandCards(playerHandList)) {
-							return true;
-						} else {
-							return false;
-						}
-					}
-				}
-			}
-		} else if (noOfHearts >= 5) {
-			int j = 0;
-			for (int i = 0; i < allCards.length; i++) {
-				if (allCards[i].getSuit() == SUITS.heart) {
-					handBestCards[j] = allCards[i];
-					j++;
-					if (j == handBestCards.length) {
-						if (makeFlushWithPlayerHandCards(playerHandList)) {
-							return true;
-						} else {
-							return false;
-						}
-					}
-				}
-			}
-		} else if (noOfDiamonds >= 5) {
-			int j = 0;
-			for (int i = 0; i < allCards.length; i++) {
-				if (allCards[i].getSuit() == SUITS.diamond) {
-					handBestCards[j] = allCards[i];
-					j++;
-					if (j == handBestCards.length) {
-						if (makeFlushWithPlayerHandCards(playerHandList)) {
-							return true;
-						} else {
-							return false;
-						}
-					}
-				}
-			}
+			 return noOfMatchCount;
+			
 		}
-
-		return false;
-	}
-
-	public boolean makeFlushWithPlayerHandCards(List<Card> playerCardList) {
-		int count = 0;
-		int sizeOfBestHand = handBestCards.length;
-		String flushSuit = handBestCards[0].getSuit().toString();
-		for (int i = 0; i < playerCardList.size(); i++) {
-			if (playerCardList.get(i).getSuit().toString() == flushSuit) {
-				handBestCards[--sizeOfBestHand] = playerCardList.get(i);
-				count++;
-				if (count == 2) {
-					handBestCards = sortingCardsArray(handBestCards);
-					return true;
-				}
-			}
-
-		}
-		return false;
-	}
-
-	public boolean isAceStraight(Card[] allCards, List<Card> playerHandList) {
-
-		if (allCards[0].getRank() == RANKS.ace) {
-			int i = 0;
-			boolean aceExist = false, twoExist = false, threeExist = false, fourExist = false, fiveExist = false;
-			for (Card card : allCards) {
-
-				switch (card.getRank().toString()) {
-				case RANK_ACE:
-					if (!aceExist) {
-						handBestCards[i] = card;
-						i++;
-						aceExist = true;
+		
+		
+		
+		
+		
+		public List<Card> sortingCardsList(List<Card> allCards){
+			for (int i = 1; i <= allCards.size(); i++) {
+				for (int j = 0; j < allCards.size()- i; j++) {
+					if (allCards.get(j + 1).getValue() > allCards.get(j).getValue()) {
+						Card cTemp = allCards.get(j);
+						allCards.set(j, allCards.get(j + 1));
+						allCards.set(j + 1, cTemp);
 					}
-					break;
-				case RANK_TWO:
-					if (!twoExist) {
-						handBestCards[i] = card;
-						i++;
-						twoExist = true;
-					}
-					break;
-				case RANK_THREE:
-					if (!threeExist) {
-						handBestCards[i] = card;
-						i++;
-						threeExist = true;
-					}
-					break;
-				case RANK_FOUR:
-					if (!fourExist) {
-						handBestCards[i] = card;
-						i++;
-						fourExist = true;
-					}
-					break;
-				case RANK_FIVE:
-					if (!fiveExist) {
-						handBestCards[i] = card;
-						i++;
-						fiveExist = true;
-					}
-					break;
-
-				}
-			}
-			if (aceExist && twoExist && threeExist && fourExist && fiveExist) {
-
-				if (isValidHandBestCards(playerHandList)) {
-					return (aceExist && twoExist && threeExist && fourExist && fiveExist);
-
-				} else {
-					return false;
-				}
-			}
-		}
-		return false;
-	}
-
-	public void checkExplicityCardOccurance(List<Card> playerHandList,
-			int threeOfKindValue) {
-		int countExist = 2;
-		for (Card cH : playerHandList) {
-			for (Card cP : handBestCards) {
-				if (cH.getCardName().equals(cP.getCardName())) {
-					countExist--;
-					playerHandList.remove(cH);
-				}
-			}
-		}
-		checkExplicitly(countExist, playerHandList, threeOfKindValue);
-
-	}
-
-	public void calculateFinalKindOfArray(int nPlace, Card[] allCards,
-			int offset) {
-		Card cTemp = handBestCards[0];
-		for (int i = 0; i < handBestCards.length; i++) {
-			if (i < nPlace) {
-				if (cTemp.getValue() < allCards[i].getValue()) {
-					handBestCards[i] = allCards[i];
-				} else {
-					for (int j = 0; j < handBestCards.length; j++) {
-						handBestCards[j] = allCards[j];
-					}
-					break;
-				}
-			} else {
-				handBestCards[i] = allCards[offset--];
-			}
-		}
-	}
-
-	public void checkExplicitly(int nPlace, List<Card> playerHandCard,
-			int repeatedCardValue) {
-		// Card cTemp = handBestCards[0];
-		int count = 0;
-		for (int i = 0; i < handBestCards.length; i++) {
-			if (count < nPlace) {
-				if (repeatedCardValue != handBestCards[i].getValue()) {
-					handBestCards[i] = playerHandCard.get(count);
-					count++;
-				}
-			} else {
-				break;
-			}
-		}
-		handBestCards = sortingCardsArray(handBestCards);
-	}
-
-	public List<Card> sameRankCards(Card[] allCards, Card currentCard) {
-		List<Card> listSameCards = new ArrayList<Card>();
-		for (Card card : allCards) {
-			if (card.getRank().equals(currentCard.getRank())
-					&& !listSameCards.contains(card)) {
-				listSameCards.add(card);
-			}
-		}
-		return listSameCards;
-	}
-
-	// Created by chirag
-	public boolean isThreeOfKindRank(Card[] allCards, List<Card> playerHandList) {
-		List<List<Card>> listPairCards = new ArrayList<List<Card>>();
-		List<Card> listFixedCards = new ArrayList<Card>();
-		for (Card card : allCards) {
-			// System.out.println("Total same rank Cards : "+sameRankCards(allCards,
-			// card).size() +" >> "+card);
-			List<Card> sameRankCards = sameRankCards(allCards, card);
-			if (sameRankCards.size() >= 3) {
-				boolean flag = true;
-				for (List<Card> listCards : listPairCards) {
-					if (listCards.contains(sameRankCards.get(0))) {
-						flag = false;
-					}
-				}
-				if (flag)
-					listPairCards.add(sameRankCards);
-			}
-		}
-		if (!listPairCards.isEmpty()) {
-			List<Card> listSelectedCards = new ArrayList<Card>();
-			boolean hasPlayerCard = false;
-			int totalPlayerCards = 0;
-			for (List<Card> listCards : listPairCards) {
-				// Check with player hand
-				hasPlayerCard = false;
-				totalPlayerCards = 0;
-				for (Card card : listCards) {
-					if (playerHandList.contains(card)) {
-						hasPlayerCard = true;
-						totalPlayerCards++;
-						break;
-					}
-				}
-				if (hasPlayerCard) {
-					listSelectedCards.addAll(listCards);
-					break;
-				}
-			}
-			if (listSelectedCards.isEmpty()) {
-				listSelectedCards.addAll(listPairCards.get(0));
-			}
-			for(Card card : listSelectedCards){
-				if(listFixedCards.size()<3){
-					listFixedCards.add(card);
 				}
 			}
 			
-			if(totalPlayerCards!=0){
-				if(totalPlayerCards==1){
-					// Add one card from player hand
-					for (Card card : playerHandList) {
-						if (!listFixedCards.contains(card)) {
-							listFixedCards.add(card);
-							break;
-						}
-					}
-					// Add from other cards
-					for (Card card : allCards) {
-						if (!listFixedCards.contains(card)) {
-							listFixedCards.add(card);
-							break;
-						}
-					}
-				}else if(totalPlayerCards==2){
-					// Add two cards from others
-					for (Card card : allCards) {
-						if (!listFixedCards.contains(card) && listFixedCards.size()<5) {
-							listFixedCards.add(card);
-						}
-					}
-				}
-			}else{
-				// Add two cards from player
-				for (Card card : playerHandList) {
-					if (!listFixedCards.contains(card) && listFixedCards.size()<5) {
-						listFixedCards.add(card);
-					}
-				}
-			}
-			for(Card card: listFixedCards){
-				System.out.println(card.getCardName());
-			}
-			if (listFixedCards.size() == 5) {
-				handBestCards = new Card[5];
-				handBestCards[0] = listFixedCards.get(0);
-				handBestCards[1] = listFixedCards.get(1);
-				handBestCards[2] = listFixedCards.get(2);
-				handBestCards[3] = listFixedCards.get(3);
-				handBestCards[4] = listFixedCards.get(4);
-				return checkCardsOccurance(playerHandList);
-			}
+			return allCards;
 		}
-		return false;
-	}
-	// Created by chirag
-		public boolean isFourOfKindRank(Card[] allCards, List<Card> playerHandList) {
-			List<List<Card>> listPairCards = new ArrayList<List<Card>>();
-			List<Card> listFixedCards = new ArrayList<Card>();
-			for (Card card : allCards) {
-				// System.out.println("Total same rank Cards : "+sameRankCards(allCards,
-				// card).size() +" >> "+card);
-				List<Card> sameRankCards = sameRankCards(allCards, card);
-				if (sameRankCards.size() >= 4) {
-					boolean flag = true;
-					for (List<Card> listCards : listPairCards) {
-						if (listCards.contains(sameRankCards.get(0))) {
-							flag = false;
-						}
+
+		public Card[] sortingCardsArray(Card[] cardArray) {
+			for (int i = 1; i <= cardArray.length; i++) {
+				for (int j = 0; j < cardArray.length - i; j++) {
+					if (cardArray[j + 1].getValue() > cardArray[j].getValue()) {
+						Card cTemp = cardArray[j];
+						cardArray[j] = cardArray[j + 1];
+						cardArray[j + 1] = cTemp;
 					}
-					if (flag)
-						listPairCards.add(sameRankCards);
 				}
 			}
-			if (!listPairCards.isEmpty()) {
-				List<Card> listSelectedCards = new ArrayList<Card>();
-				boolean hasPlayerCard = false;
-				int totalPlayerCards = 0;
-				for (List<Card> listCards : listPairCards) {
-					// Check with player hand
-					hasPlayerCard = false;
-					totalPlayerCards = 0;
-					for (Card card : listCards) {
-						if (playerHandList.contains(card)) {
-							hasPlayerCard = true;
-							totalPlayerCards++;
-//							break;
+			return cardArray;
+		}
+		public boolean isRoyalFlush(Card[] allCards, List<Card> playerHandList) {
+
+			if (isFlush(allCards, playerHandList)) {
+				if (isStraight(handBestCards, playerHandList)) {
+					boolean aceExists = false, kingExists = false, queenExists = false, jackExists = false, tenExists = false;
+					for (Card card : handBestCards) {
+						switch (card.getRank().toString()) {
+						case RANK_ACE:
+							aceExists = true;
+							break;
+						case RANK_KING:
+							kingExists = true;
+							break;
+						case RANK_QUEEN:
+							queenExists = true;
+							break;
+						case RANK_JACK:
+							jackExists = true;
+							break;
+						case RANK_TEN:
+							tenExists = true;
+							break;
 						}
 					}
-					if (hasPlayerCard) {
-						listSelectedCards.addAll(listCards);
-						break;
+					if(aceExists && kingExists && queenExists
+							&& jackExists && tenExists && isValidHandBestCards(playerHandList)){
+						return true;
 					}
-				}
-				if (listSelectedCards.isEmpty()) {
-					listSelectedCards.addAll(listPairCards.get(0));
-				}
-				for(Card card : listSelectedCards){
-					if(listFixedCards.size()<4){
-						listFixedCards.add(card);
+							
 					}
-				}
-				
-				if(totalPlayerCards!=0){
-					if(totalPlayerCards==1){
-						// Add one card from player hand
-						for (Card card : playerHandList) {
-							if (!listFixedCards.contains(card)) {
-								listFixedCards.add(card);
-								break;
-							}
-						}
-						
-					}else if(totalPlayerCards==2){
-						// Add two cards from others
-						for (Card card : allCards) {
-							if (!listFixedCards.contains(card) && listFixedCards.size()<5) {
-								listFixedCards.add(card);
-							}
-						}
-					}
-				}else{
-					// Add two cards from player
-					for (Card card : playerHandList) {
-						if (!listFixedCards.contains(card) && listFixedCards.size()<5) {
-							listFixedCards.add(card);
-						}
-					}
-				}
-				for(Card card: listFixedCards){
-					System.out.println(card.getCardName());
-				}
-				if (listFixedCards.size() == 5) {
-					handBestCards = new Card[5];
-					handBestCards[0] = listFixedCards.get(0);
-					handBestCards[1] = listFixedCards.get(1);
-					handBestCards[2] = listFixedCards.get(2);
-					handBestCards[3] = listFixedCards.get(3);
-					handBestCards[4] = listFixedCards.get(4);
-					return checkCardsOccurance(playerHandList);
-				}
-			}
+				} 
 			return false;
 		}
-	// Created by chirag
-	public boolean isStraightRank(Card[] allCards, List<Card> playerHandList) {
-		List<Card> listFixedPair = new ArrayList<Card>();
-		List<Card> listStraightPair = new ArrayList<Card>();
-		Card[] sortedAllCards = sortingCardsArray(allCards);
 
-		for (int i = 0; i < sortedAllCards.length; i++) {
-			System.out.println("Card : " + sortedAllCards[i].getValue());
-			if (listFixedPair.isEmpty()) {
-				listFixedPair.add(sortedAllCards[i]);
-			} else {
-				if (sortedAllCards[i - 1].getValue() != sortedAllCards[i]
-						.getValue()) {
-					listFixedPair.add(sortedAllCards[i]);
+		private boolean isAStraightFlush(Card[] allCards, List<Card> playerHandList) {
+			if (isFlush(allCards, playerHandList)) {
+				if (isStraight(handBestCards, playerHandList)) {
+					return true;
+				} else {
+					return false;
 				}
+			} else {
+				return false;
 			}
 		}
 
-		int playerCardsCnr = 0;
-		for (int i = 0; i < listFixedPair.size(); i++) {
-			listStraightPair.clear();
-			Card firstCard = listFixedPair.get(i);
-			listStraightPair.add(firstCard);
-			for (int j = i + 1; j < listFixedPair.size(); j++) {
-				Card secondCard = listFixedPair.get(j);
-				if (firstCard.getValue() == secondCard.getValue() + 1) {
-					if(playerHandList.contains(secondCard)){
-						playerCardsCnr++;
-					}
-					listStraightPair.add(secondCard);
-					firstCard = secondCard;
-					if (listStraightPair.size() == 5 && playerCardsCnr!=2) {
-						
-						for (int l = 0; l < listStraightPair.size(); l++) {
-							Card card = listStraightPair.get(l);
-							for (Card playerCard : playerHandList) {
-								if (playerCard.getRank() == card.getRank()
-										&& playerCard.getSuit() != card
-												.getSuit()) {
-									listStraightPair.set(l, card);
-									playerCardsCnr++;
-									break;
-								}
-							}
-							if(playerCardsCnr==2){
-								break;
-							}
-						}
-						if (playerCardsCnr != 2) {
-							if (playerHandList
-									.contains(listStraightPair.get(0))) {
-								playerCardsCnr--;
-							}
-							listStraightPair.remove(0);
-						}
-						if(listStraightPair.size() == 5 && playerCardsCnr==2){
-							break;
-						}
-					}else if(listStraightPair.size() == 5 &&playerCardsCnr==2){
-						break;
-					}
-				} else {
+		public boolean isFlush(Card[] allCards, List<Card> playerHandList) {
+
+			int noOfClubs = 0;
+			int noOfSpades = 0;
+			int noOfHearts = 0;
+			int noOfDiamonds = 0;
+			for (Card c : allCards) {
+				switch (c.getSuit().toString()) {
+				case SUIT_HEART:
+					noOfHearts++;
+					break;
+				case SUIT_SPADE:
+					noOfSpades++;
+					break;
+				case SUIT_CLUB:
+					noOfClubs++;
+					break;
+				case SUIT_DIAMOND:
+					noOfDiamonds++;
 					break;
 				}
 			}
-			if (listStraightPair.size() == 5 &&playerCardsCnr==2) {
-				break;
-			}
-		}
-		for (Card card : listStraightPair) {
-			System.out.println(card.getValue());
-		}
-		if (listStraightPair.size() == 5) {
-			handBestCards = new Card[5];
-			handBestCards[0] = listStraightPair.get(0);
-			handBestCards[1] = listStraightPair.get(1);
-			handBestCards[2] = listStraightPair.get(2);
-			handBestCards[3] = listStraightPair.get(3);
-			handBestCards[4] = listStraightPair.get(4);
-			boolean isStraight = checkCardsOccurance(playerHandList);
-			if (!isStraight) {
-				for (int i = 0; i < handBestCards.length; i++) {
-					Card card = handBestCards[i];
-					for (Card playerCard : playerHandList) {
-						if (playerCard.getRank() == card.getRank()
-								&& playerCard.getSuit() != card.getSuit()) {
-							handBestCards[i] = playerCard;
+
+			if (noOfClubs >= 5) {
+				int j = 0;
+				for (int i = 0; i < allCards.length; i++) {
+					if (allCards[i].getSuit() == SUITS.club) {
+						handBestCards[j] = allCards[i];
+						j++;
+						if (j == handBestCards.length) {
+							if (makeFlushWithPlayerHandCards(playerHandList)) {
+								return true;
+							} else {
+								return false;
+							}
 						}
 					}
 				}
-				isStraight = checkCardsOccurance(playerHandList);
-			}
-			return isStraight;
-		}
-		return false;
-	}
-
-	// Created by chirag
-	public boolean isFullHouseRank(Card[] allCards, List<Card> playerHandList) {
-
-		List<Card> listFixedPair = new ArrayList<Card>();
-		boolean isThreeSameRankCards = false;
-		boolean isTwoSameRankCards = false;
-		for (Card card : allCards) {
-			int totalSameRankCards = 0;
-			for (Card card1 : allCards) {
-				if (card.getRank() == card1.getRank()) {
-					totalSameRankCards++;
+			} else if (noOfSpades >= 5) {
+				int j = 0;
+				for (int i = 0; i < allCards.length; i++) {
+					if (allCards[i].getSuit() == SUITS.spade) {
+						handBestCards[j] = allCards[i];
+						j++;
+						if (j == handBestCards.length) {
+							if (makeFlushWithPlayerHandCards(playerHandList)) {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					}
+				}
+			} else if (noOfHearts >= 5) {
+				int j = 0;
+				for (int i = 0; i < allCards.length; i++) {
+					if (allCards[i].getSuit() == SUITS.heart) {
+						handBestCards[j] = allCards[i];
+						j++;
+						if (j == handBestCards.length) {
+							if (makeFlushWithPlayerHandCards(playerHandList)) {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					}
+				}
+			} else if (noOfDiamonds >= 5) {
+				int j = 0;
+				for (int i = 0; i < allCards.length; i++) {
+					if (allCards[i].getSuit() == SUITS.diamond) {
+						handBestCards[j] = allCards[i];
+						j++;
+						if (j == handBestCards.length) {
+							if (makeFlushWithPlayerHandCards(playerHandList)) {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					}
 				}
 			}
-			if (totalSameRankCards >= 2 && !listFixedPair.contains(card)) {
-				if (totalSameRankCards == 2) {
-					isTwoSameRankCards = true;
-				}
-				if (totalSameRankCards == 3) {
-					isThreeSameRankCards = true;
-				}
-				listFixedPair.add(card);
-			}
-		}
 
-		if (isThreeSameRankCards && isTwoSameRankCards) {
-			handBestCards = new Card[5];
-			handBestCards[0] = listFixedPair.get(0);
-			handBestCards[1] = listFixedPair.get(1);
-			handBestCards[2] = listFixedPair.get(2);
-			handBestCards[3] = listFixedPair.get(3);
-			handBestCards[4] = listFixedPair.get(4);
-			return checkCardsOccurance(playerHandList);
-		} else {
 			return false;
 		}
-	}
 
-	// Created by chirag
-	public boolean isTwoPairRank(Card[] allCards, List<Card> playerHandList) {
-		List<Card> listFixedPair = new ArrayList<Card>();
-		List<Card> listPairCards = new ArrayList<Card>();
-		int playerCardsCntr = 0;
-		for (Card card : allCards) {
-			if (!listPairCards.contains(card)) {
+		public boolean makeFlushWithPlayerHandCards(List<Card> playerCardList) {
+			int count = 0;
+			int sizeOfBestHand = handBestCards.length;
+			String flushSuit = handBestCards[0].getSuit().toString();
+			for (int i = 0; i < playerCardList.size(); i++) {
+				if (playerCardList.get(i).getSuit().toString() == flushSuit) {
+					handBestCards[--sizeOfBestHand] = playerCardList.get(i);
+					count++;
+					if (count == 2) {
+						handBestCards = sortingCardsArray(handBestCards);
+						return true;
+					}
+				}
+
+			}
+			return false;
+		}
+
+		public boolean isAceStraight(Card[] allCards, List<Card> playerHandList) {
+
+			if (allCards[0].getRank() == RANKS.ace) {
+				int i = 0;
+				boolean aceExist = false, twoExist = false, threeExist = false, fourExist = false, fiveExist = false;
+				for (Card card : allCards) {
+
+					switch (card.getRank().toString()) {
+					case RANK_ACE:
+						if (!aceExist) {
+							handBestCards[i] = card;
+							i++;
+							aceExist = true;
+						}
+						break;
+					case RANK_TWO:
+						if (!twoExist) {
+							handBestCards[i] = card;
+							i++;
+							twoExist = true;
+						}
+						break;
+					case RANK_THREE:
+						if (!threeExist) {
+							handBestCards[i] = card;
+							i++;
+							threeExist = true;
+						}
+						break;
+					case RANK_FOUR:
+						if (!fourExist) {
+							handBestCards[i] = card;
+							i++;
+							fourExist = true;
+						}
+						break;
+					case RANK_FIVE:
+						if (!fiveExist) {
+							handBestCards[i] = card;
+							i++;
+							fiveExist = true;
+						}
+						break;
+
+					}
+				}
+				if (aceExist && twoExist && threeExist && fourExist && fiveExist) {
+
+					if (isValidHandBestCards(playerHandList)) {
+						return (aceExist && twoExist && threeExist && fourExist && fiveExist);
+
+					} else {
+						return false;
+					}
+				}
+			}
+			return false;
+		}
+
+
+		
+		
+		public void makeThreeOfAKindWithPlayerHandCards(List<Card> playerHandList,
+				int threeOfKindValue) {
+			int countExist = 0;
+			List<Card> tempList=new ArrayList<>();
+			List<Card> finalCards=new ArrayList<>();
+			
+				for (Card card : handBestCards) {
+					if (card.getValue()==threeOfKindValue) {
+						tempList.add(card);
+					}
+				}
+				
+				finalCards.addAll(tempList);
+		        boolean flag=false;
+				for (Card playerCard : currentPlayerCardList) {
+					flag=false;
+					for (Card tempCard : tempList) {
+						if (playerCard.getCardName().equals(tempCard.getCardName())) {
+							countExist++;
+							flag=true;
+							break;
+						 }
+					 }
+					if(!flag){
+						finalCards.add(playerCard);
+						countExist++;
+						if(countExist==2){
+							finalCards=sortingCardsList(finalCards);
+							break;
+						}
+					 }
+				}	
+				
+				for (int i=0;i<handBestCards.length;i++) {
+					   handBestCards[i]=finalCards.get(i);
+					}
+		}
+
+		public void calculateFinalKindOfArray(int nPlace, Card[] allCards,
+				int offset) {
+			Card cTemp = handBestCards[0];
+			for (int i = 0; i < handBestCards.length; i++) {
+				if (i < nPlace) {
+					if (cTemp.getValue() < allCards[i].getValue()) {
+						handBestCards[i] = allCards[i];
+					} else {
+						for (int j = 0; j < handBestCards.length; j++) {
+							handBestCards[j] = allCards[j];
+						}
+						break;
+					}
+				} else {
+					handBestCards[i] = allCards[offset--];
+				}
+			}
+		}
+          
+//		public boolean checkForFourOfAKind(int countNotExist, List<Card> playerHandCard,
+//				int repeatedCardValue,Card waCard) {
+//			// Card cTemp = handBestCards[0];
+//			
+//			List<Card> exludeDefaultCardList= new ArrayList<Card>();
+//			
+//				
+//			List<Card> tempList=new ArrayList<Card>();
+//			int count = 0;
+//			if(countNotExist==2){
+//				exludeDefaultCardList.clear();
+//				exludeDefaultCardList.addAll(defaultCards);
+//				
+//					for(Card hC : handBestCards){
+//						for(Card dC : exludeDefaultCardList){
+//						if(hC.getCardName().equals(dC.getCardName())){
+//							exludeDefaultCardList.remove(dC);
+//							break;
+//						}
+//					  }
+//					}
+//				exludeDefaultCardList.addAll(playerHandCard);
+//				exludeDefaultCardList.add(waCard);
+//				if(tempFourOfAKind(exludeDefaultCardList)){
+//					 boolean  flag=false;
+//						for (int i = 0; i < handBestCards.length; i++) {
+//							  flag=false;
+//							for (int j = 0; j < exludeDefaultCardList.size(); j++) {
+//								if(handBestCards[i].getCardName().equals(exludeDefaultCardList.get(j).getCardName())){
+//									flag=true;
+//									break;
+//								}
+//							}
+//							if (!flag){
+//								exludeDefaultCardList.add(handBestCards[i]);
+//								break;
+//							}
+//						}
+//						exludeDefaultCardList=sortingCardsList(exludeDefaultCardList);
+//						for(int k=0;k<exludeDefaultCardList.size();k++){
+//							handBestCards[k]=exludeDefaultCardList.get(k);
+//						}
+//						handBestCards = sortingCardsArray(handBestCards);
+//						return true;
+//				}else{
+//					return false;
+//				}
+//	        
+//			}else if(countNotExist==1){
+//				for (int i = 0; i < handBestCards.length; i++) {
+//					if (repeatedCardValue == handBestCards[i].getValue()) {
+//						 tempList.add(handBestCards[i]);	
+//						}
+//					} 
+//			 
+//			  boolean  flag=false;
+//				for (int i = 0; i < handBestCards.length; i++) {
+//					for (int j = 0; j < tempList.size(); j++) {
+//						if(handBestCards[i].getCardName().equals(tempList.get(j).getCardName())){
+//							flag=true;
+//							break;
+//						}
+//					}
+//					if (!flag){
+//						tempList.add(handBestCards[i]);
+//						break;
+//					}
+//				}
+//				tempList=sortingCardsList(tempList);
+//				for(int k=0;k<tempList.size();k++){
+//					handBestCards[k]=tempList.get(k);
+//				}
+//				handBestCards = sortingCardsArray(handBestCards);
+//				return true;
+//			}
+//			return false;
+//		}
+		
+		public boolean tempFourOfAKind(List< Card> allCards){
+			int lastSameRankOffset=0;
+			int cardRepeats = 1;
+			boolean isFourOfAKind = false;
+			int m = 0;
+			int n = m + 1;
+			while (m < allCards.size() && !isFourOfAKind) {
+				cardRepeats = 1;
+				n = m + 1;
+				while (n < allCards.size() && !isFourOfAKind) {
+					if (allCards.get(m).getValue() == allCards.get(n).getValue()) {
+						cardRepeats++;
+						if (cardRepeats == 4) {
+							handBestCards[0] = allCards.get(n);
+							lastSameRankOffset=n;
+							isFourOfAKind = true;
+						}
+					}
+					n++;
+				}
+				m++;
+			}
+			if(isFourOfAKind){
+				return true;
+			}else{
+				return false;
+			}
+			
+		}
+		
+		
+		public void checkExplicitly(int countNotExist, List<Card> playerHandCard,
+				int repeatedCardValue) {
+			// Card cTemp = handBestCards[0];
+			List<Card> tempList=new ArrayList<Card>();
+			int count = 0;
+			if(countNotExist==2){
+			for (int i = 0; i < handBestCards.length; i++) {
+				if (count < countNotExist) {
+					if (repeatedCardValue != handBestCards[i].getValue()) {
+						handBestCards[i] = playerHandCard.get(count);
+						count++;
+					}
+				} else {
+					    break;
+				       }
+			  }
+			}else if(countNotExist==1){
+				for (int i = 0; i < handBestCards.length; i++) {
+					if (repeatedCardValue == handBestCards[i].getValue()) {
+						 tempList.add(handBestCards[i]);	
+						}
+					} 
+			    tempList.add(playerHandCard.get(0));
+			  boolean  flag=false;
+				for (int i = 0; i < handBestCards.length; i++) {
+					flag=false;
+					for (int j = 0; j < tempList.size(); j++) {
+						if(handBestCards[i].getCardName().equals(tempList.get(j).getCardName())){
+							flag=true;
+							break;
+						}
+					}
+					if (!flag){
+						tempList.add(handBestCards[i]);
+						break;
+					}
+				}
+				
+				tempList=sortingCardsList(tempList);
+				for(int k=0;k<tempList.size();k++){
+					handBestCards[k]=tempList.get(k);
+				}
+				handBestCards = sortingCardsArray(handBestCards);
+			}
+			
+		}
+
+
+		public boolean isStraight(Card[] allCards,List<Card> playerHandList) {
+			int lastPos = 0;
+			int noOfCardsInARow = 0;
+			int pos = 0;
+			boolean isAStraight = false;
+			while (pos < allCards.length - 1 && !isAStraight) {
+				if (allCards[pos].getValue() - allCards[pos + 1].getValue() == 1) {
+					noOfCardsInARow++;
+					if (noOfCardsInARow == 4) {
+						isAStraight = true;
+						lastPos = pos + 1;
+
+					} else {
+						pos++;
+					}
+				} else if (allCards[pos].getValue() - allCards[pos + 1].getValue() == 0) {
+
+					pos++;
+				} else {
+					noOfCardsInARow = 0;
+					pos++;
+				}
+			}
+			if (isAStraight) {
+//				System.out.println("this is pokerhand    "+"  "+allCards.length);
+//				System.out.println("this is pokerhand    "+"  "+handBestCards.length);
+				
+				for (int i=0,j=0; i < allCards.length - 1; i++) {
+
+					if ((allCards[i].getValue() - allCards[i + 1].getValue()) == 1) {
+						handBestCards[j] = allCards[i];
+						
+						j++;
+						if(j==handBestCards.length-1){
+							handBestCards[j]=allCards[i+1];
+							break;
+						}
+					}
+
+				}
+				if(isValidHandBestCards(playerHandList))
+				{
+					return isAStraight;
+					
+				}else if(makeStraightWithPlayerCards(playerHandList)){
+					return isAStraight;
+				}
+				else{
+					return false;
+				}
+			}
+
+			return isAStraight;
+		}
+
+		
+		public boolean isTempStraight(Card[] allCards) {
+			int lastPos = 0;
+			int noOfCardsInARow = 0;
+			int pos = 0;
+			boolean isAStraight = false;
+			while (pos < allCards.length - 1 && !isAStraight) {
+				if (allCards[pos].getValue() - allCards[pos + 1].getValue() == 1) {
+					noOfCardsInARow++;
+					if (noOfCardsInARow == 4) {
+						isAStraight = true;
+						lastPos = pos + 1;
+
+					} else {
+						pos++;
+					}
+				} else if (allCards[pos].getValue() - allCards[pos + 1].getValue() == 0) {
+
+					pos++;
+				} else {
+					noOfCardsInARow = 0;
+					pos++;
+				}
+			}
+			if (isAStraight) {
+//				System.out.println("this is pokerhand    "+"  "+allCards.length);
+//				System.out.println("this is pokerhand    "+"  "+handBestCards.length);
+				
+				for (int i=0,j=0; i < allCards.length - 1; i++) {
+
+					if ((allCards[i].getValue() - allCards[i + 1].getValue()) == 1) {
+						handBestCards[j] = allCards[i];
+						
+//					    System.out.println("this is pokerhand    "+j+"  "+handBestCards[j]);
+						j++;
+						if(j==handBestCards.length-1){
+							handBestCards[j]=allCards[i+1];
+							break;
+						}
+					}
+
+				}
+				return isAStraight;
+			}
+			return isAStraight;
+		}
+		
+		public List<Card> getExcludedDefualtCardsList(){
+			List<Card> exludedDefCardList= new ArrayList<Card>();
+			exludedDefCardList.addAll(currentDefaultCardsList);
+					
+				for(Card hC : handBestCards){
+					for(Card dC : currentDefaultCardsList){
+					if(hC.getCardName().equals(dC.getCardName())){
+						exludedDefCardList.remove(dC);
+						break;
+					}
+				  }
+				}
+			return exludedDefCardList;
+		}
+		
+		public List<Card> getExcludedPlayerCardsList(){
+			List<Card> exludedPlayerCardList= new ArrayList<Card>();
+			exludedPlayerCardList.addAll(currentPlayerCardList);
+					
+				for(Card hC : handBestCards){
+					for(Card dC : currentPlayerCardList){
+					if(hC.getCardName().equals(dC.getCardName())){
+						exludedPlayerCardList.remove(dC);
+						break;
+					}
+				  }
+				}
+			return exludedPlayerCardList;
+		}
+			
+		
+		public List<Card> getContinuousCardsList(List<Card> cardList){
+			
+			cardList=sortingCardsList(cardList);
+			
+			List<Card> continuousCardList= new ArrayList<Card>();
+			int pos=0;
+			int countPos=1;
+			boolean listFound=false;
+			continuousCardList.add(cardList.get(pos));
+			while (pos < cardList.size() - 1 ) {
+				if (cardList.get(pos).getValue() - cardList.get(pos+1).getValue() == 1 && !listFound) {
+				    
+				//	continuousCardList.add(countPos,cardList.get(pos));
+					continuousCardList.add(countPos,cardList.get(pos+1));
+					countPos++;
+					pos++;
+				}else{
+					if(continuousCardList.size()==1 ){
+						continuousCardList.clear();
+						continuousCardList.add(cardList.get(pos+1));
+					 }if(continuousCardList.size()>1){
+						 listFound=true;
+					 }
+					 
+					pos++;
+				}
+					
+			}
+			return continuousCardList;
+		}
+		
+		public boolean makeStraightWithPlayerCards(List<Card> playerHandList)
+		{
+			int noOfMatchCount=0;
+			int noOfCardExist=getNoOfCardsOccurance();
+			List<Card> tempCardList= new ArrayList<Card>();
+		//	if(noOfCardExist==0){
+				
+				tempCardList.addAll(getExcludedDefualtCardsList());
+			//	if(getExcludedPlayerCardsList().size()!=0)
+				  tempCardList.addAll(getExcludedPlayerCardsList());
+				
+				tempCardList=getContinuousCardsList(tempCardList);
+				 for(int i=handBestCards.length-1;tempCardList.size()<handBestCards.length;i--){
+             		tempCardList.add(handBestCards[i]);
+                   }
+				
+				 Card[] tempCards= new Card[tempCardList.size()];
+				   for(int j=0;j<tempCardList.size();j++){
+	             		tempCards[j]=tempCardList.get(j);
+	                }
+			
+				   tempCards=sortingCardsArray(tempCards);
+				if(isTempStraight(tempCards)){
+					if(getNoOfCardsOccurance()==2){
+						return true;
+					}
+				}else{
+					return false;
+				}
+			return false;
+		}
+		
+	public boolean makeFourOfAkindWithPlayerCards(){
+		int noOfMatchCount=0;
+		int noOfCardExist=getNoOfCardsOccurance();
+		List<Card> tempCardList= new ArrayList<Card>();
+	//	if(noOfCardExist==0){
+			
+			tempCardList.addAll(getExcludedDefualtCardsList());
+		//	if(getExcludedPlayerCardsList().size()!=0)
+			  tempCardList.addAll(getExcludedPlayerCardsList());
+			
+		//	tempCardList=getContinuousCardsList(tempCardList);
+			 for(int i=handBestCards.length-1;tempCardList.size()<handBestCards.length;i--){
+         		tempCardList.add(handBestCards[i]);
+               }
+			
+			 Card[] tempCards= new Card[tempCardList.size()];
+			   for(int j=0;j<tempCardList.size();j++){
+             		tempCards[j]=tempCardList.get(j);
+                }
+		
+			   tempCards=sortingCardsArray(tempCards);
+			if(isTempFourOfAKind(tempCards)){
+				if(getNoOfCardsOccurance()==2){
+					return true;
+				}
+			}else{
+				return false;
+			}
+		return false;
+	}
+		
+	public boolean isTempFourOfAKind(Card[] allCards){
+		int lastSameRankOffset=0;
+		int cardRepeats = 1;
+		int fourOfKindValue=0;
+		boolean isFourOfAKind = false;
+		int m = 0;
+		int n = m + 1;
+		while (m < allCards.length && !isFourOfAKind) {
+			cardRepeats = 1;
+			n = m + 1;
+			while (n < allCards.length && !isFourOfAKind) {
+				if (allCards[m].getValue() == allCards[n].getValue()) {
+					cardRepeats++;
+					if (cardRepeats == 4) {
+						handBestCards[0] = allCards[n];
+						fourOfKindValue=allCards[n].getValue();
+						lastSameRankOffset=n;
+						isFourOfAKind = true;
+					}
+				}
+				n++;
+			}
+			m++;
+		}
+		if (isFourOfAKind) {
+			calculateFinalKindOfArray(1, allCards,lastSameRankOffset);
+		}
+		
+		return isFourOfAKind;
+	}
+	
+	private boolean isThreeOfAKind(Card[] allCards,List<Card> playerHandList) {
+			int lastSameRankOffset=0;
+			int cardRepeats = 1;
+			boolean isThreeOfAKind = false;
+			int ThreeOFaKindValue=0;
+			int m = 0;
+			int n = m + 1;
+			while (m < allCards.length && !isThreeOfAKind) {
+				cardRepeats = 1;
+				n = m + 1;
+				while (n < allCards.length && !isThreeOfAKind) {
+					if (allCards[m].getValue() == allCards[n].getValue()) {
+						cardRepeats++;
+						if (cardRepeats == 3) {
+							handBestCards[0] = allCards[n];
+							ThreeOFaKindValue=allCards[n].getValue();
+							lastSameRankOffset=n;
+							isThreeOfAKind = true;
+						}
+					}
+					n++;
+				}
+				m++;
+			}
+			if (isThreeOfAKind) {
+				calculateFinalKindOfArray(2, allCards,lastSameRankOffset);
+				if(isValidHandBestCards(playerHandList))
+				{
+					return isThreeOfAKind;
+				}else{
+					makeThreeOfAKindWithPlayerHandCards(playerHandList,ThreeOFaKindValue);
+					return isThreeOfAKind;
+				}
+			}
+				
+			return isThreeOfAKind;
+		}
+		
+		
+		
+		
+		private boolean isTwoPair(Card[] allCards,List<Card> playerHandList) {
+	        
+			int lastSameOffsetOne=0;
+			int lastSameOffsetSecond=0;
+			
+			Card cTemp1 = null, cTemp2 = null;
+			int cardRepeats = 1;
+			int noOfCardRepeats = 0;
+			boolean isTwoPair = false;
+			int m = 0;
+			int n = m + 1;
+			while (m < allCards.length && !isTwoPair) {
+				cardRepeats = 1;
+				n = m + 1;
+				while (n < allCards.length && !isTwoPair) {
+					if (allCards[m].getValue() == allCards[n].getValue()) {
+						cardRepeats++;
+						if (cardRepeats == 2) {
+							cardRepeats = 1;
+							noOfCardRepeats++;
+							if (noOfCardRepeats == 1) {
+								cTemp1 = allCards[n];
+								lastSameOffsetOne=n;
+							}
+							if (noOfCardRepeats == 2) {
+								cTemp2 = allCards[n];
+								lastSameOffsetSecond=n;
+								isTwoPair = true;
+
+							}
+						}
+
+					}
+					n++;
+				}
+				m++;
+			}
+			if (isTwoPair) {
+				if (allCards[0].getValue() > cTemp1.getValue()) {
+					handBestCards[0] = allCards[0];
+					handBestCards[1] =  allCards[lastSameOffsetOne--];
+					handBestCards[2] =  allCards[lastSameOffsetOne--];
+					handBestCards[3] =  allCards[lastSameOffsetSecond--];
+					handBestCards[4] =  allCards[lastSameOffsetSecond--];
+				} else {
+					handBestCards[0] =  allCards[lastSameOffsetOne--];
+					handBestCards[1] =  allCards[lastSameOffsetOne--];
+					if (allCards[2].getValue() > cTemp2.getValue()) {
+						handBestCards[2] = allCards[2];
+						handBestCards[3] =  allCards[lastSameOffsetSecond--];
+						handBestCards[4] =  allCards[lastSameOffsetSecond--];
+					} else {
+						handBestCards[2] =  allCards[lastSameOffsetSecond--];
+						handBestCards[3] =  allCards[lastSameOffsetSecond--];
+						handBestCards[4] = allCards[4];
+					}
+				}
+				
+				if(isValidHandBestCards(playerHandList))
+				{
+					return isTwoPair;
+				}else if(checkPairInPlayerList(playerHandList)){
+					return isTwoPair;
+				}
+//				else if(checkForSinglePlayerCards(allCards,playerHandList)){
+//					return isTwoPair;
+//				}
+				else{
+					return false;
+				}
+		 	}
+
+			return isTwoPair;
+		}
+
+		
+		public boolean checkForSinglePlayerCards(Card[] allCards,List<Card> playerHandList){
+		List<Card> 	playerDefaultList=sortingCardsList(defaultCards);
+		boolean flag=false;
+		int k=0;
+		//    Card[] bestCardList = new Card[5];
+		    List<Card> bestCardList=new ArrayList<Card>();
+				for(int i=0;i<playerHandList.size();i++){
+					for(int j=0;j<playerDefaultList.size();j++){
+					if(playerHandList.get(i).getValue()==playerDefaultList.get(j).getValue()){
+						
+						bestCardList.add(k, playerHandList.get(i));
+						bestCardList.add(++k, playerDefaultList.get(j));
+						
+						if(k==handBestCards.length-1){
+							for(int m=0;m<handBestCards.length;m++){
+								for(int n=0;n<bestCardList.size();n++){
+									if(handBestCards[m].getCardName().equals(bestCardList.get(n).cardName)){
+									    flag=true;  
+									}
+								}
+								if(!flag){
+									bestCardList.set(k, handBestCards[m]);
+									break;
+								}
+								
+							}
+							
+							for(int p=0;p<bestCardList.size();p++){
+								handBestCards[p]=bestCardList.get(p);
+							}
+							handBestCards=sortingCardsArray(handBestCards);
+						 return true;
+						}
+					//	continue;
+					}
+						
+				}
+				
+			}
+				return false;
+			
+		}
+		
+		
+		public boolean checkPairInPlayerList(List<Card> playerCardList){
+			for(int i=0;i<playerCardList.size()-1;i++){
+				if(playerCardList.get(i).getValue()==playerCardList.get(i+1).getValue()){
+					handBestCards[handBestCards.length-1]=playerCardList.get(i+1);
+					handBestCards[handBestCards.length-2]=playerCardList.get(i);
+					return true;
+				}
+			}
+		
+    		return false;
+			
+		}
+		
+		
+		public boolean isPairRank(Card[] allCards, List<Card> playerHandList) {
+			List<Card> listFixedPair = new ArrayList<Card>();
+			int totalPlayerCards = 0;
+			for (Card card : allCards) {
 				for (Card card1 : allCards) {
 					if (card.getRank() == card1.getRank()
 							&& card.getSuit() != card1.getSuit()) {
 						if (playerHandList.contains(card)
 								|| playerHandList.contains(card1)) {
 							if (!listFixedPair.contains(card1)) {
-								listFixedPair.add(card1);
 								if (playerHandList.contains(card1))
-									playerCardsCntr++;
-							}
-							if(!listFixedPair.contains(card)){
-								listFixedPair.add(card);
+									totalPlayerCards++;
 								if (playerHandList.contains(card))
-									playerCardsCntr++;
+									totalPlayerCards++;
+								listFixedPair.add(card1);
+								listFixedPair.add(card);
 							}
-						} else {
-							listPairCards.add(card1);
-							listPairCards.add(card);
 						}
 					}
 				}
 			}
-		}
+			if (listFixedPair.isEmpty()) {
+				return false;
+			} else {
 
-		if(playerCardsCntr==3){
-			Card maxValueCard = null;
-			for (Card card : playerHandList) {
-				if (maxValueCard == null
-						|| card.getValue() > maxValueCard.getValue()) {
-					maxValueCard = card;
+				Card maxValuePlayerCard = null;
+				if (totalPlayerCards != 2) {
+					for (Card card : playerHandList) {
+						if (!listFixedPair.contains(card)
+								&& (maxValuePlayerCard == null || card.getValue() > maxValuePlayerCard
+										.getValue())) {
+							maxValuePlayerCard = card;
+						}
+					}
+
+				}
+				if (maxValuePlayerCard != null)
+					listFixedPair.add(maxValuePlayerCard);
+
+				for (Card card : allCards) {
+					if (listFixedPair.size() != 5 && !listFixedPair.contains(card)) {
+						listFixedPair.add(card);
+					}
+				}
+
+				if (listFixedPair.size() == 5) {
+					handBestCards = new Card[5];
+					handBestCards[0] = listFixedPair.get(0);
+					handBestCards[1] = listFixedPair.get(1);
+					handBestCards[2] = listFixedPair.get(2);
+					handBestCards[3] = listFixedPair.get(3);
+					handBestCards[4] = listFixedPair.get(4);
+					if(getNoOfCardsOccurance()==2){
+						return true;
+					}else{
+						return false;
+					}
+								
+				} else {
+					return false;
 				}
 			}
-			List<Card> listTmpCard = new ArrayList<Card>();
-			for(Card card : listFixedPair){
-				if(maxValueCard.getRank().equals(card.getRank())){
-					listTmpCard.add(card);
-				}
-			}
-			listFixedPair.clear();
-			listFixedPair.addAll(listTmpCard);
 		}
 		
-		if (listFixedPair.size() == 4) {
-			for (Card card : allCards) {
-				if (!listFixedPair.contains(card)) {
-					listFixedPair.add(card);
-					break;
-				}
-			}
-		} else {
-			Card maxValueCard = null;
-			for (Card card : listPairCards) {
-				if (maxValueCard == null
-						|| card.getValue() > maxValueCard.getValue()) {
-					maxValueCard = card;
-				}
-			}
-			for (Card card : listPairCards) {
-				if (card.getRank() == maxValueCard.getRank()
-						&& !listFixedPair.contains(card)) {
-					listFixedPair.add(card);
-				}
-			}
-			Card maxValuePlayerCard = null;
-			if (playerCardsCntr < 2) {
-				for (Card card : playerHandList) {
-					if (!listFixedPair.contains(card)
-							&& (maxValuePlayerCard == null || card.getValue() > maxValuePlayerCard
-									.getValue())) {
-						maxValuePlayerCard = card;
-					}
-				}
-			} else {
-				for (Card card : allCards) {
-					if (!listFixedPair.contains(card)) {
-						maxValuePlayerCard = card;
-						break;
-					}
-				}
-			}
-			if (maxValuePlayerCard != null)
-				listFixedPair.add(maxValuePlayerCard);
-		}
-
-		if (listFixedPair.size() == 5) {
-			handBestCards = new Card[5];
-			handBestCards[0] = listFixedPair.get(0);
-			handBestCards[1] = listFixedPair.get(1);
-			handBestCards[2] = listFixedPair.get(2);
-			handBestCards[3] = listFixedPair.get(3);
-			handBestCards[4] = listFixedPair.get(4);
-			return checkCardsOccurance(playerHandList);
-		} else {
-			return false;
-		}
-	}
-
-	// Created by chirag
-	public boolean isPairRank(Card[] allCards, List<Card> playerHandList) {
-		List<Card> listFixedPair = new ArrayList<Card>();
-		List<Card> listPairCards = new ArrayList<Card>();
-		int totalPlayerCards = 0;
-		for (Card card : allCards) {
-			for (Card card1 : allCards) {
-				if (card.getRank() == card1.getRank()
-						&& card.getSuit() != card1.getSuit()) {
-					if (playerHandList.contains(card)
-							|| playerHandList.contains(card1)) {
-						if (!listFixedPair.contains(card1)) {
-							if (playerHandList.contains(card1))
-								totalPlayerCards++;
-							if (playerHandList.contains(card))
-								totalPlayerCards++;
-							listFixedPair.add(card1);
-							listFixedPair.add(card);
-						}
-					}else {
-						if(!listPairCards.contains(card1))
-						listPairCards.add(card1);
-						if(!listPairCards.contains(card))
-						listPairCards.add(card);
-					}
-				}
-			}
-		}
-		if (listFixedPair.isEmpty()) {
-			if(!listPairCards.isEmpty()){
-				listFixedPair.addAll(listPairCards);
-			}else{
-			return false;
-			}
-		} if(!listFixedPair.isEmpty()) {
-
-			Card maxValuePlayerCard = null;
-			while (totalPlayerCards != 2) {
-				for (Card card : playerHandList) {
-					if (!listFixedPair.contains(card)
-							&& (maxValuePlayerCard == null || card.getValue() > maxValuePlayerCard
-									.getValue())) {
-						maxValuePlayerCard = card;
-					}
-				}
-				if (maxValuePlayerCard != null){
-					listFixedPair.add(maxValuePlayerCard);
-					totalPlayerCards++;
-				}
-			}
-			
-			for (Card card : allCards) {
-				if (listFixedPair.size() != 5 && !listFixedPair.contains(card)) {
-					listFixedPair.add(card);
-				}
-			}
-
-			if (listFixedPair.size() == 5) {
-				handBestCards = new Card[5];
-				handBestCards[0] = listFixedPair.get(0);
-				handBestCards[1] = listFixedPair.get(1);
-				handBestCards[2] = listFixedPair.get(2);
-				handBestCards[3] = listFixedPair.get(3);
-				handBestCards[4] = listFixedPair.get(4);
-				return checkCardsOccurance(playerHandList);
-			} else {
-				return false;
-			}
-		}
-		return false;
-	}
-
-	public boolean checkForSinglePlayerCards(Card[] allCards,
-			List<Card> playerHandList) {
-
-		List<Card> listPairCards = new ArrayList<Card>();
-		List<Card> listOtherCards = new ArrayList<Card>();
-		for (Card card : handBestCards) {
-			if (!listPairCards.contains(card)) {
-				for (Card card1 : handBestCards) {
-					if (card.getRank() == card1.getRank()
-							&& card.getSuit() != card1.getSuit()) {
-						listPairCards.add(card1);
-						listPairCards.add(card);
-					}
-				}
-			}
-		}
-		for (Card card : allCards) {
-			if (!listPairCards.contains(card)) {
-				listOtherCards.add(card);
-			}
-		}
-		System.out.println("High Pair Cards===================");
-		for (Card card : listPairCards) {
-			System.out.println("= " + card.getCardName());
-		}
-		System.out.println("Other Cards ===================");
-		for (Card card : listOtherCards) {
-			System.out.println("=> " + card.getCardName());
-		}
-		System.out.println("Check other card have pair ===================");
-
-		for (Card card : listOtherCards) {
-
-			for (Card card1 : listOtherCards) {
-				if (card.getRank() == card1.getRank()
-						&& card.getSuit() != card1.getSuit()) {
-					System.out.println("Check other card have pair ===>> YES");
-					if (playerHandList.contains(card1)
-							|| playerHandList.contains(card)) {
-						System.out.println("It is Player hand card ===>> YES");
-						handBestCards[0] = card;
-						handBestCards[1] = card1;
-						Card playerExtraCard = null;
-						for (Card playerCards : playerHandList) {
-							if (!playerCards.getCardName().equals(
-									card1.getCardName())
-									&& !playerCards.getCardName().equals(
-											card.getCardName())) {
-								if (playerExtraCard == null
-										|| playerExtraCard.getValue() < playerCards
-												.getValue()) {
-									playerExtraCard = playerCards;
-								}
-							}
-						}
-						handBestCards[2] = playerExtraCard;
-						for (Card card2 : listPairCards) {
-							for (Card card3 : listPairCards) {
-								if (card2.getValue() <= card3.getValue()) {
-									if (card2.getValue() == card3.getValue()
-											&& card2.getSuit() != card3
-													.getSuit()) {
-										handBestCards[3] = card2;
-										handBestCards[4] = card3;
-										return true;
+		
+		public boolean makePairWithPlayerCards(List<Card> playerHandList){
+			List<Card> 	playerDefaultList=sortingCardsList(defaultCards);
+			boolean flag=false;
+			int k=0;
+			//    Card[] bestCardList = new Card[5];
+			    List<Card> bestCardList=new ArrayList<Card>();
+					for(int i=0;i<playerHandList.size();i++){
+						for(int j=0;j<playerDefaultList.size();j++){
+						if(playerHandList.get(i).getValue()==playerDefaultList.get(j).getValue()){
+							
+							bestCardList.add(k, playerHandList.get(i));
+							bestCardList.add(++k, playerDefaultList.get(j));
+							
+							if(k==handBestCards.length-3){
+								for(int m=0;m<handBestCards.length;m++){
+									for(int n=0;n<bestCardList.size();n++){
+										if(handBestCards[m].getCardName().equals(bestCardList.get(n).cardName)){
+										    flag=true;  
+										}
 									}
+									if(!flag){
+										bestCardList.set(k, handBestCards[m]);
+										flag=false;
+										k++;
+										if(k==handBestCards.length){
+											break;
+										}
+									}
+									
 								}
+								
+								for(int p=0;p<bestCardList.size();p++){
+									handBestCards[p]=bestCardList.get(p);
+								}
+								handBestCards=sortingCardsArray(handBestCards);
+							 return true;
 							}
+						//	continue;
 						}
-
-					} else {
-						System.out.println("It is Player hand card ===>> NO");
+							
 					}
+					
 				}
-			}
+					return false;
+				
+		}
+		
+		
+		private boolean isPair(Card[] allCards,List<Card> playerHandList) {
+			   int lastSameRankOffset=0;
+			   int cardRepeats = 1;
+			   boolean isPair = false;
+			   int m = 0;
+			   int n = m + 1;
+			   while (m < allCards.length && !isPair) {
+			    cardRepeats = 1;
+			    n = m + 1;
+			    while (n < allCards.length && !isPair) {
+			     if (allCards[m].getValue() == allCards[n].getValue()) {
+			      cardRepeats++;
+			      if (cardRepeats == 2) {
+			       isPair = true;
+			       handBestCards[0] = allCards[n];
+			       lastSameRankOffset=n;
+			       break;
+			      }
+			     }
+			     n++;
+			    }
+
+			    m++;
+			   }
+			   if (isPair) {
+			    calculateFinalKindOfArray(3, allCards,lastSameRankOffset);
+			    if(isValidHandBestCards(playerHandList))
+			    {
+			     return isPair;
+			    }else{
+			     return false;
+			    }
+			    
+			   }
+			   return isPair;
+			  }
+		private boolean isFullHouse(Card[] allCards,List<Card> playerHandList) {
+	        return false;
+	        
+//			int lastSameRankOffset=0;
+//			Card cTemp = null;
+//			int ThreeOfKindCardValue = 0;
+//			int noOfRepeats = 1;
+//			int j = 0;
+//			boolean isThreeOfAKind = false;
+//			boolean isTwoOfAKind = false;
+//			for (int i = 0; i < allCards.length; i++) {
+//				j = i + 1;
+//				noOfRepeats = 1;
+//				while (j < allCards.length) {
+//					if (allCards[i].getValue() == allCards[j].getValue()) {
+//						noOfRepeats++;
+//						if (noOfRepeats == 3) {
+//							ThreeOfKindCardValue = allCards[i].getValue();
+//							isThreeOfAKind = true;
+//							cTemp = allCards[j];
+//							lastSameRankOffset=j;
+//							noOfRepeats = 1;
+//							break;
+//						}
+//					}
+//					j++;
+//				}
+//				if (isThreeOfAKind) {
+//					for (int k = 0; k < 3; k++) {
+//						handBestCards[k] = allCards[lastSameRankOffset--];
+//						
+//					}
+//					break;
+//				}
+//			}
+//			if (isThreeOfAKind) {
+//				
+//				for (int i = 0; i < allCards.length - 1; i++) {
+//					j = i + 1;
+//					noOfRepeats = 1;
+//					if (allCards[i].getValue() != ThreeOfKindCardValue) {
+//						while (j < allCards.length) {
+//							if (allCards[i].getValue() == allCards[j].getValue()) {
+//								noOfRepeats++;
+//								if (noOfRepeats == 2) {
+//									isTwoOfAKind = true;
+//									cTemp = allCards[j];
+//									lastSameRankOffset=j;
+//									noOfRepeats = 1;
+//									break;
+//								}
+//							}
+//							j++;
+//						}
+//					}
+//					if (isTwoOfAKind) {
+//						for (int k = 3; k < handBestCards.length; k++) {
+//							
+//							handBestCards[k] =  allCards[lastSameRankOffset--];
+//						}
+//						handBestCards = sortingCardsArray(handBestCards);
+//						break;
+//					}
+//				}
+//			}
+//			return (isTwoOfAKind && isThreeOfAKind);
 
 		}
-		return false;
 
-	}
-
-	public boolean checkPairInPlayerList(List<Card> playerCardList) {
-		for (int i = 0; i < playerCardList.size() - 1; i++) {
-			if (playerCardList.get(i).getValue() == playerCardList.get(i + 1)
-					.getValue()) {
-				handBestCards[handBestCards.length - 1] = playerCardList
-						.get(i + 1);
-				handBestCards[handBestCards.length - 2] = playerCardList.get(i);
-				return true;
+		public boolean isFourOfAKind(Card[] allCards,List<Card> playerHandList,Card waCard) {
+			int lastSameRankOffset=0;
+			int cardRepeats = 1;
+			int fourOfKindValue=0;
+			boolean isFourOfAKind = false;
+			int m = 0;
+			int n = m + 1;
+			while (m < allCards.length && !isFourOfAKind) {
+				cardRepeats = 1;
+				n = m + 1;
+				while (n < allCards.length && !isFourOfAKind) {
+					if (allCards[m].getValue() == allCards[n].getValue()) {
+						cardRepeats++;
+						if (cardRepeats == 4) {
+							handBestCards[0] = allCards[n];
+							fourOfKindValue=allCards[n].getValue();
+							lastSameRankOffset=n;
+							isFourOfAKind = true;
+						}
+					}
+					n++;
+				}
+				m++;
 			}
-		}
-
-		return false;
-
-	}
-
-	public boolean makePairWithPlayerCards(List<Card> playerHandList) {
-		List<Card> playerDefaultList = sortingCardsList(defaultCards);
-		boolean flag = false;
-		int k = 0;
-		// Card[] bestCardList = new Card[5];
-		List<Card> bestCardList = new ArrayList<Card>();
-		for (int i = 0; i < playerHandList.size(); i++) {
-			for (int j = 0; j < playerDefaultList.size(); j++) {
-				if (playerHandList.get(i).getValue() == playerDefaultList
-						.get(j).getValue()) {
-
-					bestCardList.add(k, playerHandList.get(i));
-					bestCardList.add(++k, playerDefaultList.get(j));
-
-					if (k == handBestCards.length - 3) {
-						for (int m = 0; m < handBestCards.length; m++) {
-							for (int n = 0; n < bestCardList.size(); n++) {
-								if (handBestCards[m].getCardName().equals(
-										bestCardList.get(n).cardName)) {
-									flag = true;
-								}
-							}
-							if (!flag) {
-								bestCardList.set(k, handBestCards[m]);
-								flag = false;
-								k++;
-								if (k == handBestCards.length) {
-									break;
-								}
-							}
-
-						}
-
-						for (int p = 0; p < bestCardList.size(); p++) {
-							handBestCards[p] = bestCardList.get(p);
-						}
-						handBestCards = sortingCardsArray(handBestCards);
+			if (isFourOfAKind) {
+				calculateFinalKindOfArray(1, allCards,lastSameRankOffset);
+				
+				if(isValidHandBestCards(playerHandList))
+				{
+					return isFourOfAKind;
+					
+				}else{
+					if(makeFourOfAkindWithPlayerCards()){
 						return true;
+					}else{
+					
+					  return false;
 					}
-					// continue;
 				}
 
 			}
 
+			return isFourOfAKind;
 		}
-		return false;
 
+	
+
+//		public Card[] GetPokerHandArray() {
+		public ArrayList<Card> getPokerHandArray() {
+			ArrayList< Card> pokerHands=  new ArrayList<Card>();
+			for(Card c : handBestCards){
+				pokerHands.add(c);
+			}
+			return pokerHands;
+		//	return this.PokerHandFinalCards;
+		}
+		
+		public ArrayList<String> getWinnerHandCardNameList() {
+			ArrayList< String> pokerHands=  new ArrayList<String>();
+			for(Card c : handBestCards){
+				pokerHands.add(c.getCardName());
+			}
+			return pokerHands;
+		//	return this.PokerHandFinalCards;
+		}
 	}
 
 
-	// public Card[] GetPokerHandArray() {
-	public ArrayList<Card> getPokerHandArray() {
-		ArrayList<Card> pokerHands = new ArrayList<Card>();
-		for (Card c : handBestCards) {
-			pokerHands.add(c);
-		}
-		return pokerHands;
-		// return this.PokerHandFinalCards;
-	}
-
-	public ArrayList<String> getWinnerHandCardNameList() {
-		ArrayList<String> pokerHands = new ArrayList<String>();
-		for (Card c : handBestCards) {
-			pokerHands.add(c.getCardName());
-		}
-		return pokerHands;
-		// return this.PokerHandFinalCards;
-	}
-}
