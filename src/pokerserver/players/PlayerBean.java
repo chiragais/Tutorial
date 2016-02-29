@@ -29,7 +29,9 @@ public class PlayerBean {
 	private boolean isAllInPlayer;
 	private boolean isFoldedPlayer;
 	private HAND_RANK handRank;
+	private int winningIndex = 0;
 	private Card[] handBestCards = new Card[5];
+//	private 
     
 	// private int betAmount;
 
@@ -77,13 +79,12 @@ public class PlayerBean {
 		this.totalBalance = playersBal;
 	}
 
-	// public void setPlayerBetAmount(int betAmt){
-	// this.betAmount=betAmt;
-	// }
-	//
-	// public int getPlayerBetAmount(){
-	// return this.betAmount;
-	// }
+	public void setWinningIndex (int index){
+		this.winningIndex=index;
+	}
+	public int getWinningIndex(){
+		return winningIndex;
+	}
 	public void setWACardStatus(int status){
 		this.wACardStatus=status;
 	}
@@ -99,6 +100,14 @@ public class PlayerBean {
 		return this.totalBalance;
 	}
 
+	
+	public int getBestHandRankTotal(){
+		int totalRank =0;
+		for(Card card :handBestCards ){
+			totalRank += card.getValue();
+		}
+		return totalRank;
+	}
 	public void setPlayerActive(boolean isActive) {
 		this.isActivePlayer = isActive;
 	}
@@ -106,11 +115,8 @@ public class PlayerBean {
 	public void setCards(Card card1, Card card2, Card waCard) {
 		this.cards = new PlayerCards(card1, card2);
 		this.waCard = waCard;
-		System.out.println("Default card 1: " + getPlayeName() + " = "
-				+ card1.getCardName());
-		System.out.println("Default card 2: " + getPlayeName() + " = "
-				+ card2.getCardName());
-		System.out.println("WA Card : " + waCard.getCardName());
+		System.out.println();
+		System.out.println("Card 1: "+ card1.getCardName()+" >> Card 2: "+ card2.getCardName()+" >> WA Card : " + waCard.getCardName());
 	}
 
 	public PlayerCards getPlayerCards() {
@@ -156,9 +162,6 @@ public class PlayerBean {
 	public void setPlayersBestHand(HAND_RANK hand, Card[] listCard) {
 		this.handRank = hand;
 		this.handBestCards = listCard;
-		// System.out.println();
-		// System.out.print("Player Hand : "+ handRank);
-		
 	}
 
 	public HAND_RANK getHandRank() {

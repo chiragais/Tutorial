@@ -394,14 +394,10 @@ public class TexassGameManager implements GameConstants {
 		}
 	}
 
-//	public Winner getTopWinner() {
-//		return winnerManager.getTopWinner();
-//	}
-
-	public PlayerBean getTopWinner() {
+	public Winner getTopWinner() {
 		return winnerManager.getTopWinner();
 	}
-	
+
 	public ArrayList<String> getAllWinnerName() {
 		ArrayList<String> listWinners = new ArrayList<String>();
 		for (Winner winner : winnerManager.getWinnerList()) {

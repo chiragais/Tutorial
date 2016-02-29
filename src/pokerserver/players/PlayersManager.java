@@ -6,6 +6,7 @@ public class PlayersManager {
 
 	public ArrayList<PlayerBean> roomPlayersList; // all player container list
 
+	
 	public PlayersManager() {
 		
 		 roomPlayersList = new ArrayList<>();
