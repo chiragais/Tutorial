@@ -287,13 +287,13 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void addNewPlayerCards(IUser user) {
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, user.getName());
-		if (gameRoom.getJoinedUsers().size() == 0) {
-			player.setTotalBalance(100);
-		} else if (gameRoom.getJoinedUsers().size() == 1) {
-			player.setTotalBalance(200);
-		} else if (gameRoom.getJoinedUsers().size() == 2) {
-			player.setTotalBalance(400);
-		}
+//		if (gameRoom.getJoinedUsers().size() == 0) {
+//			player.setTotalBalance(100);
+//		} else if (gameRoom.getJoinedUsers().size() == 1) {
+//			player.setTotalBalance(200);
+//		} else if (gameRoom.getJoinedUsers().size() == 2) {
+//			player.setTotalBalance(400);
+//		}
 
 		// player.setTotalBalance((gameRoom.getJoinedUsers().size()+1)*500);
 
