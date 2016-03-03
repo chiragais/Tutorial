@@ -1,14 +1,11 @@
 package pokerserver.room;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pokerserver.TexassGameManager;
 import pokerserver.players.PlayerBean;
-import pokerserver.players.Winner;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
 
@@ -131,8 +128,8 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				gameManager.findAllWinnerPlayers();
 				broadcastRoundCompeleteToAllPlayers();
 				broadcastGameCompleteToAllPlayers();
-				handleFinishGame(gameManager.getWinnerPlayer().getPlayeName(),
-						gameManager.getWinnerCards());
+				broadcastWinningPlayer(gameManager.generateWinnerPlayers().get(0));
+				handleFinishGame();
 				izone.deleteRoom(gameRoom.getId());
 			} else {
 				gameManager.moveToNextRound();
@@ -215,7 +212,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		System.out.println();
 		System.out.print("Room : handleUserLeavingTurnRoom :  User : "
 				+ user.getName());
-		gameManager.leavePlayerToGame(gameManager.getPlayerByName(user
+		gameManager.leavePlayerToGame(gameManager.getPlayersManager().getPlayerByName(user
 				.getName()));
 		broadcastBlindPlayerDatas();
 		// This will be changed.
@@ -232,7 +229,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	 * This function stop the game and notify the room players about winning
 	 * user and his cards.
 	 */
-	private void handleFinishGame(String winningUser, ArrayList<String> cards) {
+	private void handleFinishGame() {
 
 		try {
 			gameRoom.setAdaptor(null);
@@ -410,55 +407,63 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_ROUND_COMPLETE
 				+ cardsObject.toString());
 	}
-
-	private void broadcastGameCompleteToAllPlayers() {
-		  JSONArray   winnerArray=new JSONArray();
-			//	JSONObject cardsObject = new JSONObject();
+	private void broadcastWinningPlayer(PlayerBean playerBean) {
+        JSONArray   winnerArray=new JSONArray();
+		JSONObject cardsObject = new JSONObject();
+//		try {
+		/*   for(Winner winnerPlayer:gameManager.getAllWinnerPlayers()){
+			   // Winner winnerPlayer = gameManager.getTopWinner();
+			    JSONObject winnerObject = new JSONObject();
+			    winnerObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
+			    winnerObject
+			      .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
+			    
+			    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
+			      winnerPlayer.getPlayer().getTotalBalance());
+			    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+			    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
+			      .ordinal());
+			    winnerObject.put(TAG_WINNERS_WINNING_AMOUNT,
+					      winnerPlayer.getWinningAmount());
+			    
+			    winnerObject.put(TAG_WINNER_BEST_CARDS,
+			      winnerPlayer.getPlayer().getBestHandCardsName());
+			    winnerArray.put(winnerObject);
+		     }
+		*/
+//		   gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+//		     + winnerArray.toString());
+//		   System.out.println("winner array is  "+winnerArray.toString());
+//		   } catch (JSONException e) {
+//				e.printStackTrace();
+//			}
 		try {
-			/*PlayerBean winnerPlayer = gameManager.getWinnerPlayer();
-			cardsObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
 			cardsObject
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-			winnerPlayer.setTotalBalance(winnerPlayer.getTotalBalance()
-					+ gameManager.getTotalTableAmount());
-			cardsObject.put(TAG_WINNER_TOTAL_BALENCE,
-					winnerPlayer.getTotalBalance());
-			cardsObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayeName());
-			cardsObject.put(TAG_WINNER_RANK, winnerPlayer.getHandRank()
-					.ordinal());
-			cardsObject.put(TAG_WINNER_BEST_CARDS,
-					winnerPlayer.getBestHandCardsName());
 
-			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+			cardsObject.put(TAG_WINNER_TOTAL_BALENCE, playerBean
+					.getTotalBalance());
+			cardsObject.put(TAG_WINNER_NAME, playerBean
+					.getPlayeName());
+			cardsObject.put(TAG_WINNER_RANK, playerBean
+					.getHandRank().ordinal());
+			cardsObject.put(TAG_WINNER_BEST_CARDS, playerBean
+					.getBestHandCardsName());
+
+			// cardsObject.put(TAG_PLAYER, player.getPlayeName());
+			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_WINNIER_INFO
 					+ cardsObject.toString());
-			System.out.println();
-			System.out.print("Winner Player : " + cardsObject.toString());*/
-			
-			
-		   for(Winner winnerPlayer:gameManager.getAllWinnerPlayers()){
-		   // Winner winnerPlayer = gameManager.getTopWinner();
-		    JSONObject winnerObject = new JSONObject();
-		    winnerObject.put(TAG_ROUND, gameManager.getCurrentRoundIndex());
-		    winnerObject
-		      .put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
-		    
-		    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
-		      winnerPlayer.getPlayer().getTotalBalance());
-		    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
-		    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
-		      .ordinal());
-		    winnerObject.put(TAG_WINNER_BEST_CARDS,
-		      winnerPlayer.getPlayer().getBestHandCardsName());
-		    winnerArray.put(winnerObject);
-		    winnerObject.put(TAG_WINNERS_WINNING_AMOUNT,
-				      winnerPlayer.getWinningAmount());
-		   }
-		   gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
-				     + winnerArray.toString());
-				   System.out.println("winner array is  "+winnerArray.toString());
-				   } catch (JSONException e) {
-						e.printStackTrace();
-				}
+			System.out.println("Winner Info : "+ cardsObject.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void broadcastGameCompleteToAllPlayers() {
+        JSONArray   winnerArray=new JSONArray();
+        gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
+		     + winnerArray.toString());
+	   System.out.println("winner array is  "+winnerArray.toString());
 
 	}
 

@@ -26,7 +26,9 @@ public interface GameConstants {
 	public String SUIT_CLUB = "club";
 
 	public static int maxPlayers = 6;
-
+	public int TEXASS_PLAYER_CARD_LIMIT_FOR_HAND = 0;
+	public int WA_PLAYER_CARD_LIMIT_FOR_HAND = 2;
+	
 	public int MIN_PLAYER_TO_START_GAME = 3;
 
 	// All Texass Rounds constants

@@ -3,11 +3,12 @@ package pokerserver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import pokerserver.cards.Card;
+import pokerserver.handrank.GeneralHandManager;
 import pokerserver.players.AllInPlayer;
 import pokerserver.players.GamePlay;
-import pokerserver.players.HandManager;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
 import pokerserver.players.Winner;
@@ -25,9 +26,11 @@ import pokerserver.utils.GameConstants;
 public class TexassGameManager implements GameConstants {
 
 	PlayersManager playersManager;
-	HandManager handManager;
+//	HandManager handManager;
+	GeneralHandManager handManager;
 	public GamePlay gamePlay;
 	ArrayList<Card> listDefaultCards = new ArrayList<Card>();
+	ArrayList<Card> listTableCards = new ArrayList<Card>();
 	RoundManager preflopRound;
 	RoundManager flopRound;
 	RoundManager turnRound;
@@ -36,32 +39,21 @@ public class TexassGameManager implements GameConstants {
 	WinnerManager winnerManager;
 
 	public TexassGameManager() {
-		// TODO Auto-generated constructor stub
 		playersManager = new PlayersManager();
-
-		initGameRounds();
 	}
 
 	public void initGameRounds() {
-		System.out.println();
 		System.out
-				.print("================== WA Game started ==================");
+				.println("================== Texass Game started ==================");
 		winnerManager = new WinnerManager(playersManager);
 		generateDefaultCards();
 		preflopRound = new RoundManager(TEXASS_ROUND_PREFLOP);
 		flopRound = new RoundManager(TEXASS_ROUND_FLOP);
 		turnRound = new RoundManager(TEXASS_ROUND_TURN);
 		riverRound = new RoundManager(TEXASS_ROUND_RIVER);
-		handManager = new HandManager(listDefaultCards);
+//		handManager = new HandManager(listDefaultCards);
+		handManager = new GeneralHandManager(TEXASS_PLAYER_CARD_LIMIT_FOR_HAND);
 		startPreFlopRound();
-	}
-
-	public void createGamePlat() {
-		// gamePlay = new GamePlay(playersManager);
-	}
-
-	public void setTableCards() {
-		// gamePlay.setTableCards(listDefaultCards);
 	}
 
 	public RoundManager getCurrentRoundInfo() {
@@ -79,9 +71,7 @@ public class TexassGameManager implements GameConstants {
 
 	public void addNewPlayerToGame(PlayerBean player) {
 		// handManager.findPlayerBestHand(player.getPlayerCards());
-		player.setPlayersBestHand(
-				handManager.findPlayerBestHand(player.getPlayerCards()),
-				handManager.getPlayerBestCards());
+		handManager.generatePlayerBestRank(listDefaultCards, player);
 		for (Card card : player.getBestHandCards()) {
 			System.out.println();
 			System.out.print("Player Best Cards : " + card.getCardName());
@@ -172,39 +162,10 @@ public class TexassGameManager implements GameConstants {
 		return riverRound;
 	}
 
-	public PlayerBean getWinnerPlayer() {
-
-		Collections.sort(playersManager.getAllAvailablePlayers(),
-				new Comparator<PlayerBean>() {
-					@Override
-					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
-						return paramT1.getHandRank().compareTo(
-								paramT2.getHandRank());
-					}
-				});
-
-		PlayerBean winnerPlayer = null;
-		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.isPlayerActive() && winnerPlayer == null) {
-				winnerPlayer = player;
-			}
-		}
-
-		return winnerPlayer;
-	}
-
 	public ArrayList<String> getWinnerCards() {
 		return gamePlay.getWinnerCards();
 	}
 
-	public PlayerBean getPlayerByName(String name) {
-		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.getPlayeName().equals(name)) {
-				return player;
-			}
-		}
-		return null;
-	}
 
 	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
 			int action) {
@@ -277,7 +238,7 @@ public class TexassGameManager implements GameConstants {
 	}
 
 	public int getPlayerTotalBetAmount(String name) {
-		PlayerBean player = getPlayerByName(name);
+		PlayerBean player = playersManager.getPlayerByName(name);
 		int totalBetAmount = 0;
 		totalBetAmount += preflopRound.getTotalPlayerBetAmount(player);
 		totalBetAmount += flopRound.getTotalPlayerBetAmount(player);
@@ -310,19 +271,21 @@ public class TexassGameManager implements GameConstants {
 	/** It will generate flop(3), turn(1) and river(1) cards. Total 5 cards */
 	public void generateDefaultCards() {
 		listDefaultCards.clear();
+		listTableCards.clear();
 		while (listDefaultCards.size() != 5) {
 			Card cardBean = new Card();
 			if (!isAlreadyDesributedCard(cardBean)) {
 				System.out.println();
 				System.out.print("Default card : " + cardBean.getCardName());
 				listDefaultCards.add(cardBean);
+				listTableCards.add(cardBean);
 			}
 		}
 	}
 
 	/** Check card is already on table or not */
 	public boolean isAlreadyDesributedCard(Card cardBean) {
-		for (Card cardBean2 : listDefaultCards) {
+		for (Card cardBean2 : listTableCards) {
 			if (cardBean.getCardName().equals(cardBean2.getCardName())) {
 				return true;
 			}
@@ -335,8 +298,7 @@ public class TexassGameManager implements GameConstants {
 		while (isAlreadyDesributedCard(cardBean)) {
 			cardBean.generateRandomCard();
 		}
-		// System.out.print("Default card  : " + cardBean.getCardName());
-		listDefaultCards.add(cardBean);
+		listTableCards.add(cardBean);
 		return cardBean;
 	}
 
@@ -346,15 +308,6 @@ public class TexassGameManager implements GameConstants {
 		// gamePlay.executePlayerAction(betAmount, userAction);
 		return addCurrentActionToTurnManager(userName, betAmount, userAction);
 	}
-
-	// public int getTotalTableAmount() {
-	// int totalBetAmount = 0;
-	// totalBetAmount += preflopRound.getTotalRoundBetAmount();
-	// totalBetAmount += flopRound.getTotalRoundBetAmount();
-	// totalBetAmount += turnRound.getTotalRoundBetAmount();
-	// totalBetAmount += riverRound.getTotalRoundBetAmount();
-	// return totalBetAmount;
-	// }
 
 	private TurnManager addCurrentActionToTurnManager(String userName,
 			int betAmount, int action) {
@@ -412,6 +365,9 @@ public class TexassGameManager implements GameConstants {
 
 	public void findAllWinnerPlayers() {
 		winnerManager.findWinnerPlayers();
+	}
+	public List<PlayerBean> generateWinnerPlayers(){
+		return winnerManager.generateWinnerPlayers();
 	}
 
 	public void calculatePotAmountForAllInMembers() {

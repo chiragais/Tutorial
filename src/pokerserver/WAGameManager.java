@@ -6,9 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import pokerserver.cards.Card;
+import pokerserver.handrank.GeneralHandManager;
 import pokerserver.players.AllInPlayer;
 import pokerserver.players.GamePlay;
-import pokerserver.players.GeneralHandManager;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
 import pokerserver.players.Winner;
@@ -26,7 +26,6 @@ import pokerserver.utils.GameConstants;
 public class WAGameManager implements GameConstants {
 
 	PlayersManager playersManager;
-//	WhoopAssHandManager handManager;
 	GeneralHandManager handManager;
 	public GamePlay gamePlay;
 	ArrayList<Card> listDefaultCards = new ArrayList<Card>();
@@ -40,15 +39,12 @@ public class WAGameManager implements GameConstants {
 	WinnerManager winnerManager;
 
 	public WAGameManager() {
-		// TODO Auto-generated constructor stub
 		playersManager = new PlayersManager();
-		// initGameRounds();
 	}
 
 	public void initGameRounds() {
-		System.out.println();
 		System.out
-				.print("================== WA Game started ==================");
+				.println("================== WA Game started ==================");
 		winnerManager = new WinnerManager(playersManager);
 		generateDefaultCards();
 		startRound = new RoundManager(WA_ROUND_START);
@@ -56,17 +52,8 @@ public class WAGameManager implements GameConstants {
 		secondFlopRound = new RoundManager(WA_ROUND_SECOND_FLOP);
 		whoopAssRound = new RoundManager(WA_ROUND_WHOOPASS);
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
-//		handManager = new WhoopAssHandManager(listDefaultCards);
-		handManager = new GeneralHandManager();
+		handManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
 		startFirstRound();
-	}
-
-	public void createGamePlat() {
-		// gamePlay = new GamePlay(playersManager);
-	}
-
-	public void setTableCards() {
-		// gamePlay.setTableCards(listDefaultCards);
 	}
 
 	public RoundManager getCurrentRoundInfo() {
@@ -85,20 +72,12 @@ public class WAGameManager implements GameConstants {
 	}
 
 	public void addNewPlayerToGame(PlayerBean player) {
-
-		// player.setPlayersBestHand(
-		// handManager.findPlayerBestHand(player.getPlayerCards(),player.getWACard(),GameConstants.ACTION_WA_UP),
-		// handManager.getPlayerBestCards());
 		this.playersManager.addNewPlayerInRoom(player);
 	}
 
 	public void findBestPlayerHand() {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-//			HAND_RANK rank = handManager.findPlayerBestHand(
-//					player.getPlayerCards(), player.getWACard(),
-//					player.getWACardStatus());
-//			player.setPlayersBestHand(rank, handManager.getPlayerBestCards(),null);
-			handManager.generatePlayerBestRank(listDefaultCards, player,player.getWACardStatus());
+			handManager.generatePlayerBestRank(listDefaultCards, player);
 		}
 	}
 
@@ -127,12 +106,12 @@ public class WAGameManager implements GameConstants {
 	}
 	public void calculatePotAmountForAllInMembers() {
 		int allInBetTotalAmount = 0;
-
+		System.out.println("\n ---------calculatePotAmountForAllInMembers------------------------");
 		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
 			allInBetTotalAmount = 0;
 			PlayerBean player = playersManager.getAllAvailablePlayers().get(i);
 			boolean isAllIn = player.isPlayrAllIn();
-			int lastAction = getCurrentRoundInfo().getPlayerLastAction(player);
+//			int lastAction = getCurrentRoundInfo().getPlayerLastAction(player);
 			if (isAllIn
 					&& winnerManager.getAllInPotAmount(player.getPlayeName()) == 0) {
 
@@ -144,10 +123,7 @@ public class WAGameManager implements GameConstants {
 							.getTotalPlayerBetAmount(
 									playersManager.getAllAvailablePlayers()
 											.get(j))) {
-						// allInAmountArray[i] = allInAmountArray[i] +
-						// allInBetAmt;
 						allInBetTotalAmount = allInBetTotalAmount + allInBetAmt;
-
 					} else {
 						allInBetTotalAmount = allInBetTotalAmount
 								+ getCurrentRoundInfo()
@@ -155,7 +131,6 @@ public class WAGameManager implements GameConstants {
 												playersManager
 														.getAllAvailablePlayers()
 														.get(j));
-
 					}
 				}
 
@@ -179,6 +154,11 @@ public class WAGameManager implements GameConstants {
 
 		}
 
+		for(AllInPlayer allInPlayer : winnerManager.getAllInPlayers()){
+			System.out.println("\n All IN Player :  "
+					+ allInPlayer.getPlayeName() + "  Bet Amount =  "
+					+ allInPlayer.getTotalAllInPotAmount());
+		}
 	}
 
 	public void leavePlayerToGame(PlayerBean player) {
@@ -282,95 +262,9 @@ public class WAGameManager implements GameConstants {
 	public RoundManager getThirdRound() {
 		return thirdRound;
 	}
-
-	public PlayerBean getWinnerPlayer() {
-
-		Collections.sort(playersManager.getAllAvailablePlayers(),
-				new Comparator<PlayerBean>() {
-					@Override
-					public int compare(PlayerBean paramT1, PlayerBean paramT2) {
-						return paramT1.getHandRank().compareTo(
-								paramT2.getHandRank());
-					}
-				});
-
-		PlayerBean winnerPlayer = null;
-		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.isPlayerActive() && winnerPlayer == null) {
-				winnerPlayer = player;
-			}
-		}
-
-		return winnerPlayer;
-	}
-
-	// public PlayerBean getWinnerPlayer() {
-	//
-	// Collections.sort(playersManager.getAllAvailablePlayers(),
-	// new Comparator<PlayerBean>() {
-	// @Override
-	// public int compare(PlayerBean paramT1, PlayerBean paramT2) {
-	// return paramT1.getHandRank().compareTo(
-	// paramT2.getHandRank());
-	// }
-	// });
-	//
-	//
-	// for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-	//
-	// System.out.println("\n winner are =     "+player.getHandRank());
-	// }
-	// System.out.println("\n ---------------------------------");
-	// findSameRankWinners();
-	//
-	// for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-	//
-	// System.out.println("\n winner are =     "+player.getHandRank());
-	// }
-	//
-	// System.out.println("\n ---------------------------------");
-	//
-	//
-	//
-	// PlayerBean winnerPlayer = null;
-	// for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-	// if (player.isPlayerActive() && winnerPlayer == null) {
-	// winnerPlayer = player;
-	// }
-	// }
-	//
-	// return playersManager.getAllAvailablePlayers().get(0);
-	//
-	// //return winnerPlayer;
-	// }
-
-	public void findSameRankWinners() {
-
-		ArrayList<PlayerBean> listPlayers = new ArrayList<PlayerBean>();
-		listPlayers.clear();
-		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
-			listPlayers.add(playersManager.getAllAvailablePlayers().get(i));
-		}
-		PlayerBean player = playersManager.getAllAvailablePlayers().get(0);
-		for (PlayerBean playerTemp : listPlayers) {
-			if (player.getHandRank() != playerTemp.getHandRank()) {
-				playersManager.getAllAvailablePlayers().remove(playerTemp);
-			}
-
-		}
-	}
-
+	
 	public ArrayList<String> getWinnerCards() {
 		return gamePlay.getWinnerCards();
-	}
-
-	public PlayerBean getPlayerByName(String name) {
-		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.getPlayeName().equals(name)) {
-				return player;
-			}
-		}
-		return null;
 	}
 
 	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
@@ -465,7 +359,7 @@ public class WAGameManager implements GameConstants {
 	}
 
 	public int getPlayerTotalBetAmount(String name) {
-		PlayerBean player = getPlayerByName(name);
+		PlayerBean player = playersManager.getPlayerByName(name);
 		int totalBetAmount = 0;
 		totalBetAmount += startRound.getTotalPlayerBetAmount(player);
 		totalBetAmount += firstFlopRound.getTotalPlayerBetAmount(player);
@@ -495,6 +389,9 @@ public class WAGameManager implements GameConstants {
 			break;
 		case WA_ROUND_THIRD_FLOP:
 			// startThirdFlopRound();
+			calculatePotAmountForAllInMembers();
+			getCurrentRoundInfo().setStatus(
+					ROUND_STATUS_FINISH);
 			break;
 		}
 
@@ -510,7 +407,6 @@ public class WAGameManager implements GameConstants {
 				System.out.println();
 				System.out.print("Default card : " + cardBean.getCardName());
 				listDefaultCards.add(cardBean);
-				listTableCards.add(cardBean);
 			}
 		}
 	}
@@ -522,6 +418,7 @@ public class WAGameManager implements GameConstants {
 				return true;
 			}
 		}
+		listTableCards.add(cardBean);
 		return false;
 	}
 
@@ -531,7 +428,6 @@ public class WAGameManager implements GameConstants {
 			cardBean.generateRandomCard();
 		}
 		// System.out.print("Default card  : " + cardBean.getCardName());
-		listTableCards.add(cardBean);
 		return cardBean;
 	}
 

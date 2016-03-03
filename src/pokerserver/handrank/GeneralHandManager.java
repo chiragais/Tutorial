@@ -1,9 +1,10 @@
-package pokerserver.players;
+package pokerserver.handrank;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import pokerserver.cards.Card;
+import pokerserver.players.PlayerBean;
 import pokerserver.utils.GameConstants;
 
 //http://www.cardplayer.com/rules-of-poker/hand-rankings
@@ -12,10 +13,11 @@ public class GeneralHandManager implements GameConstants {
 	List<Card> defaultCards = new ArrayList<Card>();
 	List<Card> playerCards = new ArrayList<Card>();
 	List<Card> playerBestHandCard = new ArrayList<Card>();
-	int PLAYER_CARD_LIMIT_FOR_HAND = 2;
+	int PLAYER_CARD_LIMIT_FOR_HAND = 0;
 	final int BEST_HAND_CARD_LIMIT = 5;
 
-	public GeneralHandManager() {
+	public GeneralHandManager(int playerCardLimit) {
+		this.PLAYER_CARD_LIMIT_FOR_HAND = playerCardLimit;
 	}
 
 	public List<Card> setPlayerAndDefaultCards(List<Card> defaultCards,List<Card> playerCards) {
@@ -30,7 +32,7 @@ public class GeneralHandManager implements GameConstants {
 		 return allTableCards;
 	}
 	
-	public  void generatePlayerBestRank(List<Card> listDefaultCards,PlayerBean playerBean,int waCardAction){
+	public  void generatePlayerBestRank(List<Card> listDefaultCards,PlayerBean playerBean){
 		System.out.println();
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		HAND_RANK handRank = null;
@@ -40,10 +42,10 @@ public class GeneralHandManager implements GameConstants {
 		listPlayersCards.add(playerBean.getFirstCard());
 		listPlayersCards.add(playerBean.getSecondCard());
 		listDefaultTableCards.addAll(listDefaultCards);
-		if(waCardAction==ACTION_WA_DOWN){
+		if(playerBean.getWACardStatus()==ACTION_WA_DOWN){
 			System.out.println("=========== WA Down");
 			listPlayersCards.add(playerBean.getWACard());
-		}else if(waCardAction== ACTION_WA_UP){
+		}else if(playerBean.getWACardStatus()== ACTION_WA_UP){
 			System.out.println("=========== WA UP");
 			listDefaultTableCards.add(playerBean.getWACard());
 		}
@@ -452,6 +454,7 @@ public class GeneralHandManager implements GameConstants {
 										break;
 									}
 								}
+								break;
 							}
 						} else {
 							// Add player cards
@@ -1024,17 +1027,6 @@ public class GeneralHandManager implements GameConstants {
 	 */
 	public List<PlayerBean> manageSameRoyalFlushRank(List<PlayerBean> listPlayers){
 		return listPlayers;
-	}
-
-	/** 
-	 * Manage multiple straight flush winning players. Winning will be decided on joining order 
-	 * @param listPlayers
-	 * @return listPlayers
-	 */
-	public List<PlayerBean> manageSameStraightFlushRank(List<PlayerBean> listPlayers){
-		List<PlayerBean> listWinningPlayers = new ArrayList<PlayerBean>();
-		
- 		return listPlayers;
 	}
 	
 }

@@ -9,10 +9,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import pokerserver.players.GeneralHandManager;
+import pokerserver.handrank.GeneralHandManager;
+import pokerserver.handrank.WhoopAssHandManager;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
-import pokerserver.players.WhoopAssHandManager;
 import pokerserver.utils.GameConstants;
 
 import com.shephertz.app42.server.AppWarpServer;
@@ -26,30 +26,33 @@ public class Main implements GameConstants {
 	static PlayersManager playersManager ;
 	static GeneralHandManager generalHandManager;
 	public static void main(String[] args) throws Exception {
-		/*generalHandManager = new GeneralHandManager();
+/*		generalHandManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
 		playersManager = new PlayersManager();
 		ArrayList<Card> listDefaultCards = new ArrayList<Card>();
-		listDefaultCards.add(new Card(SUIT_SPADE, RANK_THREE));
-		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_EIGHT));
-		listDefaultCards.add(new Card(SUIT_CLUB, RANK_ACE));
-		listDefaultCards.add(new Card(SUIT_HEART, RANK_NINE));
-		listDefaultCards.add(new Card(SUIT_CLUB, RANK_QUEEN));
-		listDefaultCards.add(new Card(SUIT_CLUB, RANK_TWO));
+		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_KING));
+		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_QUEEN));
+		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_FOUR));
+		listDefaultCards.add(new Card(SUIT_CLUB, RANK_SIX));
+		listDefaultCards.add(new Card(SUIT_SPADE, RANK_JACK));
+		listDefaultCards.add(new Card(SUIT_CLUB, RANK_FIVE));
 
 		PlayerBean playerBean1 = new PlayerBean(1, "Player 1");
-		playerBean1.setCards(new Card(SUIT_SPADE, RANK_QUEEN), new Card(SUIT_DIAMOND, RANK_NINE),  new Card(SUIT_DIAMOND, RANK_SEVEN));
+		playerBean1.setCards(new Card(SUIT_CLUB, RANK_TEN), new Card(SUIT_HEART, RANK_KING),  new Card(SUIT_SPADE, RANK_THREE));
+		playerBean1.setWACardStatus(ACTION_WA_DOWN);
 		playersManager.addNewPlayerInRoom(playerBean1);
-		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean1,ACTION_WA_DOWN);
+		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean1);
 		
 		PlayerBean playerBean2 = new PlayerBean(2, "Player 2");
-		playerBean2.setCards(new Card(SUIT_HEART, RANK_ACE), new Card(SUIT_SPADE, RANK_NINE),  new Card(SUIT_CLUB, RANK_FOUR));
+		playerBean2.setCards(new Card(SUIT_DIAMOND, RANK_NINE), new Card(SUIT_SPADE, RANK_TWO),  new Card(SUIT_SPADE, RANK_SIX));
+		playerBean2.setWACardStatus(ACTION_WA_DOWN);
 		playersManager.addNewPlayerInRoom(playerBean2);
-		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean2,ACTION_WA_UP);
+		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean2);
 //		
 		PlayerBean playerBean3 = new PlayerBean(2, "Player 3");
-		playerBean3.setCards(new Card(SUIT_DIAMOND, RANK_ACE), new Card(SUIT_SPADE, RANK_EIGHT),  new Card(SUIT_SPADE, RANK_EIGHT));
+		playerBean3.setCards(new Card(SUIT_SPADE, RANK_ACE), new Card(SUIT_CLUB, RANK_ACE),  new Card(SUIT_HEART, RANK_JACK));
+		playerBean3.setWACardStatus(ACTION_WA_DOWN);
 		playersManager.addNewPlayerInRoom(playerBean3);
-		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean3,ACTION_WA_NO);
+		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean3);
 		generateWinnerPlayers();*/
 		
 		String appconfigPath = System.getProperty("user.dir")

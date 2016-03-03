@@ -1,4 +1,4 @@
-package pokerserver.players;
+package pokerserver.handrank;
 
 import java.util.ArrayList;
 import java.util.List;

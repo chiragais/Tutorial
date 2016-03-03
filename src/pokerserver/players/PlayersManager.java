@@ -19,6 +19,14 @@ public class PlayersManager {
 	public ArrayList<PlayerBean> getAllAvailablePlayers(){
 		return roomPlayersList;
 	}
+	public PlayerBean getPlayerByName(String name) {
+		for (PlayerBean player : roomPlayersList) {
+			if (player.getPlayeName().equals(name)) {
+				return player;
+			}
+		}
+		return null;
+	}
 	
 	public void setAllAvailablePlayers(ArrayList<PlayerBean> playerList){
 		roomPlayersList.clear();

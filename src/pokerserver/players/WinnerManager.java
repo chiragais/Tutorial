@@ -108,7 +108,7 @@ public class WinnerManager {
 	}
 
 	public void findWinnerPlayers() {
-	
+		System.out.println("\n Find Winner Player ------------");
 		for (PlayerBean player : generateWinnerPlayers()) {
 			if (player.isPlayerActive()) {
 				if (!player.isPlayrAllIn()) {
@@ -141,20 +141,20 @@ public class WinnerManager {
 				}
 			}
 		}
-
 		if (totalTableAmount != 0) {
 			remainingAmount = totalTableAmount;
 		}
-
 		System.out.println("\n ---------------------------------");
-		for (AllInPlayer player : listAllinPotAmounts) {
-
-			System.out.println("\n All In pot amount are =     "
-					+ player.getTotalAllInPotAmount());
+		for (Winner player : listWinners) {
+			System.out.println("\n Winner Player =  "
+					+ player.getPlayer().getPlayeName() +" :: Amount : "+player.getWinningAmount());
 		}
 
 	}
 
+	public List<AllInPlayer> getAllInPlayers(){
+		return listAllinPotAmounts;
+	}
 	public ArrayList<Winner> getWinnerList() {
 		return listWinners;
 	}
