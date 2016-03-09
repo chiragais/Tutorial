@@ -17,7 +17,7 @@ public interface GameConstants {
 		two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace
 	}
 	public enum HAND_RANK {
-		ROYAL_FLUSH, STRAIGHT_FLUSH, FOUR_OF_A_KIND, FULL_HOUSE, FLUSH, STRAIGHT, THREE_OF_A_KIND, TWO_PAIR, PAIR, HIGH_CARD
+		ROYAL_FLUSH, STRAIGHT_FLUSH, FOUR_OF_A_KIND, FULL_HOUSE, FLUSH, STRAIGHT, THREE_OF_A_KIND, TWO_PAIR, PAIR, HIGH_CARD,FOLDED
 	}
 
 	public String SUIT_HEART = "heart";
@@ -98,6 +98,7 @@ public interface GameConstants {
 	public int RESUMED = 74;
 	public int FINISHED = 75;
 	public int CARD_DISTRIBUTE = 76;
+	public int RESTART = 77;
 
 	// Player actions
 	/** Betting the same amount as BB */
@@ -134,10 +135,12 @@ public interface GameConstants {
 	String REQUEST_FOR_ACTION = 3 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_ACTION_DONE = 4 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_ROUND_COMPLETE = 5 + RESPONSE_DATA_SEPRATOR;
+	String RESPONSE_FOR_GAME_START = 6+RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_GAME_COMPLETE = 7 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_BLIEND_PLAYER = 8 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_DESTRIBUTE_CARD = 9 + RESPONSE_DATA_SEPRATOR;
 	String RESPONSE_FOR_WINNIER_INFO = 10 + RESPONSE_DATA_SEPRATOR;
+	String REQUEST_FOR_RESTART_GAME = 11 + RESPONSE_DATA_SEPRATOR;
 
 	String TAG_ACTION = "Action";
 	String TAG_BET_AMOUNT = "Bet_Amount";

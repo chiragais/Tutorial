@@ -96,7 +96,7 @@ public class GeneralHandManager implements GameConstants {
 		if (handRank!=null) {
 			listBestCards = getPlayerBestCards();
 			Card[] bestCard = new Card[listBestCards.size()];
-			System.out.println("Player : "+playerBean.getPlayeName()+" >> Rank : "+ handRank);
+			System.out.println("Player : "+playerBean.getPlayerName()+" >> Rank : "+ handRank);
 			for (int i=0;i<listBestCards.size();i++) {
 				System.out.println(listBestCards.get(i).getCardName());
 				bestCard[i]=listBestCards.get(i);
@@ -364,6 +364,7 @@ public class GeneralHandManager implements GameConstants {
 								break;
 							}
 						}
+						break;
 					}
 				} else {
 					// Add player cards
@@ -958,6 +959,7 @@ public class GeneralHandManager implements GameConstants {
 							break;
 						}
 					}
+					break;
 				}
 			} else {
 				for (Card card : playerCards) {
@@ -999,6 +1001,7 @@ public class GeneralHandManager implements GameConstants {
 							break;
 						}
 					}
+					break;
 				}
 			} else {
 				for (Card card : playerCards) {

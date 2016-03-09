@@ -19,11 +19,11 @@ public class PlayerBean {
 	private String playerName;
 	private int playerId;
 	private int totalBalance = 1000;
-	private boolean isActivePlayer = true;
+//	private boolean isActivePlayer = true;
 	private PlayerCards cards;
 	private Card waCard;
 	private int wACardStatus;
-	
+	private boolean isDealer;
 	private boolean isSmalBlind;
 	private boolean isBigBlind;
 	private boolean isAllInPlayer;
@@ -55,6 +55,14 @@ public class PlayerBean {
 		return this.isSmalBlind;
 	}
 
+	public void setDealer(boolean b) {
+		this.isDealer = b;
+	}
+
+	public boolean isDealer() {
+		return this.isDealer;
+	}
+	
 	public void setBigBlind(boolean b) {
 		this.isBigBlind = b;
 	}
@@ -69,10 +77,6 @@ public class PlayerBean {
 
 	public void setPlayerName(String pName) {
 		this.playerName = pName;
-	}
-
-	public String getPlayeName() {
-		return playerName;
 	}
 
 	public void setTotalBalance(int playersBal) {
@@ -108,10 +112,9 @@ public class PlayerBean {
 		}
 		return totalRank;
 	}
-	public void setPlayerActive(boolean isActive) {
-		this.isActivePlayer = isActive;
-	}
-
+//	public void setPlayerActive(boolean isActive) {
+//		this.isActivePlayer = isActive;
+//	}
 	public void setCards(Card card1, Card card2, Card waCard) {
 		this.cards = new PlayerCards(card1, card2);
 		this.waCard = waCard;
@@ -139,11 +142,11 @@ public class PlayerBean {
 		return this.playerName;
 	}
 
-	public boolean isPlayerActive() {
-		return this.isActivePlayer;
-	}
+//	public boolean isPlayerActive() {
+//		return this.isActivePlayer;
+//	}
 
-	public boolean isPlayrAllIn() {
+	public boolean isAllIn() {
 		return this.isAllInPlayer;
 	}
 
@@ -151,7 +154,7 @@ public class PlayerBean {
 		this.isAllInPlayer = b;
 	}
 
-	public boolean isPlayrFolded() {
+	public boolean isFolded() {
 		return this.isFoldedPlayer;
 	}
 

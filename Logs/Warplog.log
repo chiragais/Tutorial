@@ -28047,3 +28047,349 @@
 2016-03-03 14:50:39,584 - WARNING: Running with 500 CCU limit
 2016-03-03 16:09:12,026 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
 2016-03-03 16:09:12,028 - WARNING: Running with 500 CCU limit
+2016-03-04 14:39:22,004 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 14:39:22,014 - WARNING: Running with 500 CCU limit
+2016-03-04 15:06:49,910 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 15:06:49,910 - WARNING: Running with 500 CCU limit
+2016-03-04 15:44:19,441 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 15:44:19,447 - WARNING: Running with 500 CCU limit
+2016-03-04 17:20:31,857 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 17:20:31,861 - WARNING: Running with 500 CCU limit
+2016-03-04 17:22:11,486 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 17:22:11,491 - WARNING: Running with 500 CCU limit
+2016-03-04 17:23:52,565 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 17:23:52,570 - WARNING: Running with 500 CCU limit
+2016-03-04 18:32:37,571 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 18:32:37,591 - WARNING: Running with 500 CCU limit
+2016-03-04 18:35:02,750 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-04 18:35:02,754 - WARNING: Running with 500 CCU limit
+2016-03-05 11:01:12,806 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 11:01:12,812 - WARNING: Running with 500 CCU limit
+2016-03-05 11:27:46,016 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 11:27:46,021 - WARNING: Running with 500 CCU limit
+2016-03-05 11:35:03,327 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 11:35:03,332 - WARNING: Running with 500 CCU limit
+2016-03-05 12:00:36,996 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:00:37,003 - WARNING: Running with 500 CCU limit
+2016-03-05 12:25:22,662 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:25:22,667 - WARNING: Running with 500 CCU limit
+2016-03-05 12:33:03,437 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:33:03,442 - WARNING: Running with 500 CCU limit
+2016-03-05 12:35:00,313 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:35:00,318 - WARNING: Running with 500 CCU limit
+2016-03-05 12:36:34,676 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:36:34,682 - WARNING: Running with 500 CCU limit
+2016-03-05 12:41:34,437 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 12:42:47,790 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:42:47,795 - WARNING: Running with 500 CCU limit
+2016-03-05 12:44:24,435 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 12:46:30,009 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 12:48:45,079 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 12:49:29,670 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:49:29,675 - WARNING: Running with 500 CCU limit
+2016-03-05 12:50:44,817 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:50:44,823 - WARNING: Running with 500 CCU limit
+2016-03-05 12:50:55,519 - ERROR: Error in getStatement java.sql.SQLException: Database lock acquisition failure: lockFile: org.hsqldb.persist.LockFile@e9be70e7[file =D:\Android_Client_Projects\PokerGame\SVN_PokerGameCode\trunk\PokerGame_Server\HSQLDBFile.lck, exists=true, locked=false, valid=false, ] method: checkHeartbeat read: 2016-03-05 07:20:54 heartbeat - read: -4338 ms.
+2016-03-05 12:50:55,524 - ERROR: Error in getAllZonesFromHSQLDB java.lang.NullPointerException
+2016-03-05 12:50:55,848 - ERROR: Error in starting TCP server java.net.BindException: Address already in use: bind
+2016-03-05 12:50:55,919 - ERROR: Error in starting FlashPolicyServer java.net.BindException: Address already in use: bind
+2016-03-05 12:51:06,194 - ERROR: Error in getStatement java.sql.SQLException: Database lock acquisition failure: lockFile: org.hsqldb.persist.LockFile@e9be70e7[file =D:\Android_Client_Projects\PokerGame\SVN_PokerGameCode\trunk\PokerGame_Server\HSQLDBFile.lck, exists=true, locked=false, valid=false, ] method: checkHeartbeat read: 2016-03-05 07:21:05 heartbeat - read: -5041 ms.
+2016-03-05 12:51:06,194 - WARNING: Error in createHSQLServiceTable java.lang.NullPointerException
+2016-03-05 12:51:16,467 - ERROR: Error in getStatement java.sql.SQLException: Database lock acquisition failure: lockFile: org.hsqldb.persist.LockFile@e9be70e7[file =D:\Android_Client_Projects\PokerGame\SVN_PokerGameCode\trunk\PokerGame_Server\HSQLDBFile.lck, exists=true, locked=false, valid=false, ] method: checkHeartbeat read: 2016-03-05 07:21:15 heartbeat - read: -5314 ms.
+2016-03-05 12:51:16,468 - WARNING: Error in createHSQLMteringTable java.lang.NullPointerException
+2016-03-05 12:51:26,103 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:51:26,107 - WARNING: Running with 500 CCU limit
+2016-03-05 12:51:33,815 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:51:33,819 - WARNING: Running with 500 CCU limit
+2016-03-05 12:51:36,788 - ERROR: Error in getStatement java.sql.SQLException: Database lock acquisition failure: lockFile: org.hsqldb.persist.LockFile@e9be70e7[file =D:\Android_Client_Projects\PokerGame\SVN_PokerGameCode\trunk\PokerGame_Server\HSQLDBFile.lck, exists=true, locked=false, valid=false, ] method: checkHeartbeat read: 2016-03-05 07:21:35 heartbeat - read: -5631 ms.
+2016-03-05 12:51:36,788 - ERROR: Error in getAllZonesFromHSQLDB java.lang.NullPointerException
+2016-03-05 12:51:37,119 - ERROR: Error in starting TCP server java.net.BindException: Address already in use: bind
+2016-03-05 12:51:37,211 - ERROR: Error in starting FlashPolicyServer java.net.BindException: Address already in use: bind
+2016-03-05 12:51:57,481 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 12:51:57,485 - WARNING: Running with 500 CCU limit
+2016-03-05 13:21:11,847 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 13:21:11,851 - WARNING: Running with 500 CCU limit
+2016-03-05 13:28:35,013 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 13:28:35,017 - WARNING: Running with 500 CCU limit
+2016-03-05 13:39:23,495 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 13:39:23,500 - WARNING: Running with 500 CCU limit
+2016-03-05 13:40:35,533 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 13:47:29,641 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 13:49:50,113 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 13:49:50,117 - WARNING: Running with 500 CCU limit
+2016-03-05 14:02:38,860 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:02:38,864 - WARNING: Running with 500 CCU limit
+2016-03-05 14:10:27,428 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:10:27,432 - WARNING: Running with 500 CCU limit
+2016-03-05 14:16:05,943 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:16:05,947 - WARNING: Running with 500 CCU limit
+2016-03-05 14:19:33,293 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:19:33,298 - WARNING: Running with 500 CCU limit
+2016-03-05 14:23:47,560 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:23:47,564 - WARNING: Running with 500 CCU limit
+2016-03-05 14:37:33,569 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:37:33,573 - WARNING: Running with 500 CCU limit
+2016-03-05 14:41:39,430 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:41:39,434 - WARNING: Running with 500 CCU limit
+2016-03-05 14:41:50,002 - ERROR: Error in getStatement java.sql.SQLException: Database lock acquisition failure: lockFile: org.hsqldb.persist.LockFile@e9be70e7[file =D:\Android_Client_Projects\PokerGame\SVN_PokerGameCode\trunk\PokerGame_Server\HSQLDBFile.lck, exists=true, locked=false, valid=false, ] method: checkHeartbeat read: 2016-03-05 09:11:48 heartbeat - read: -5062 ms.
+2016-03-05 14:41:50,003 - ERROR: Error in getAllZonesFromHSQLDB java.lang.NullPointerException
+2016-03-05 14:41:50,273 - ERROR: Error in starting TCP server java.net.BindException: Address already in use: bind
+2016-03-05 14:41:50,338 - ERROR: Error in starting FlashPolicyServer java.net.BindException: Address already in use: bind
+2016-03-05 14:42:01,851 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:42:01,855 - WARNING: Running with 500 CCU limit
+2016-03-05 14:42:15,184 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:42:15,188 - WARNING: Running with 500 CCU limit
+2016-03-05 14:45:32,814 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 14:45:32,818 - WARNING: Running with 500 CCU limit
+2016-03-05 15:51:11,482 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 15:51:11,482 - WARNING: Running with 500 CCU limit
+2016-03-05 15:54:39,927 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 15:54:39,937 - WARNING: Running with 500 CCU limit
+2016-03-05 15:55:49,028 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 15:57:48,122 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 15:57:48,125 - WARNING: Running with 500 CCU limit
+2016-03-05 15:59:12,778 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 16:00:34,721 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 16:00:34,724 - WARNING: Running with 500 CCU limit
+2016-03-05 16:01:55,247 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 16:03:34,964 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 16:03:34,968 - WARNING: Running with 500 CCU limit
+2016-03-05 16:04:52,493 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 16:06:24,854 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 16:06:24,858 - WARNING: Running with 500 CCU limit
+2016-03-05 16:10:19,290 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 16:12:43,869 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 16:27:13,090 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-05 16:28:18,585 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 16:28:18,589 - WARNING: Running with 500 CCU limit
+2016-03-05 16:32:36,396 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 16:32:36,400 - WARNING: Running with 500 CCU limit
+2016-03-05 16:56:56,517 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 16:56:56,527 - WARNING: Running with 500 CCU limit
+2016-03-05 18:24:53,937 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 18:24:53,940 - WARNING: Running with 500 CCU limit
+2016-03-05 18:46:22,531 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 18:46:22,534 - WARNING: Running with 500 CCU limit
+2016-03-05 19:03:42,086 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 19:03:42,086 - WARNING: Running with 500 CCU limit
+2016-03-05 19:10:36,723 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-05 19:10:36,727 - WARNING: Running with 500 CCU limit
+2016-03-07 11:28:51,410 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 11:28:51,410 - WARNING: Running with 500 CCU limit
+2016-03-07 11:47:14,329 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 11:47:14,336 - WARNING: Running with 500 CCU limit
+2016-03-07 11:56:46,564 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 11:56:46,568 - WARNING: Running with 500 CCU limit
+2016-03-07 12:01:23,278 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 12:01:23,282 - WARNING: Running with 500 CCU limit
+2016-03-07 12:25:30,487 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 12:25:30,487 - WARNING: Running with 500 CCU limit
+2016-03-07 13:18:13,030 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 13:18:13,034 - WARNING: Running with 500 CCU limit
+2016-03-07 13:21:11,495 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 13:21:11,499 - WARNING: Running with 500 CCU limit
+2016-03-07 13:22:32,154 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 13:22:32,154 - WARNING: Running with 500 CCU limit
+2016-03-07 13:25:10,038 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 13:25:10,048 - WARNING: Running with 500 CCU limit
+2016-03-07 13:27:55,723 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 13:27:55,727 - WARNING: Running with 500 CCU limit
+2016-03-07 13:37:08,842 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 13:37:08,846 - WARNING: Running with 500 CCU limit
+2016-03-07 14:08:48,735 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:08:48,735 - WARNING: Running with 500 CCU limit
+2016-03-07 14:23:09,246 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:23:09,250 - WARNING: Running with 500 CCU limit
+2016-03-07 14:24:33,355 - ERROR: LoopTask Caught Exception java.lang.NullPointerException
+	at com.shephertz.app42.server.domain.TurnBasedRoom.getNextTurn(TurnBasedRoom.java:77)
+	at com.shephertz.app42.server.domain.TurnBasedRoom.handleTimerTick(TurnBasedRoom.java:62)
+	at com.shephertz.app42.server.domain.Zone.handleTimerTick(Zone.java:802)
+	at com.shephertz.app42.server.handler.WarpProtocolHandler.handleTimerTick(WarpProtocolHandler.java:539)
+	at com.shephertz.app42.server.handler.LoopTask.run(WarpProtocolHandler.java:676)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+
+2016-03-07 14:27:44,505 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:27:44,508 - WARNING: Running with 500 CCU limit
+2016-03-07 14:34:33,986 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:34:33,989 - WARNING: Running with 500 CCU limit
+2016-03-07 14:40:51,450 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:40:51,454 - WARNING: Running with 500 CCU limit
+2016-03-07 14:43:19,542 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:43:19,546 - WARNING: Running with 500 CCU limit
+2016-03-07 14:48:32,525 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:48:32,529 - WARNING: Running with 500 CCU limit
+2016-03-07 14:57:12,673 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 14:57:12,677 - WARNING: Running with 500 CCU limit
+2016-03-07 15:01:23,278 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 15:01:23,282 - WARNING: Running with 500 CCU limit
+2016-03-07 15:10:21,492 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 15:10:21,496 - WARNING: Running with 500 CCU limit
+2016-03-07 15:22:55,114 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 15:22:55,118 - WARNING: Running with 500 CCU limit
+2016-03-07 15:40:15,273 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 15:40:15,277 - WARNING: Running with 500 CCU limit
+2016-03-07 15:41:04,460 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-07 15:41:04,463 - WARNING: Running with 500 CCU limit
+2016-03-08 14:46:36,166 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 14:46:36,173 - WARNING: Running with 500 CCU limit
+2016-03-08 15:15:04,293 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 15:15:04,297 - WARNING: Running with 500 CCU limit
+2016-03-08 15:32:26,019 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 15:32:26,025 - WARNING: Running with 500 CCU limit
+2016-03-08 15:56:50,039 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 15:56:50,043 - WARNING: Running with 500 CCU limit
+2016-03-08 16:32:48,104 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 16:32:48,107 - WARNING: Running with 500 CCU limit
+2016-03-08 16:40:29,353 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 16:40:29,357 - WARNING: Running with 500 CCU limit
+2016-03-08 17:31:05,871 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 17:31:05,875 - WARNING: Running with 500 CCU limit
+2016-03-08 17:35:18,925 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 17:35:18,929 - WARNING: Running with 500 CCU limit
+2016-03-08 17:47:54,551 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 17:47:54,554 - WARNING: Running with 500 CCU limit
+2016-03-08 17:50:34,792 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 17:50:34,796 - WARNING: Running with 500 CCU limit
+2016-03-08 17:55:33,470 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 17:55:33,474 - WARNING: Running with 500 CCU limit
+2016-03-08 17:58:55,831 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 17:58:55,834 - WARNING: Running with 500 CCU limit
+2016-03-08 18:02:25,313 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 18:02:25,318 - WARNING: Running with 500 CCU limit
+2016-03-08 18:08:43,233 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 18:08:43,236 - WARNING: Running with 500 CCU limit
+2016-03-08 18:10:02,413 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 18:10:02,417 - WARNING: Running with 500 CCU limit
+2016-03-08 18:11:24,974 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 18:11:24,978 - WARNING: Running with 500 CCU limit
+2016-03-08 18:24:29,065 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 18:24:29,069 - WARNING: Running with 500 CCU limit
+2016-03-08 19:31:18,898 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-08 19:31:18,902 - WARNING: Running with 500 CCU limit
+2016-03-09 11:19:01,759 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 11:19:01,762 - WARNING: Running with 500 CCU limit
+2016-03-09 11:31:44,241 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 11:31:44,244 - WARNING: Running with 500 CCU limit
+2016-03-09 11:44:26,160 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 11:44:26,170 - WARNING: Running with 500 CCU limit
+2016-03-09 11:44:52,676 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 11:44:52,686 - WARNING: Running with 500 CCU limit
+2016-03-09 11:52:59,714 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 11:52:59,718 - WARNING: Running with 500 CCU limit
+2016-03-09 11:55:46,982 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 11:55:46,985 - WARNING: Running with 500 CCU limit
+2016-03-09 13:45:06,925 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 13:45:06,935 - WARNING: Running with 500 CCU limit
+2016-03-09 14:16:08,391 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 14:16:08,391 - WARNING: Running with 500 CCU limit
+2016-03-09 14:43:48,262 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 14:43:48,272 - WARNING: Running with 500 CCU limit
+2016-03-09 16:28:18,377 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 16:28:18,381 - WARNING: Running with 500 CCU limit
+2016-03-09 18:19:53,892 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-09 18:19:53,896 - WARNING: Running with 500 CCU limit

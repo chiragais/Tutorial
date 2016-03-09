@@ -214,7 +214,7 @@ public class GamePlay implements GameConstants {
 		boolean flag = false;
 		int maxAmt = 0;
 		for (int i = 0; i < betAmtIntArray.length; i++) {
-			if (playerManager.getPlayer(i).isPlayerActive()) {
+			if (!playerManager.getPlayer(i).isFolded()) {
 				maxAmt = betAmtIntArray[i];
 				break;
 			}
@@ -225,7 +225,7 @@ public class GamePlay implements GameConstants {
 			}
 		}
 		for (int k = 0; k < betAmtIntArray.length; k++) {
-			if (playerManager.getPlayer(k).isPlayerActive()) {
+			if (!playerManager.getPlayer(k).isFolded()) {
 
 				if (maxAmt != betAmtIntArray[k]) {
 					flag = true;
@@ -321,7 +321,7 @@ public class GamePlay implements GameConstants {
 		ActivePlayerList = new ArrayList<Integer>();
 
 		for (int i = 0; i < nPlayer; i++) {
-			if (!playerManager.getPlayer(i).isPlayrFolded()) {
+			if (!playerManager.getPlayer(i).isFolded()) {
 				ActivePlayerList.add(i);
 			}
 		}
@@ -431,13 +431,13 @@ public class GamePlay implements GameConstants {
 
 	public String getWinner() {
 
-		return playerManager.getPlayer(WinnerList.get(0)).getPlayeName();
+		return playerManager.getPlayer(WinnerList.get(0)).getPlayerName();
 	}
 
 	// Declare and distribute money to each winner
 	public void DeclareMoneyToFinalWinners() {
 		for (int i = 0; i < WinnerList.size(); i++) {
-			if (playerManager.getPlayer(WinnerList.get(i)).isPlayrAllIn()
+			if (playerManager.getPlayer(WinnerList.get(i)).isAllIn()
 					&& TotalTableAmt > 0) {
 
 				curPlayerBalance = playerManager.getPlayer(WinnerList.get(i))
@@ -491,7 +491,7 @@ public class GamePlay implements GameConstants {
 			curPlayerId = 0;
 			curTurnNo = 1;
 
-			if (!playerManager.getPlayer(curPlayerId).isPlayerActive()) {
+			if (playerManager.getPlayer(curPlayerId).isFolded()) {
 				curPlayerId++;
 			}
 
@@ -529,7 +529,7 @@ public class GamePlay implements GameConstants {
 		}
 
 		// to check if curplayer is Active or not
-		while (!playerManager.getPlayer(curPlayerId).isPlayerActive()) {
+		while (playerManager.getPlayer(curPlayerId).isFolded()) {
 			boolean checkAnyActive = false;
 			curPlayerId++;
 			if (curPlayerId > nPlayer - 1) {
@@ -539,7 +539,7 @@ public class GamePlay implements GameConstants {
 			// loop if all players are
 			// inactive
 			{
-				if (playerManager.getPlayer(i).isPlayerActive()) {
+				if (!playerManager.getPlayer(i).isFolded()) {
 					checkAnyActive = true;
 					break;
 				}
@@ -632,7 +632,7 @@ public class GamePlay implements GameConstants {
 				curPlayerBalance = curPlayerBalance - curRaiseAmt;
 				betText[curPlayerId] = tempBetAmt;
 				if (curPlayerBalance == 0) {
-					playerManager.getPlayer(curPlayerId).setPlayerActive(false);
+					playerManager.getPlayer(curPlayerId).setPlayerFolded(false);
 					playerManager.getPlayer(curPlayerId).setPlayerAllIn(true);
 				}
 				playerManager.getPlayer(curPlayerId).setTotalBalance(
@@ -710,7 +710,7 @@ public class GamePlay implements GameConstants {
 				lastTurnAmt = curBetAmount;
 				betText[curPlayerId] = curBetAmount;
 				if (curPlayerBalance == 0) {
-					playerManager.getPlayer(curPlayerId).setPlayerActive(false);
+					playerManager.getPlayer(curPlayerId).setPlayerFolded(false);
 					playerManager.getPlayer(curPlayerId).setPlayerAllIn(true);
 				}
 				playerManager.getPlayer(curPlayerId).setTotalBalance(
@@ -741,7 +741,7 @@ public class GamePlay implements GameConstants {
 				betText[curPlayerId] = curBetAmount;
 
 				if (curPlayerBalance == 0) {
-					playerManager.getPlayer(curPlayerId).setPlayerActive(false);
+					playerManager.getPlayer(curPlayerId).setPlayerFolded(false);
 					playerManager.getPlayer(curPlayerId).setPlayerAllIn(true);
 				}
 
@@ -770,7 +770,7 @@ public class GamePlay implements GameConstants {
 	}
 
 	public void OnFoldButtonPress() {
-		playerManager.getPlayer(curPlayerId).setPlayerActive(false);
+		playerManager.getPlayer(curPlayerId).setPlayerFolded(false);
 		playerManager.getPlayer(curPlayerId).setPlayerFolded(true);
 		ChangePlayerTurn();
 	}
@@ -800,7 +800,7 @@ public class GamePlay implements GameConstants {
 			betText[curPlayerId] = curBetAmount;
 			playerManager.getPlayer(curPlayerId).setTotalBalance(
 					curPlayerBalance);
-			playerManager.getPlayer(curPlayerId).setPlayerActive(false);
+			playerManager.getPlayer(curPlayerId).setPlayerFolded(false);
 			playerManager.getPlayer(curPlayerId).setPlayerAllIn(true);
 
 			ChangePlayerTurn();
@@ -815,7 +815,7 @@ public class GamePlay implements GameConstants {
 	public void CountAmountForAllInMember() {
 
 		for (int i = 0; i < nPlayer; i++) {
-			boolean b = playerManager.getPlayer(i).isPlayrAllIn();
+			boolean b = playerManager.getPlayer(i).isAllIn();
 			if (b && allInAmountArray[i] == 0) {
 				int allInBetAmt = betAmtIntArray[i];
 				for (int j = 0; j < nPlayer; j++) {

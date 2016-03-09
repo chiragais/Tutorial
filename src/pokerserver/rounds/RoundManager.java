@@ -62,8 +62,8 @@ public class RoundManager implements GameConstants {
 	public int getTotalPlayerBetAmount(PlayerBean player) {
 		int totalBet = 0;
 		for (TurnManager turnManager : listTurn) {
-			if (turnManager.getPlayer().getPlayeName()
-					.equals(player.getPlayeName())) {
+			if (turnManager.getPlayer().getPlayerName()
+					.equals(player.getPlayerName())) {
 				totalBet += turnManager.getBetAmount();
 			}
 		}
@@ -74,8 +74,8 @@ public class RoundManager implements GameConstants {
 		int lastAction = ACTION_PENDING;
 
 		for (TurnManager turnManager : listTurn) {
-			if (turnManager.getPlayer().getPlayeName()
-					.equals(player.getPlayeName())) {
+			if (turnManager.getPlayer().getPlayerName()
+					.equals(player.getPlayerName())) {
 				lastAction = turnManager.getPlayerAction();
 			}
 		}
@@ -94,8 +94,8 @@ public class RoundManager implements GameConstants {
 		int action = ACTION_PENDING;
 		int lastBetAmount = 0;
 		for (TurnManager turnManager : listTurn) {
-			if (turnManager.getPlayer().getPlayeName()
-					.equals(player.getPlayeName())) {
+			if (turnManager.getPlayer().getPlayerName()
+					.equals(player.getPlayerName())) {
 				action = turnManager.getPlayerAction();
 				if (action == ACTION_ALL_IN) {
 					lastBetAmount = turnManager.getBetAmount();

@@ -53,7 +53,7 @@ public class WAGameManager implements GameConstants {
 		whoopAssRound = new RoundManager(WA_ROUND_WHOOPASS);
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
 		handManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
-		startFirstRound();
+//		startFirstRound();
 	}
 
 	public RoundManager getCurrentRoundInfo() {
@@ -77,7 +77,8 @@ public class WAGameManager implements GameConstants {
 
 	public void findBestPlayerHand() {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			handManager.generatePlayerBestRank(listDefaultCards, player);
+			if (!player.isFolded())
+				handManager.generatePlayerBestRank(listDefaultCards, player);
 		}
 	}
 
@@ -88,7 +89,7 @@ public class WAGameManager implements GameConstants {
 	public ArrayList<String> getAllWinnerName() {
 		ArrayList<String> listWinners = new ArrayList<String>();
 		for (Winner winner : winnerManager.getWinnerList()) {
-			listWinners.add(winner.getPlayer().getPlayeName());
+			listWinners.add(winner.getPlayer().getPlayerName());
 		}
 		return listWinners;
 	}
@@ -101,19 +102,22 @@ public class WAGameManager implements GameConstants {
 		winnerManager.findWinnerPlayers();
 	}
 
-	public List<PlayerBean> generateWinnerPlayers(){
+	public List<PlayerBean> generateWinnerPlayers() {
 		return winnerManager.generateWinnerPlayers();
 	}
+
 	public void calculatePotAmountForAllInMembers() {
 		int allInBetTotalAmount = 0;
-		System.out.println("\n ---------calculatePotAmountForAllInMembers------------------------");
+		System.out
+				.println("\n ---------calculatePotAmountForAllInMembers------------------------");
 		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
 			allInBetTotalAmount = 0;
 			PlayerBean player = playersManager.getAllAvailablePlayers().get(i);
-			boolean isAllIn = player.isPlayrAllIn();
-//			int lastAction = getCurrentRoundInfo().getPlayerLastAction(player);
+			boolean isAllIn = player.isAllIn();
+			// int lastAction =
+			// getCurrentRoundInfo().getPlayerLastAction(player);
 			if (isAllIn
-					&& winnerManager.getAllInPotAmount(player.getPlayeName()) == 0) {
+					&& winnerManager.getAllInPotAmount(player.getPlayerName()) == 0) {
 
 				int allInBetAmt = getCurrentRoundInfo()
 						.getPlayerBetAmountAtActionAllIn(player);
@@ -145,18 +149,18 @@ public class WAGameManager implements GameConstants {
 					allInBetTotalAmount += secondFlopRound
 							.getTotalRoundBetAmount();
 				AllInPlayer allInPlayer = new AllInPlayer(
-						player.getPlayeName(), allInBetTotalAmount);
+						player.getPlayerName(), allInBetTotalAmount);
 				System.out.println("\n this is all in amount of player  "
-						+ allInPlayer.getPlayeName() + "  is =  "
+						+ allInPlayer.getPlayerName() + "  is =  "
 						+ allInPlayer.getTotalAllInPotAmount());
 				winnerManager.addAllInTotalPotAmount(allInPlayer);
 			}
 
 		}
 
-		for(AllInPlayer allInPlayer : winnerManager.getAllInPlayers()){
+		for (AllInPlayer allInPlayer : winnerManager.getAllInPlayers()) {
 			System.out.println("\n All IN Player :  "
-					+ allInPlayer.getPlayeName() + "  Bet Amount =  "
+					+ allInPlayer.getPlayerName() + "  Bet Amount =  "
 					+ allInPlayer.getTotalAllInPotAmount());
 		}
 	}
@@ -191,7 +195,7 @@ public class WAGameManager implements GameConstants {
 	public void startFirstRound() {
 		currentRound = WA_ROUND_START;
 		System.out.println();
-		System.out.print(">>>>>>>>>>> WA start Round started");
+		System.out.println(">>>>>>>>>>> WA start Round started");
 		startRound.setStatus(ROUND_STATUS_ACTIVE);
 		firstFlopRound.setStatus(ROUND_STATUS_PENDING);
 		secondFlopRound.setStatus(ROUND_STATUS_PENDING);
@@ -262,7 +266,7 @@ public class WAGameManager implements GameConstants {
 	public RoundManager getThirdRound() {
 		return thirdRound;
 	}
-	
+
 	public ArrayList<String> getWinnerCards() {
 		return gamePlay.getWinnerCards();
 	}
@@ -270,14 +274,14 @@ public class WAGameManager implements GameConstants {
 	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
 			int action) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.getPlayeName().equals(name)) {
+			if (player.getPlayerName().equals(name)) {
 
 				if (action == ACTION_ALL_IN) {
 					player.setPlayerAllIn(true);
 				}
 				if (action == ACTION_FOLD) {
-					player.setPlayerActive(false);
-				} else if (player.isPlayerActive()) {
+					player.setPlayerFolded(true);
+				} else if (!player.isFolded()) {
 					player.deductBetAmount(amount);
 				}
 				return player;
@@ -302,7 +306,7 @@ public class WAGameManager implements GameConstants {
 					.getAllAvailablePlayers().size()) {
 				for (PlayerBean player : playersManager
 						.getAllAvailablePlayers()) {
-					if (player.isPlayerActive()) {
+					if (!player.isFolded()) {
 						player.setWACardStatus(currentRound
 								.getPlayerLastAction(player));
 					}
@@ -313,7 +317,7 @@ public class WAGameManager implements GameConstants {
 		} else {
 
 			for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-				if (player.isPlayerActive() && !player.isPlayrAllIn()) {
+				if (!player.isFolded() && !player.isAllIn()) {
 					totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 							.getTotalPlayerBetAmount(player), currentRound
 							.getPlayerLastAction(player)));
@@ -390,8 +394,7 @@ public class WAGameManager implements GameConstants {
 		case WA_ROUND_THIRD_FLOP:
 			// startThirdFlopRound();
 			calculatePotAmountForAllInMembers();
-			getCurrentRoundInfo().setStatus(
-					ROUND_STATUS_FINISH);
+			getCurrentRoundInfo().setStatus(ROUND_STATUS_FINISH);
 			break;
 		}
 
@@ -496,5 +499,30 @@ public class WAGameManager implements GameConstants {
 		public int getLastAction() {
 			return lastAction;
 		}
+	}
+
+	/**
+	 * Return last active player.
+	 * 
+	 * @return PlayerBean
+	 */
+	public PlayerBean checkAllAreFoldOrAllIn() {
+		PlayerBean lastPlayer = null;
+		int totalActivePlayersCnt = 0;
+		for (PlayerBean playerBean : playersManager.getAllAvailablePlayers()) {
+			if (!playerBean.isAllIn())
+				if (!playerBean.isFolded()) {
+					lastPlayer = playerBean;
+					totalActivePlayersCnt++;
+				}
+//			System.out.println("\nPlayer : " + playerBean.getPlayeName()
+//					+ " >> IsFolded: " + playerBean.isPlayerFolded()
+//					+ " >> IsAllIn : " + playerBean.isPlayrAllIn()
+//					+ " >>ActivePlayers : " + totalActivePlayersCnt);
+			if (totalActivePlayersCnt == 2) {
+				return null;
+			}
+		}
+		return lastPlayer;
 	}
 }

@@ -30,7 +30,7 @@ public class WinnerManager {
 	public int getPlayerWinningAmount(String playerName) {
 		int winningAmount = 0;
 		for (Winner winner : listWinners) {
-			if (winner.getPlayer().getPlayeName().equals(playerName)) {
+			if (winner.getPlayer().getPlayerName().equals(playerName)) {
 				winningAmount = winner.getWinningAmount();
 
 			}
@@ -41,7 +41,7 @@ public class WinnerManager {
 	public int getAllInPotAmount(String playerName) {
 		int allInPotAmount = 0;
 		for (AllInPlayer allInplayer : listAllinPotAmounts) {
-			if (allInplayer.getPlayeName().equals(playerName)) {
+			if (allInplayer.getPlayerName().equals(playerName)) {
 				allInPotAmount = allInplayer.getTotalAllInPotAmount();
 			}
 		}
@@ -55,7 +55,7 @@ public class WinnerManager {
 	public void setPlayerWinningAmount(String playerName, int winningAmount) {
 
 		for (Winner winner : listWinners) {
-			if (winner.getPlayer().getPlayeName().equals(playerName)) {
+			if (winner.getPlayer().getPlayerName().equals(playerName)) {
 				winner.setWinningAmount(winningAmount);
 				break;
 			}
@@ -66,7 +66,7 @@ public class WinnerManager {
 	public List<PlayerBean> generateWinnerPlayers() {
 		List<PlayerBean> listWinnerPlayer = new ArrayList<PlayerBean>();
 		// Sort winner players
-		Collections.sort(playerManager.getAllAvailablePlayers(),
+		Collections.sort(playerManager.getAllAactivePlayersForWinning(),
 				new Comparator<PlayerBean>() {
 					@Override
 					public int compare(PlayerBean player1, PlayerBean player2) {
@@ -74,16 +74,16 @@ public class WinnerManager {
 								player2.getHandRank());
 					}
 				});
-		for (int i = 0; i < playerManager.getAllAvailablePlayers().size(); i++) {
+		for (int i = 0; i < playerManager.getAllAactivePlayersForWinning().size(); i++) {
 			List<PlayerBean> sameRankPlayer = new ArrayList<PlayerBean>();
-			PlayerBean currentPlayer = playerManager.getAllAvailablePlayers()
+			PlayerBean currentPlayer = playerManager.getAllAactivePlayersForWinning()
 					.get(i);
 			if (!listWinnerPlayer.contains(currentPlayer)) {
 				sameRankPlayer.add(currentPlayer);
-				for (int j = i + 1; j < playerManager.getAllAvailablePlayers()
+				for (int j = i + 1; j < playerManager.getAllAactivePlayersForWinning()
 						.size(); j++) {
 					PlayerBean nextPlayer = playerManager
-							.getAllAvailablePlayers().get(j);
+							.getAllAactivePlayersForWinning().get(j);
 					if (currentPlayer.getHandRank() == nextPlayer.getHandRank()) {
 						sameRankPlayer.add(nextPlayer);
 					}
@@ -100,7 +100,7 @@ public class WinnerManager {
 		}
 
 		for (PlayerBean playerBean : listWinnerPlayer) {
-			System.out.println("Current Pla : " + playerBean.getPlayeName()
+			System.out.println("Current Pla : " + playerBean.getPlayerName()
 					+ " >> " + playerBean.getBestHandRankTotal() + " >> "
 					+ playerBean.getHandRank());
 		}
@@ -110,8 +110,8 @@ public class WinnerManager {
 	public void findWinnerPlayers() {
 		System.out.println("\n Find Winner Player ------------");
 		for (PlayerBean player : generateWinnerPlayers()) {
-			if (player.isPlayerActive()) {
-				if (!player.isPlayrAllIn()) {
+			if (!player.isFolded()) {
+				if (!player.isAllIn()) {
 					Winner winner = new Winner(player, totalTableAmount);
 					winner.getPlayer().setTotalBalance(
 							winner.getPlayer().getTotalBalance()
@@ -120,14 +120,14 @@ public class WinnerManager {
 					listWinners.add(winner);
 					break;
 				} else {
-					if (getAllInPotAmount(player.getPlayeName()) < totalTableAmount) {
+					if (getAllInPotAmount(player.getPlayerName()) < totalTableAmount) {
 						Winner winner = new Winner(player,
-								getAllInPotAmount(player.getPlayeName()));
+								getAllInPotAmount(player.getPlayerName()));
 						winner.getPlayer().setTotalBalance(
 								winner.getPlayer().getTotalBalance()
 										+ winner.getWinningAmount());
 						totalTableAmount -= getAllInPotAmount(player
-								.getPlayeName());
+								.getPlayerName());
 						listWinners.add(winner);
 					} else {
 						Winner winner = new Winner(player, totalTableAmount);
@@ -147,7 +147,7 @@ public class WinnerManager {
 		System.out.println("\n ---------------------------------");
 		for (Winner player : listWinners) {
 			System.out.println("\n Winner Player =  "
-					+ player.getPlayer().getPlayeName() +" :: Amount : "+player.getWinningAmount());
+					+ player.getPlayer().getPlayerName() +" :: Amount : "+player.getWinningAmount());
 		}
 
 	}

@@ -63,7 +63,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			JSONObject cardsObject = new JSONObject();
 
 			try {
-				cardsObject.put(TAG_PLAYER_NAME, player.getPlayeName());
+				cardsObject.put(TAG_PLAYER_NAME, player.getPlayerName());
 				cardsObject.put(TAG_CARD_PLAYER_1, player.getFirstCard()
 						.getCardName());
 				cardsObject.put(TAG_CARD_PLAYER_2, player.getSecondCard()
@@ -381,6 +381,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					cardsObject.put(TAG_PLAYER_BIG_BLIND,
 							RESPONSE_DATA_SEPRATOR);
 				}
+				cardsObject.put(TAG_SMALL_BLIEND_AMOUNT,SBAmount);
 				System.out.println();
 				System.out.print("Blind Player Details : "
 						+ cardsObject.toString());
@@ -420,7 +421,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			    
 			    winnerObject.put(TAG_WINNER_TOTAL_BALENCE,
 			      winnerPlayer.getPlayer().getTotalBalance());
-			    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayeName());
+			    winnerObject.put(TAG_WINNER_NAME, winnerPlayer.getPlayer().getPlayerName());
 			    winnerObject.put(TAG_WINNER_RANK, winnerPlayer.getPlayer().getHandRank()
 			      .ordinal());
 			    winnerObject.put(TAG_WINNERS_WINNING_AMOUNT,
@@ -444,13 +445,13 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			cardsObject.put(TAG_WINNER_TOTAL_BALENCE, playerBean
 					.getTotalBalance());
 			cardsObject.put(TAG_WINNER_NAME, playerBean
-					.getPlayeName());
+					.getPlayerName());
 			cardsObject.put(TAG_WINNER_RANK, playerBean
 					.getHandRank().ordinal());
 			cardsObject.put(TAG_WINNER_BEST_CARDS, playerBean
 					.getBestHandCardsName());
 
-			// cardsObject.put(TAG_PLAYER, player.getPlayeName());
+			// cardsObject.put(TAG_PLAYER, player.getPlayerName());
 			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_WINNIER_INFO
 					+ cardsObject.toString());
 			System.out.println("Winner Info : "+ cardsObject.toString());
@@ -476,7 +477,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					.put(TAG_TABLE_AMOUNT, gameManager.getTotalTableAmount());
 			cardsObject.put(TAG_ACTION, turnManager.getPlayerAction());
 			cardsObject.put(TAG_PLAYER_NAME, turnManager.getPlayer()
-					.getPlayeName());
+					.getPlayerName());
 			cardsObject.put(TAG_PLAYER_BALANCE, turnManager.getPlayer()
 					.getTotalBalance());
 			gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_ACTION_DONE

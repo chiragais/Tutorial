@@ -170,13 +170,13 @@ public class TexassGameManager implements GameConstants {
 	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
 			int action) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.getPlayeName().equals(name)) {
+			if (player.getPlayerName().equals(name)) {
 				if (action == ACTION_ALL_IN) {
 					player.setPlayerAllIn(true);
 				}
 				if (action == ACTION_FOLD) {
-					player.setPlayerActive(false);
-				} else if (player.isPlayerActive()) {
+					player.setPlayerFolded(true);
+				} else if (!player.isFolded()) {
 					player.deductBetAmount(amount);
 				}
 				return player;
@@ -197,7 +197,7 @@ public class TexassGameManager implements GameConstants {
 		RoundManager currentRound = getCurrentRoundInfo();
 
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-			if (player.isPlayerActive()) {
+			if (!player.isFolded()) {
 
 				totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 						.getTotalPlayerBetAmount(player), currentRound
@@ -354,7 +354,7 @@ public class TexassGameManager implements GameConstants {
 	public ArrayList<String> getAllWinnerName() {
 		ArrayList<String> listWinners = new ArrayList<String>();
 		for (Winner winner : winnerManager.getWinnerList()) {
-			listWinners.add(winner.getPlayer().getPlayeName());
+			listWinners.add(winner.getPlayer().getPlayerName());
 		}
 		return listWinners;
 	}
@@ -375,10 +375,10 @@ public class TexassGameManager implements GameConstants {
 		int tempCurrentRound = 0;
 		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
 			PlayerBean player = playersManager.getAllAvailablePlayers().get(i);
-			boolean isAllIn = player.isPlayrAllIn();
+			boolean isAllIn = player.isAllIn();
 			int lastAction = getCurrentRoundInfo().getPlayerLastAction(player);
 			if (isAllIn
-					&& winnerManager.getAllInPotAmount(player.getPlayeName()) == 0) {
+					&& winnerManager.getAllInPotAmount(player.getPlayerName()) == 0) {
 
 				int allInBetAmt = getCurrentRoundInfo()
 						.getPlayerBetAmountAtActionAllIn(player);
@@ -410,7 +410,7 @@ public class TexassGameManager implements GameConstants {
 				if (turnRound.getRound() < getCurrentRoundInfo().getRound())
 					allInBetTotalAmount += turnRound.getTotalRoundBetAmount();
 				AllInPlayer allInPlayer = new AllInPlayer(
-						player.getPlayeName(), allInBetTotalAmount);
+						player.getPlayerName(), allInBetTotalAmount);
 				winnerManager.addAllInTotalPotAmount(allInPlayer);
 
 			}
