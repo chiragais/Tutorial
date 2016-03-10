@@ -458,8 +458,6 @@ public class WAGameManager implements GameConstants {
 		totalBetAmount += thirdRound.getTotalRoundBetAmount();
 
 		winnerManager.setTotalTableAmount(totalBetAmount);
-		System.out.println();
-		System.out.print("Total Bet Amount : " + totalBetAmount);
 		return totalBetAmount;
 	}
 
