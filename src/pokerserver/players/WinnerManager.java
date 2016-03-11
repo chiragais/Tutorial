@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import pokerserver.cards.Card;
+import pokerserver.handrank.GeneralHandManager;
+import pokerserver.utils.GameConstants.HAND_RANK;
+
 public class WinnerManager {
 
 	PlayersManager playerManager;
@@ -13,10 +17,13 @@ public class WinnerManager {
 	int totalTableAmount = 0;
 	int remainingAmount = 0;
 
-	public WinnerManager(PlayersManager playerMgr) {
+	GeneralHandManager generalHandManager ;
+	public WinnerManager(PlayersManager playerMgr,GeneralHandManager generalHandManager ) {
 		this.playerManager = playerMgr;
+		this.generalHandManager = generalHandManager;
 		listWinners = new ArrayList<Winner>();
 		listAllinPotAmounts = new ArrayList<AllInPlayer>();
+		
 	}
 
 	public void addWinner(Winner winner) {
@@ -65,8 +72,9 @@ public class WinnerManager {
 
 	public List<PlayerBean> generateWinnerPlayers() {
 		List<PlayerBean> listWinnerPlayer = new ArrayList<PlayerBean>();
+		List<PlayerBean> listAllActivePlayers = playerManager.getAllAactivePlayersForWinning(); 
 		// Sort winner players
-		Collections.sort(playerManager.getAllAactivePlayersForWinning(),
+		Collections.sort(listAllActivePlayers,
 				new Comparator<PlayerBean>() {
 					@Override
 					public int compare(PlayerBean player1, PlayerBean player2) {
@@ -74,16 +82,22 @@ public class WinnerManager {
 								player2.getHandRank());
 					}
 				});
-		for (int i = 0; i < playerManager.getAllAactivePlayersForWinning().size(); i++) {
+		System.out.println("Before sort...........");
+		for (PlayerBean playerBean : listAllActivePlayers) {
+			System.out.println("Current Pla : " + playerBean.getPlayerName()
+					+ " >> " + playerBean.getBestHandRankTotal() + " >> "
+					+ playerBean.getHandRank());
+		}
+		System.out.println("Before sort...........");
+		for (int i = 0; i < listAllActivePlayers.size(); i++) {
 			List<PlayerBean> sameRankPlayer = new ArrayList<PlayerBean>();
-			PlayerBean currentPlayer = playerManager.getAllAactivePlayersForWinning()
+			PlayerBean currentPlayer = listAllActivePlayers
 					.get(i);
 			if (!listWinnerPlayer.contains(currentPlayer)) {
 				sameRankPlayer.add(currentPlayer);
-				for (int j = i + 1; j < playerManager.getAllAactivePlayersForWinning()
+				for (int j = i + 1; j < listAllActivePlayers
 						.size(); j++) {
-					PlayerBean nextPlayer = playerManager
-							.getAllAactivePlayersForWinning().get(j);
+					PlayerBean nextPlayer = listAllActivePlayers.get(j);
 					if (currentPlayer.getHandRank() == nextPlayer.getHandRank()) {
 						sameRankPlayer.add(nextPlayer);
 					}
@@ -91,8 +105,7 @@ public class WinnerManager {
 				Collections.sort(sameRankPlayer, new Comparator<PlayerBean>() {
 					@Override
 					public int compare(PlayerBean player1, PlayerBean player2) {
-						return Integer.compare(player2.getBestHandRankTotal(),
-								player1.getBestHandRankTotal());
+						return getBestHandPlayer(player1,player2);
 					}
 				});
 				listWinnerPlayer.addAll(sameRankPlayer);
@@ -151,7 +164,73 @@ public class WinnerManager {
 		}
 
 	}
+public  int getBestHandPlayer(PlayerBean playerBean1,PlayerBean playerBean2){
+		
+		if(playerBean1.getHandRank().equals(playerBean2.getHandRank())){
+			
+			// If Pair is Full House
+			if (playerBean1.getHandRank().equals(HAND_RANK.FULL_HOUSE)) {
+				List<List<Card>> listOfListSameRankCardsForPlayer1 = generalHandManager.listAllSameRankCards(playerBean1.getMainHandCards());
+				List<List<Card>> listOfListSameRankCardsForPlayer2 = generalHandManager.listAllSameRankCards(playerBean2.getMainHandCards());
+				List<Card> listPlayer1Cards = new ArrayList<Card>();
+				List<Card> listPlayer2Cards = new ArrayList<Card>();
+				
+				if(listOfListSameRankCardsForPlayer1.size()==2 && listOfListSameRankCardsForPlayer2.size()==2){
+					if(listOfListSameRankCardsForPlayer1.get(0).size()==3){
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(0));
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(1));
+					}else{
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(1));
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(0));
+					}
+					
+					if(listOfListSameRankCardsForPlayer2.get(0).size()==3){
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(0));
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(1));
+					}else{
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(1));
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(0));
+					}
+					for(int i =0 ;i<listPlayer1Cards.size();i++){
+						if (listPlayer1Cards.get(i).getValue() == listPlayer2Cards.get(i).getValue()) {
 
+						} else if (listPlayer1Cards.get(i).getValue() > listPlayer2Cards.get(i).getValue()) {
+							return -1;
+						} else if (listPlayer1Cards.get(i).getValue() < listPlayer2Cards.get(i).getValue()) {
+							return 1;
+						}
+						
+					}
+				}
+			} else {
+				for (int i = 0; i < playerBean1.getMainHandCards().size(); i++) {
+					if (playerBean1.getMainHandCards().get(i).getValue() == playerBean2
+							.getMainHandCards().get(i).getValue()) {
+
+					} else if (playerBean1.getMainHandCards().get(i).getValue() > playerBean2
+							.getMainHandCards().get(i).getValue()) {
+						return -1;
+					} else if (playerBean1.getMainHandCards().get(i).getValue() < playerBean2
+							.getMainHandCards().get(i).getValue()) {
+						return 1;
+					}
+				}
+			}
+			for (int i = 0; i < playerBean1.getBestHandCards().size(); i++) {
+				if (playerBean1.getBestHandCards().get(i).getValue() == playerBean2
+						.getBestHandCards().get(i).getValue()) {
+
+				} else if (playerBean1.getBestHandCards().get(i).getValue() > playerBean2
+						.getBestHandCards().get(i).getValue()) {
+					return -1;
+				} else if (playerBean1.getBestHandCards().get(i).getValue() < playerBean2
+						.getBestHandCards().get(i).getValue()) {
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
 	public List<AllInPlayer> getAllInPlayers(){
 		return listAllinPotAmounts;
 	}

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import pokerserver.cards.Card;
 import pokerserver.handrank.GeneralHandManager;
 import pokerserver.handrank.WhoopAssHandManager;
 import pokerserver.players.PlayerBean;
@@ -29,28 +30,29 @@ public class Main implements GameConstants {
 /*		generalHandManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
 		playersManager = new PlayersManager();
 		ArrayList<Card> listDefaultCards = new ArrayList<Card>();
-		listDefaultCards.add(new Card(SUIT_CLUB, RANK_JACK));
-		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_TWO));
-		listDefaultCards.add(new Card(SUIT_CLUB, RANK_TEN));
-		listDefaultCards.add(new Card(SUIT_SPADE, RANK_EIGHT));
-		listDefaultCards.add(new Card(SUIT_HEART, RANK_ACE));
-		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_QUEEN));
+		listDefaultCards.add(new Card(SUIT_DIAMOND, RANK_EIGHT));
+		listDefaultCards.add(new Card(SUIT_CLUB, RANK_NINE));
+		listDefaultCards.add(new Card(SUIT_HEART, RANK_FOUR));
+		listDefaultCards.add(new Card(SUIT_HEART, RANK_QUEEN));
+		listDefaultCards.add(new Card(SUIT_SPADE, RANK_TWO));
+		listDefaultCards.add(new Card(SUIT_CLUB, RANK_FIVE));
 
 		PlayerBean playerBean1 = new PlayerBean(1, "Player 1");
-		playerBean1.setCards( new Card(SUIT_HEART, RANK_EIGHT),  new Card(SUIT_HEART, RANK_JACK),new Card(SUIT_CLUB, RANK_QUEEN));
-		playerBean1.setWACardStatus(ACTION_WA_DOWN);
+		playerBean1.setCards( new Card(SUIT_SPADE, RANK_FOUR),  new Card(SUIT_HEART, RANK_SEVEN),new Card(SUIT_DIAMOND, RANK_ACE));
+		playerBean1.setWACardStatus(ACTION_WA_UP);
 		playersManager.addNewPlayerInRoom(playerBean1);
 		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean1);
 		
 		PlayerBean playerBean2 = new PlayerBean(2, "Player 2");
-		playerBean2.setCards(new Card(SUIT_CLUB, RANK_SIX), new Card(SUIT_SPADE, RANK_SIX),  new Card(SUIT_SPADE, RANK_KING));
-		playerBean2.setWACardStatus(ACTION_WA_DOWN);
+		playerBean2.setCards(new Card(SUIT_HEART, RANK_FIVE), new Card(SUIT_HEART, RANK_NINE),  new Card(SUIT_DIAMOND, RANK_TWO));
+		playerBean2.setWACardStatus(ACTION_WA_UP);
 		playersManager.addNewPlayerInRoom(playerBean2);
 		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean2);
+		
 //		
 		PlayerBean playerBean3 = new PlayerBean(2, "Player 3");
-		playerBean3.setCards(new Card(SUIT_CLUB, RANK_FIVE), new Card(SUIT_HEART, RANK_THREE),  new Card(SUIT_HEART, RANK_FOUR));
-		playerBean3.setWACardStatus(ACTION_WA_DOWN);
+		playerBean3.setCards(new Card(SUIT_CLUB, RANK_SIX), new Card(SUIT_CLUB, RANK_ACE),  new Card(SUIT_HEART, RANK_EIGHT));
+		playerBean3.setWACardStatus(ACTION_WA_UP);
 		playersManager.addNewPlayerInRoom(playerBean3);
 		generalHandManager.generatePlayerBestRank(listDefaultCards, playerBean3);
 		generateWinnerPlayers();
@@ -97,8 +99,7 @@ public class Main implements GameConstants {
 				Collections.sort(sameRankPlayer, new Comparator<PlayerBean>() {
 					@Override
 					public int compare(PlayerBean player1, PlayerBean player2) {
-						return Integer.compare(player2.getBestHandRankTotal(),
-								player1.getBestHandRankTotal());
+						return getBestHandPlayer(player1,player2);
 					}
 				});
 				listWinnerPlayer.addAll(sameRankPlayer);
@@ -111,4 +112,71 @@ public class Main implements GameConstants {
 		return listWinnerPlayer;
 	}
 
+	public static int getBestHandPlayer(PlayerBean playerBean1,PlayerBean playerBean2){
+		
+		if(playerBean1.getHandRank().equals(playerBean2.getHandRank())){
+			
+			// If Pair is Full House
+			if (playerBean1.getHandRank().equals(HAND_RANK.FULL_HOUSE)) {
+				List<List<Card>> listOfListSameRankCardsForPlayer1 = generalHandManager.listAllSameRankCards(playerBean1.getMainHandCards());
+				List<List<Card>> listOfListSameRankCardsForPlayer2 = generalHandManager.listAllSameRankCards(playerBean2.getMainHandCards());
+				List<Card> listPlayer1Cards = new ArrayList<Card>();
+				List<Card> listPlayer2Cards = new ArrayList<Card>();
+				
+				if(listOfListSameRankCardsForPlayer1.size()==2 && listOfListSameRankCardsForPlayer2.size()==2){
+					if(listOfListSameRankCardsForPlayer1.get(0).size()==3){
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(0));
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(1));
+					}else{
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(1));
+						listPlayer1Cards.addAll(listOfListSameRankCardsForPlayer1.get(0));
+					}
+					
+					if(listOfListSameRankCardsForPlayer2.get(0).size()==3){
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(0));
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(1));
+					}else{
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(1));
+						listPlayer2Cards.addAll(listOfListSameRankCardsForPlayer2.get(0));
+					}
+					for(int i =0 ;i<listPlayer1Cards.size();i++){
+						if (listPlayer1Cards.get(i).getValue() == listPlayer2Cards.get(i).getValue()) {
+
+						} else if (listPlayer1Cards.get(i).getValue() > listPlayer2Cards.get(i).getValue()) {
+							return -1;
+						} else if (listPlayer1Cards.get(i).getValue() < listPlayer2Cards.get(i).getValue()) {
+							return 1;
+						}
+						
+					}
+				}
+			} else {
+				for (int i = 0; i < playerBean1.getMainHandCards().size(); i++) {
+					if (playerBean1.getMainHandCards().get(i).getValue() == playerBean2
+							.getMainHandCards().get(i).getValue()) {
+
+					} else if (playerBean1.getMainHandCards().get(i).getValue() > playerBean2
+							.getMainHandCards().get(i).getValue()) {
+						return -1;
+					} else if (playerBean1.getMainHandCards().get(i).getValue() < playerBean2
+							.getMainHandCards().get(i).getValue()) {
+						return 1;
+					}
+				}
+			}
+			for (int i = 0; i < playerBean1.getBestHandCards().size(); i++) {
+				if (playerBean1.getBestHandCards().get(i).getValue() == playerBean2
+						.getBestHandCards().get(i).getValue()) {
+
+				} else if (playerBean1.getBestHandCards().get(i).getValue() > playerBean2
+						.getBestHandCards().get(i).getValue()) {
+					return -1;
+				} else if (playerBean1.getBestHandCards().get(i).getValue() < playerBean2
+						.getBestHandCards().get(i).getValue()) {
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
 }

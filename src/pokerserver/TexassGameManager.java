@@ -45,14 +45,14 @@ public class TexassGameManager implements GameConstants {
 	public void initGameRounds() {
 		System.out
 				.println("================== Texass Game started ==================");
-		winnerManager = new WinnerManager(playersManager);
+		handManager = new GeneralHandManager(TEXASS_PLAYER_CARD_LIMIT_FOR_HAND);
+		winnerManager = new WinnerManager(playersManager,handManager);
 		generateDefaultCards();
 		preflopRound = new RoundManager(TEXASS_ROUND_PREFLOP);
 		flopRound = new RoundManager(TEXASS_ROUND_FLOP);
 		turnRound = new RoundManager(TEXASS_ROUND_TURN);
 		riverRound = new RoundManager(TEXASS_ROUND_RIVER);
 //		handManager = new HandManager(listDefaultCards);
-		handManager = new GeneralHandManager(TEXASS_PLAYER_CARD_LIMIT_FOR_HAND);
 		startPreFlopRound();
 	}
 

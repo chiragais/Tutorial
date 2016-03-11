@@ -45,14 +45,15 @@ public class WAGameManager implements GameConstants {
 	public void initGameRounds() {
 		System.out
 				.println("================== WA Game started ==================");
-		winnerManager = new WinnerManager(playersManager);
+		handManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
+		winnerManager = new WinnerManager(playersManager,handManager);
 		generateDefaultCards();
 		startRound = new RoundManager(WA_ROUND_START);
 		firstFlopRound = new RoundManager(WA_ROUND_FIRST_FLOP);
 		secondFlopRound = new RoundManager(WA_ROUND_SECOND_FLOP);
 		whoopAssRound = new RoundManager(WA_ROUND_WHOOPASS);
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
-		handManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
+		
 //		startFirstRound();
 	}
 

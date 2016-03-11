@@ -28415,3 +28415,23 @@
 2016-03-10 18:30:11,107 - WARNING: Running with 500 CCU limit
 2016-03-10 19:21:31,326 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
 2016-03-10 19:21:31,330 - WARNING: Running with 500 CCU limit
+2016-03-11 11:49:18,394 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 11:49:18,404 - WARNING: Running with 500 CCU limit
+2016-03-11 17:44:59,670 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 17:44:59,674 - WARNING: Running with 500 CCU limit
+2016-03-11 18:02:10,387 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:02:10,390 - WARNING: Running with 500 CCU limit
+2016-03-11 18:10:46,864 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:10:46,868 - WARNING: Running with 500 CCU limit
+2016-03-11 18:11:00,474 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:11:00,478 - WARNING: Running with 500 CCU limit
+2016-03-11 18:13:38,349 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:13:38,353 - WARNING: Running with 500 CCU limit
+2016-03-11 18:18:51,804 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:18:51,810 - WARNING: Running with 500 CCU limit
+2016-03-11 18:28:16,365 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:28:16,369 - WARNING: Running with 500 CCU limit
+2016-03-11 18:34:25,632 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 18:34:25,636 - WARNING: Running with 500 CCU limit
+2016-03-11 19:01:24,444 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-11 19:01:24,448 - WARNING: Running with 500 CCU limit

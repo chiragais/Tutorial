@@ -31,7 +31,7 @@ public class PlayerBean {
 	private HAND_RANK handRank;
 	private int winningIndex = 0;
 	private Card[] handBestCards = new Card[5];
-//	private 
+	private List<Card> mainHandCards = new ArrayList<Card>();
     
 	// private int betAmount;
 
@@ -162,9 +162,13 @@ public class PlayerBean {
 		this.isFoldedPlayer = b;
 	}
 
-	public void setPlayersBestHand(HAND_RANK hand, Card[] listCard) {
+	public void setPlayersBestHand(HAND_RANK hand, Card[] listCard, List<Card> listMainHandCards) {
 		this.handRank = hand;
 		this.handBestCards = listCard;
+		this.mainHandCards.clear();
+		for(Card card : listMainHandCards){
+			this.mainHandCards.add(card);			
+		}
 	}
 
 	public HAND_RANK getHandRank() {
@@ -183,6 +187,9 @@ public class PlayerBean {
 
 	}
 
+	public List<Card> getMainHandCards(){
+		return mainHandCards;
+	}
 	
 	public Card[] getBestHandCardsArray() {
 		

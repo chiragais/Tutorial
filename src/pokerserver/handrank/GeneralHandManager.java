@@ -13,6 +13,7 @@ public class GeneralHandManager implements GameConstants {
 	List<Card> defaultCards = new ArrayList<Card>();
 	List<Card> playerCards = new ArrayList<Card>();
 	List<Card> playerBestHandCard = new ArrayList<Card>();
+	List<Card> mainHandCards = new ArrayList<Card>();
 	int PLAYER_CARD_LIMIT_FOR_HAND = 0;
 	final int BEST_HAND_CARD_LIMIT = 5;
 
@@ -38,7 +39,7 @@ public class GeneralHandManager implements GameConstants {
 		HAND_RANK handRank = null;
 		List<Card> listPlayersCards = new ArrayList<Card>();
 		List<Card> listDefaultTableCards = new ArrayList<Card>();
-		List<Card> mainHandCards = new ArrayList<>();
+//		List<Card> mainHandCards = new ArrayList<>();
 		listPlayersCards.add(playerBean.getFirstCard());
 		listPlayersCards.add(playerBean.getSecondCard());
 		listDefaultTableCards.addAll(listDefaultCards);
@@ -61,35 +62,35 @@ public class GeneralHandManager implements GameConstants {
 		List<Card> listAllTableCards = setPlayerAndDefaultCards(listDefaultTableCards, listPlayersCards);
 		if (isRoyalFlushRank(listAllTableCards)) {
 			handRank= HAND_RANK.ROYAL_FLUSH;
-			mainHandCards.addAll(getPlayerBestCards());
+//			mainHandCards.addAll(getPlayerBestCards());
 		} else if (isStraightFlushRank(listAllTableCards)) {
 			handRank= HAND_RANK.STRAIGHT_FLUSH;
-			mainHandCards.addAll(getPlayerBestCards());
+//			mainHandCards.addAll(getPlayerBestCards());
 		} else if (isFourOfKindRank(listAllTableCards)) {
 			handRank= HAND_RANK.FOUR_OF_A_KIND;
-			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
+//			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
 		} else if (isFullHouseRank(listAllTableCards)) {
 			handRank= HAND_RANK.FULL_HOUSE;
-			mainHandCards.addAll(getPlayerBestCards());
+//			mainHandCards.addAll(getPlayerBestCards());
 		} else if (isFlushRank(listAllTableCards)) {
 			handRank= HAND_RANK.FLUSH;
-			mainHandCards.addAll(getPlayerBestCards());
+//			mainHandCards.addAll(getPlayerBestCards());
 		} else if (isStraightRank(listAllTableCards)) {
 			handRank= HAND_RANK.STRAIGHT;
-			mainHandCards.addAll(getPlayerBestCards());
+//			mainHandCards.addAll(getPlayerBestCards());
 		} else if(isThreeOfKindRank(listAllTableCards)){
 			handRank= HAND_RANK.THREE_OF_A_KIND;
-			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
+//			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
 		} else if(isTwoPairRank(listAllTableCards)){
 			handRank= HAND_RANK.TWO_PAIR;
-			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
-			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(1));
+//			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
+//			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(1));
 		} else if(isPairRank(listAllTableCards)){
 			handRank= HAND_RANK.PAIR;
-			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
+//			mainHandCards.addAll(listAllSameRankCards(listAllTableCards).get(0));
 		}  else if(isHighCardRank(listAllTableCards)){
 			handRank= HAND_RANK.HIGH_CARD;
-			mainHandCards.addAll(getPlayerBestCards());
+//			mainHandCards.addAll(getPlayerBestCards());
 		}else {
 			handRank= null;
 		}
@@ -105,7 +106,7 @@ public class GeneralHandManager implements GameConstants {
 //			for (int i=0;i<mainHandCards.size();i++) {
 //				System.out.println(mainHandCards.get(i).getCardName());
 //			}
-			playerBean.setPlayersBestHand(handRank, bestCard);
+			playerBean.setPlayersBestHand(handRank, bestCard,mainHandCards);
 		}
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 	}
@@ -128,8 +129,8 @@ public class GeneralHandManager implements GameConstants {
 				if (diffSuitCard == null) {
 					// Check list have player limit cards
 					if (isValidCardsForPlayerHand(listStraight)) {
-						playerBestHandCard.clear();
-						playerBestHandCard.addAll(listStraight);
+						playerBestHandCard.clear();playerBestHandCard.addAll(descendingSortedCards(listStraight));
+						mainHandCards.clear();mainHandCards.addAll(listStraight);
 						return true;
 					}
 				} else {
@@ -143,8 +144,8 @@ public class GeneralHandManager implements GameConstants {
 						listStraight = descendingSortedCards(listStraight);
 						// Re-check list for royal flush
 						if (isRoyalFlushRank(listStraight)) {
-							playerBestHandCard.clear();
-							playerBestHandCard.addAll(listStraight);
+							playerBestHandCard.clear();	playerBestHandCard.addAll(descendingSortedCards(listStraight));
+							mainHandCards.clear();mainHandCards.addAll(listStraight);
 							return true;
 						}
 					}
@@ -168,7 +169,8 @@ public class GeneralHandManager implements GameConstants {
 				// Check list have player limit cards
 				if (isValidCardsForPlayerHand(listStraight)) {
 					playerBestHandCard.clear();
-					playerBestHandCard.addAll(listStraight);
+					playerBestHandCard.addAll(descendingSortedCards(listStraight));
+					mainHandCards.clear();mainHandCards.addAll(listStraight);
 					return true;
 				}
 			} else {
@@ -183,7 +185,8 @@ public class GeneralHandManager implements GameConstants {
 						listStraight = descendingSortedCards(listStraight);
 						if (isStraightFlushRank(listStraight)) {
 							playerBestHandCard.clear();
-							playerBestHandCard.addAll(listStraight);
+							playerBestHandCard.addAll(descendingSortedCards(listStraight));
+							mainHandCards.clear();mainHandCards.addAll(listStraight);
 							return true;
 						}
 					}
@@ -216,10 +219,12 @@ public class GeneralHandManager implements GameConstants {
 					// Find maximum cards from player hand which are not list
 					bigCard = getBiggestCardFromList(playerCards, listCards);
 				}
+				// Main hand cards
+				mainHandCards.clear();mainHandCards.addAll(listCards);
 				listCards.add(bigCard);
 				if (isValidCardsForPlayerHand(listCards)) {
 					playerBestHandCard.clear();
-					playerBestHandCard.addAll(listCards);
+					playerBestHandCard.addAll(descendingSortedCards(listCards));
 					return true;
 				}
 			}
@@ -275,7 +280,9 @@ public class GeneralHandManager implements GameConstants {
 
 					if (isValidCardsForPlayerHand(checkBestCardsWithRank(listFullHouseCards))) {
 						playerBestHandCard.clear();
-						playerBestHandCard.addAll(listFullHouseCards);
+						playerBestHandCard.addAll(descendingSortedCards(listFullHouseCards));
+						// Main hand cards
+						mainHandCards.clear();mainHandCards.addAll(listFullHouseCards);
 						return true;
 					}
 
@@ -298,7 +305,8 @@ public class GeneralHandManager implements GameConstants {
 				if (PLAYER_CARD_LIMIT_FOR_HAND != 0) {
 					if (isValidCardsForPlayerHand(checkBestCardsWithSuit(listCards))) {
 						playerBestHandCard.clear();
-						playerBestHandCard.addAll(listCards);
+						playerBestHandCard.addAll(descendingSortedCards(listCards));
+						mainHandCards.clear();mainHandCards.addAll(listCards);
 						return true;
 					}
 				}
@@ -319,6 +327,7 @@ public class GeneralHandManager implements GameConstants {
 				if (isValidCardsForPlayerHand(checkBestCardsWithRank(listCards))) {
 					playerBestHandCard.clear();
 					playerBestHandCard.addAll(descendingSortedCards(listCards));
+					mainHandCards.clear();mainHandCards.addAll(listCards);
 					return true;
 				}
 				// break;
@@ -366,7 +375,9 @@ public class GeneralHandManager implements GameConstants {
 						}
 						break;
 					}
+					mainHandCards.clear();mainHandCards.addAll(listCards);
 				} else {
+					mainHandCards.clear();mainHandCards.addAll(listCards);
 					// Add player cards
 					for (Card card : playerCards) {
 						if (totalPlayerCards < PLAYER_CARD_LIMIT_FOR_HAND
@@ -457,6 +468,7 @@ public class GeneralHandManager implements GameConstants {
 								}
 								break;
 							}
+						
 						} else {
 							// Add player cards
 							for (Card card : playerCards) {
@@ -479,6 +491,7 @@ public class GeneralHandManager implements GameConstants {
 								}
 							}
 						}
+					mainHandCards.clear();mainHandCards.addAll(listTwoPairCard);
 					// If total player card is 1
 					if (totalPlayerCards == 1) {
 						for (Card card : playerCards) {
@@ -552,6 +565,7 @@ public class GeneralHandManager implements GameConstants {
 					}
 				}
 			}
+			mainHandCards.clear();mainHandCards.addAll(listPairCard);
 			// Add player max cards
 			for (Card card : playerCards) {
 				if (!listPairCard.contains(card)
@@ -602,8 +616,10 @@ public class GeneralHandManager implements GameConstants {
 			}
 		}
 		if (isValidCardsForPlayerHand(listHighCards)) {
+			listHighCards = descendingSortedCards(listHighCards);
 			playerBestHandCard.clear();
 			playerBestHandCard.addAll(descendingSortedCards(listHighCards));
+			mainHandCards.clear();mainHandCards.addAll(listHighCards);
 			return true;
 		}
 		return false;
