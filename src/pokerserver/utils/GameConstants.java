@@ -182,6 +182,8 @@ public interface GameConstants {
 
 	int SBAmount = 10;
 	
-	String WA_APP_KEY = "4318ddad-038a-409d-8";
-	String TEXASS_APP_KEY = "3689654b-d64f-421e-8";
+//	String WA_APP_KEY = "4318ddad-038a-409d-8";
+//	String TEXASS_APP_KEY = "3689654b-d64f-421e-8";
+	String WA_APP_KEY = "970f84e7-bb66-4499-b";
+	String TEXASS_APP_KEY = "6be0f405-c805-45c2-9";
 }
