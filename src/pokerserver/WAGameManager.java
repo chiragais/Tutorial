@@ -8,7 +8,6 @@ import java.util.List;
 import pokerserver.cards.Card;
 import pokerserver.handrank.GeneralHandManager;
 import pokerserver.players.AllInPlayer;
-import pokerserver.players.GamePlay;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
 import pokerserver.players.Winner;
@@ -27,7 +26,6 @@ public class WAGameManager implements GameConstants {
 
 	PlayersManager playersManager;
 	GeneralHandManager handManager;
-	public GamePlay gamePlay;
 	ArrayList<Card> listDefaultCards = new ArrayList<Card>();
 	ArrayList<Card> listTableCards = new ArrayList<Card>();
 	RoundManager startRound;
@@ -268,9 +266,6 @@ public class WAGameManager implements GameConstants {
 		return thirdRound;
 	}
 
-	public ArrayList<String> getWinnerCards() {
-		return gamePlay.getWinnerCards();
-	}
 
 	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
 			int action) {

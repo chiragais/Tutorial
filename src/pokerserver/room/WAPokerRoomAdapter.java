@@ -48,13 +48,6 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				&& gameRoom.getJoinedUsers().size() >= MIN_PLAYER_TO_START_GAME) {
 
 			distributeCarsToPlayerFromDelear();
-			// if (isFirstTime) {
-			// isFirstTime = false;
-			// } else {
-			// gameManager.initGameRounds();
-			// }
-			// managePlayerTurn();
-			// gameRoom.startGame(WA_SERVER_NAME);
 			GAME_STATUS = RUNNING;
 		} else if (GAME_STATUS == RESUMED) {
 			GAME_STATUS = RUNNING;
