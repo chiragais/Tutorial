@@ -5190,3 +5190,21 @@
 2016-03-22 11:55:53,186 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:51577
 2016-03-22 11:56:22,311 - WARNING: closing idle session /192.168.1.200:51597
 2016-03-22 11:56:40,114 - WARNING: closing idle session /192.168.1.200:51610
+2016-03-22 19:11:34,221 - WARNING: Room Created: id= 1543744401
+2016-03-22 19:11:34,259 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:11:37,452 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:11:51,822 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:12:16,871 - WARNING: closing idle session /192.168.1.200:55129
+2016-03-22 19:12:16,884 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:55105
+2016-03-22 19:12:16,893 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:55113
+2016-03-22 19:12:40,556 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:12:58,846 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:13:02,533 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:13:18,659 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:55219
+2016-03-22 19:15:35,357 - WARNING: closing idle session /192.168.1.200:55192
+2016-03-22 19:17:20,693 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:17:26,865 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:17:42,106 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-03-22 19:18:07,762 - WARNING: closing idle session /192.168.1.200:55559
+2016-03-22 19:18:07,775 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:55582
+2016-03-22 19:18:07,782 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:55566

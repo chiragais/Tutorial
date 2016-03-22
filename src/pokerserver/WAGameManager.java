@@ -307,8 +307,11 @@ public class WAGameManager implements GameConstants {
 			return false;
 		} else {
 
+			boolean allPlayersAreAllIn = true;
 			for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+				
 				if (!player.isFolded() && !player.isAllIn()) {
+					allPlayersAreAllIn = false;
 					totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 							.getTotalPlayerBetAmount(player), currentRound
 							.getPlayerLastAction(player)));
@@ -331,6 +334,11 @@ public class WAGameManager implements GameConstants {
 				if (c.getLastAction() == ACTION_PENDING) {
 					allPlayerHaveTurn = false;
 				}
+			}
+			
+			if(allPlayerHaveTurn && allPlayersAreAllIn)
+			{
+				return true;
 			}
 			PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
 			totalPlayerWiseBetAmount.remove(0);
@@ -460,6 +468,9 @@ public class WAGameManager implements GameConstants {
 				betAmount, action);
 		if (currentPlayer != null) {
 
+			if(currentPlayer.getTotalBalance()==0){
+				action = ACTION_ALL_IN;
+			}
 			RoundManager currentRoundManger = getCurrentRoundInfo();
 			turnManager = new TurnManager(currentPlayer, action, betAmount);
 			currentRoundManger.addTurnRecord(turnManager);
