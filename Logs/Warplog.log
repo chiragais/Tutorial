@@ -28473,3 +28473,9 @@
 2016-03-21 09:20:33,988 - WARNING: Running with 500 CCU limit
 2016-03-21 18:57:40,360 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
 2016-03-21 18:57:40,364 - WARNING: Running with 500 CCU limit
+2016-03-22 11:53:27,426 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-22 11:53:27,436 - WARNING: Running with 500 CCU limit
+2016-03-22 12:04:15,247 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-22 12:04:15,250 - WARNING: Running with 500 CCU limit
+2016-03-22 12:10:00,123 - WARNING: Error in loading license from server java.lang.Exception: no key in AppConfig.json
+2016-03-22 12:10:00,127 - WARNING: Running with 500 CCU limit

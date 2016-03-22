@@ -27,7 +27,7 @@ AppKey : 3689654b-d64f-421e-8
     {             
     	System.out.println();
     	System.out.print("Poker Server Extension : "+zone.getName());
-    	if(zone.getAppKey().equals(TEXASS_APP_KEY)){
+    	if(zone.getAppKey().equals(TEXASS_APP_KEY) || zone.getAppKey().equals(TEXASS_APP_KEY_LOCAL)){
     		zone.setAdaptor(new TexassPokerZoneExtension(zone));
     	}else{
     		zone.setAdaptor(new WAPokerZoneExtension(zone));

@@ -193,7 +193,6 @@ public class WAGameManager implements GameConstants {
 	 */
 	public void startFirstRound() {
 		currentRound = WA_ROUND_START;
-		System.out.println();
 		System.out.println(">>>>>>>>>>> WA start Round started");
 		startRound.setStatus(ROUND_STATUS_ACTIVE);
 		firstFlopRound.setStatus(ROUND_STATUS_PENDING);
@@ -204,8 +203,7 @@ public class WAGameManager implements GameConstants {
 
 	public void startFirstFlopRound() {
 		currentRound = WA_ROUND_FIRST_FLOP;
-		System.out.println();
-		System.out.print(">>>>>>>>>>>WA First Flop Round started  ");
+		System.out.println(">>>>>>>>>>>WA First Flop Round started  ");
 		startRound.setStatus(ROUND_STATUS_FINISH);
 		firstFlopRound.setStatus(ROUND_STATUS_ACTIVE);
 		secondFlopRound.setStatus(ROUND_STATUS_PENDING);
@@ -215,8 +213,7 @@ public class WAGameManager implements GameConstants {
 
 	public void startSecondFlopRound() {
 		currentRound = WA_ROUND_SECOND_FLOP;
-		System.out.println();
-		System.out.print(">>>>>>>>>>> WA Second flop Round started  ");
+		System.out.println(">>>>>>>>>>> WA Second flop Round started  ");
 		startRound.setStatus(ROUND_STATUS_FINISH);
 		firstFlopRound.setStatus(ROUND_STATUS_FINISH);
 		secondFlopRound.setStatus(ROUND_STATUS_ACTIVE);
@@ -226,8 +223,7 @@ public class WAGameManager implements GameConstants {
 
 	public void startWhoopAssRound() {
 		currentRound = WA_ROUND_WHOOPASS;
-		System.out.println();
-		System.out.print(">>>>>>>>>>> WA WhoopAss Round started  ");
+		System.out.println(">>>>>>>>>>> WA WhoopAss Round started  ");
 		startRound.setStatus(ROUND_STATUS_FINISH);
 		firstFlopRound.setStatus(ROUND_STATUS_FINISH);
 		secondFlopRound.setStatus(ROUND_STATUS_FINISH);
@@ -237,8 +233,7 @@ public class WAGameManager implements GameConstants {
 
 	public void startThirdFlopRound() {
 		currentRound = WA_ROUND_THIRD_FLOP;
-		System.out.println();
-		System.out.print(">>>>>>>>>>> WA Third Round started  ");
+		System.out.println(">>>>>>>>>>> WA Third Round started  ");
 		startRound.setStatus(ROUND_STATUS_FINISH);
 		firstFlopRound.setStatus(ROUND_STATUS_FINISH);
 		secondFlopRound.setStatus(ROUND_STATUS_FINISH);
