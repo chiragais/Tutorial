@@ -24,8 +24,8 @@ public class GeneralHandManager implements GameConstants {
 	public List<Card> setPlayerAndDefaultCards(List<Card> defaultCards,List<Card> playerCards) {
 //		this.defaultCards.clear();
 //		this.playerCards.clear();
-		this.defaultCards = defaultCards;
-		this.playerCards = playerCards;
+		this.defaultCards = descendingSortedCards(defaultCards);
+		this.playerCards = descendingSortedCards(playerCards);
 		List<Card> allTableCards = new ArrayList<Card>();
 		 allTableCards.addAll(this.defaultCards);
 		 allTableCards.addAll(this.playerCards);
