@@ -468,10 +468,11 @@ public class WAGameManager implements GameConstants {
 				betAmount, action);
 		if (currentPlayer != null) {
 
-			if(currentPlayer.getTotalBalance()==0){
+			
+			RoundManager currentRoundManger = getCurrentRoundInfo();
+			if(currentPlayer.getTotalBalance()==0 && currentRoundManger.getRound()!=WA_ROUND_WHOOPASS){
 				action = ACTION_ALL_IN;
 			}
-			RoundManager currentRoundManger = getCurrentRoundInfo();
 			turnManager = new TurnManager(currentPlayer, action, betAmount);
 			currentRoundManger.addTurnRecord(turnManager);
 			System.out.println();
