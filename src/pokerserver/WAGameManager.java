@@ -510,19 +510,28 @@ public class WAGameManager implements GameConstants {
 	public PlayerBean checkAllAreFoldOrAllIn() {
 		PlayerBean lastPlayer = null;
 		int totalActivePlayersCnt = 0;
+		int totalAllInPlayers = 0;
+		PlayerBean lastAllInPlayer = null;
 		for (PlayerBean playerBean : playersManager.getAllAvailablePlayers()) {
-			if (!playerBean.isAllIn())
+			if (!playerBean.isAllIn()){
 				if (!playerBean.isFolded()) {
 					lastPlayer = playerBean;
 					totalActivePlayersCnt++;
 				}
-//			System.out.println("\nPlayer : " + playerBean.getPlayeName()
-//					+ " >> IsFolded: " + playerBean.isPlayerFolded()
-//					+ " >> IsAllIn : " + playerBean.isPlayrAllIn()
-//					+ " >>ActivePlayers : " + totalActivePlayersCnt);
+			}else{
+				totalAllInPlayers++;
+				lastAllInPlayer=playerBean;
+			}
 			if (totalActivePlayersCnt == 2) {
 				return null;
 			}
+		}
+		System.out.println("Total All in Player : "+totalAllInPlayers+" >>  "+playersManager.getAllAvailablePlayers().size());
+		if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()-1){
+			System.out.println("Last All in player: "+lastAllInPlayer.getPlayerName());
+			return null;
+		}else if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()){
+			return lastAllInPlayer;
 		}
 		return lastPlayer;
 	}

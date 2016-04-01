@@ -34,7 +34,7 @@ public class GeneralHandManager implements GameConstants {
 	}
 	
 	public  void generatePlayerBestRank(List<Card> listDefaultCards,PlayerBean playerBean){
-		System.out.println();
+		
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		HAND_RANK handRank = null;
 		List<Card> listPlayersCards = new ArrayList<Card>();

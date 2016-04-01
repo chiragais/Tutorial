@@ -168,15 +168,28 @@ public class TexassGameManager implements GameConstants {
 	public PlayerBean checkAllAreFoldOrAllIn() {
 		PlayerBean lastPlayer = null;
 		int totalActivePlayersCnt = 0;
+		int totalAllInPlayers = 0;
+		PlayerBean lastAllInPlayer = null;
 		for (PlayerBean playerBean : playersManager.getAllAvailablePlayers()) {
-			if (!playerBean.isAllIn())
+			if (!playerBean.isAllIn()){
 				if (!playerBean.isFolded()) {
 					lastPlayer = playerBean;
 					totalActivePlayersCnt++;
 				}
+			}else{
+				totalAllInPlayers++;
+				lastAllInPlayer=playerBean;
+			}
 			if (totalActivePlayersCnt == 2) {
 				return null;
 			}
+		}
+		System.out.println("Total All in Player : "+totalAllInPlayers+" >>  "+playersManager.getAllAvailablePlayers().size());
+		if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()-1){
+			System.out.println("Last All in player: "+lastAllInPlayer.getPlayerName());
+			return null;
+		}else if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()){
+			return lastAllInPlayer;
 		}
 		return lastPlayer;
 	}
@@ -338,7 +351,9 @@ public class TexassGameManager implements GameConstants {
 		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,
 				betAmount, action);
 		if (currentPlayer != null) {
-
+			if(currentPlayer.getTotalBalance()==0){
+				action = ACTION_ALL_IN;
+			}
 			RoundManager currentRoundManger = getCurrentRoundInfo();
 			turnManager = new TurnManager(currentPlayer, action, betAmount);
 			currentRoundManger.addTurnRecord(turnManager);

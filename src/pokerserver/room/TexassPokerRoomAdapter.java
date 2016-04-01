@@ -172,6 +172,7 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 	}
 	public void manageGameFinishEvent() {
+		
 		gameManager.moveToNextRound();
 		// Broad cast game completed to all players
 		broadcastRoundCompeleteToAllPlayers();
@@ -192,22 +193,20 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// winner
 		PlayerBean lastActivePlayer = gameManager.checkAllAreFoldOrAllIn();
 		if (lastActivePlayer != null) {
+			System.out.println("Manage game Finish event : "+ lastActivePlayer);
 			manageGameFinishEvent();
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 					&& gameManager.getCurrentRoundIndex() == TEXASS_ROUND_RIVER) {
+				System.out.println("Manage game Finish event >> 1");
 				manageGameFinishEvent();
 			} else {
 				gameManager.moveToNextRound();
 				broadcastRoundCompeleteToAllPlayers();
 			}
-		} else {
-			// managePlayerTurn(sender);
 		}
-		// Manage user turns
-		// gameRoom.setNextTurn(getUserFromName(name))
 	}
 
 	/**
@@ -405,13 +404,13 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	private void addNewPlayerCards(String userName) {
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, userName);
-//		if (gameRoom.getJoinedUsers().size() == 0) {
-//			player.setTotalBalance(100);
-//		} else if (gameRoom.getJoinedUsers().size() == 1) {
-//			player.setTotalBalance(200);
-//		} else if (gameRoom.getJoinedUsers().size() == 2) {
-//			player.setTotalBalance(400);
-//		}
+		if (gameRoom.getJoinedUsers().size() == 0) {
+			player.setTotalBalance(100);
+		} else if (gameRoom.getJoinedUsers().size() == 1) {
+			player.setTotalBalance(200);
+		} else if (gameRoom.getJoinedUsers().size() == 2) {
+			player.setTotalBalance(400);
+		}
 
 		player.setCards(gameManager.generatePlayerCards(),
 				gameManager.generatePlayerCards(),
@@ -560,8 +559,6 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
         JSONArray   winnerArray=new JSONArray();
         gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_COMPLETE
 		     + winnerArray.toString());
-	   System.out.println("winner array is  "+winnerArray.toString());
-
 	}
 
 	private void broadcastPlayerActionDoneToOtherPlayers(TurnManager turnManager) {
