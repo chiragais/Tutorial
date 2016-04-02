@@ -139,16 +139,21 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// If all players are folded or all in then declare last player as a
 		// winner
 		PlayerBean lastActivePlayer = gameManager.checkAllAreFoldOrAllIn();
+		System.out.println("Crony 0");
 		if (lastActivePlayer != null) {
+			System.out.println("Crony 1");
 			if(gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_PENDING ){
 				gameManager.calculatePotAmountForAllInMembers();
 				gameManager.startWhoopAssRound();
 				broadcastRoundCompeleteToAllPlayers();
-			}else if(gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_ACTIVE && gameManager.checkEveryPlayerHaveSameBetAmount()){
+			}else if((gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_ACTIVE 
+					||gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE )
+					&& gameManager.checkEveryPlayerHaveSameBetAmount()){
 				manageGameFinishEvent();
 			}
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
+			System.out.println("Crony 2");
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 					&& gameManager.getCurrentRoundIndex() == WA_ROUND_THIRD_FLOP) {
@@ -157,11 +162,9 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				gameManager.moveToNextRound();
 				broadcastRoundCompeleteToAllPlayers();
 			}
-		} else {
-			// managePlayerTurn(sender);
+		} else{
+			System.out.println("Crony 3");
 		}
-		// Manage user turns
-		// gameRoom.setNextTurn(getUserFromName(name))
 	}
 
 	private void managePlayerTurn(String currentPlayer) {

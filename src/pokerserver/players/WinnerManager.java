@@ -121,7 +121,7 @@ public class WinnerManager {
 	}
 
 	public void findWinnerPlayers() {
-		System.out.println("\n Find Winner Player ------------");
+	//	System.out.println("\n Find Winner Player ------------");
 		for (PlayerBean player : generateWinnerPlayers()) {
 			if (!player.isFolded()) {
 				if (!player.isAllIn()) {
