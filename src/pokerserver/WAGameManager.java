@@ -44,15 +44,15 @@ public class WAGameManager implements GameConstants {
 		System.out
 				.println("================== WA Game started ==================");
 		handManager = new GeneralHandManager(WA_PLAYER_CARD_LIMIT_FOR_HAND);
-		winnerManager = new WinnerManager(playersManager,handManager);
+		winnerManager = new WinnerManager(playersManager, handManager);
 		generateDefaultCards();
 		startRound = new RoundManager(WA_ROUND_START);
 		firstFlopRound = new RoundManager(WA_ROUND_FIRST_FLOP);
 		secondFlopRound = new RoundManager(WA_ROUND_SECOND_FLOP);
 		whoopAssRound = new RoundManager(WA_ROUND_WHOOPASS);
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
-		
-//		startFirstRound();
+
+		// startFirstRound();
 	}
 
 	public RoundManager getCurrentRoundInfo() {
@@ -107,8 +107,8 @@ public class WAGameManager implements GameConstants {
 
 	public void calculatePotAmountForAllInMembers() {
 		int allInBetTotalAmount = 0;
-//		System.out
-//				.println("\n ---------calculatePotAmountForAllInMembers------------------------");
+		// System.out
+		// .println("\n ---------calculatePotAmountForAllInMembers------------------------");
 		for (int i = 0; i < playersManager.getAllAvailablePlayers().size(); i++) {
 			allInBetTotalAmount = 0;
 			PlayerBean player = playersManager.getAllAvailablePlayers().get(i);
@@ -261,7 +261,6 @@ public class WAGameManager implements GameConstants {
 		return thirdRound;
 	}
 
-
 	public PlayerBean deductPlayerBetAmountFromBalance(String name, int amount,
 			int action) {
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
@@ -309,9 +308,9 @@ public class WAGameManager implements GameConstants {
 			boolean allPlayersAreAllIn = true;
 			int maxPlayerBetAmt = 0;
 			for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
-				int totalBetAmt =currentRound.getTotalPlayerBetAmount(player);
-				if(maxPlayerBetAmt<totalBetAmt){
-					maxPlayerBetAmt= totalBetAmt;
+				int totalBetAmt = currentRound.getTotalPlayerBetAmount(player);
+				if (maxPlayerBetAmt < totalBetAmt) {
+					maxPlayerBetAmt = totalBetAmt;
 				}
 				if (!player.isFolded() && !player.isAllIn()) {
 					allPlayersAreAllIn = false;
@@ -338,18 +337,17 @@ public class WAGameManager implements GameConstants {
 					allPlayerHaveTurn = false;
 				}
 			}
-			
-			if(allPlayerHaveTurn && allPlayersAreAllIn)
-			{
+
+			if (allPlayerHaveTurn && allPlayersAreAllIn) {
 				return true;
 			}
-//			PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
-//			totalPlayerWiseBetAmount.remove(0);
+			// PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
+			// totalPlayerWiseBetAmount.remove(0);
 			// Checking all players have same bet amount
 			for (PlayerBetBean currentPlayerBetAmt : totalPlayerWiseBetAmount) {
-//				if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
-//						.getBetAmount()) {
-				if(currentPlayerBetAmt.getBetAmount()!=maxPlayerBetAmt){
+				// if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
+				// .getBetAmount()) {
+				if (currentPlayerBetAmt.getBetAmount() != maxPlayerBetAmt) {
 					return false;
 				}
 			}
@@ -472,9 +470,9 @@ public class WAGameManager implements GameConstants {
 				betAmount, action);
 		if (currentPlayer != null) {
 
-			
 			RoundManager currentRoundManger = getCurrentRoundInfo();
-			if(currentPlayer.getTotalBalance()==0 && currentRoundManger.getRound()!=WA_ROUND_WHOOPASS){
+			if (currentPlayer.getTotalBalance() == 0
+					&& currentRoundManger.getRound() != WA_ROUND_WHOOPASS) {
 				action = ACTION_ALL_IN;
 			}
 			turnManager = new TurnManager(currentPlayer, action, betAmount);
@@ -517,45 +515,37 @@ public class WAGameManager implements GameConstants {
 		int totalAllInPlayers = 0;
 		int maxPlayerAmt = 0;
 		PlayerBean lastAllInPlayer = null;
-		System.out.println();
 		for (PlayerBean playerBean : playersManager.getAllAvailablePlayers()) {
-			int betAmt = getCurrentRoundInfo().getTotalPlayerBetAmount(playerBean);
-			if(maxPlayerAmt< betAmt){
-				maxPlayerAmt=betAmt;
+			int betAmt = getCurrentRoundInfo().getTotalPlayerBetAmount(
+					playerBean);
+			if (maxPlayerAmt < betAmt) {
+				maxPlayerAmt = betAmt;
 			}
-			if (!playerBean.isAllIn()){
+			if (!playerBean.isAllIn()) {
 				if (!playerBean.isFolded()) {
 					lastPlayer = playerBean;
 					totalActivePlayersCnt++;
-					System.out.println("Active Plr : "+ playerBean.getPlayerName());
 				}
-				System.out.println("checkAllAreFoldOrAllIn 1.0 : ");
-			}else{
+			} else {
 				totalAllInPlayers++;
-				lastAllInPlayer=playerBean;
+				lastAllInPlayer = playerBean;
 			}
-			System.out.println("checkAllAreFoldOrAllIn 1.2 : ");
 			if (totalActivePlayersCnt == 2) {
-				System.out.println("checkAllAreFoldOrAllIn 1: ");
 				return null;
 			}
 		}
-		System.out.println("checkAllAreFoldOrAllIn 1.1 : ");
-		if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()-1){
-			
-			int activePlrBet = getCurrentRoundInfo().getTotalPlayerBetAmount(lastPlayer);
-			System.out.println("Active Plr Balance > "+ activePlrBet+" >> Max Bet : "+maxPlayerAmt );
-			if(activePlrBet<maxPlayerAmt){
-				System.out.println("checkAllAreFoldOrAllIn 2: ");
+		if (totalAllInPlayers == playersManager.getAllAvailablePlayers().size() - 1) {
+
+			int activePlrBet = getCurrentRoundInfo().getTotalPlayerBetAmount(
+					lastPlayer);
+			if (activePlrBet < maxPlayerAmt) {
 				return null;
 			}
-			System.out.println("checkAllAreFoldOrAllIn 2.1: ");
 			return lastPlayer;
-		}else if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()){
-			System.out.println("checkAllAreFoldOrAllIn 3: ");
+		} else if (totalAllInPlayers == playersManager.getAllAvailablePlayers()
+				.size()) {
 			return lastAllInPlayer;
 		}
-		System.out.println("checkAllAreFoldOrAllIn 4: ");
 		return lastPlayer;
 	}
 }

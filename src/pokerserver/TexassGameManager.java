@@ -169,8 +169,13 @@ public class TexassGameManager implements GameConstants {
 		PlayerBean lastPlayer = null;
 		int totalActivePlayersCnt = 0;
 		int totalAllInPlayers = 0;
+		int maxPlayerAmt = 0;
 		PlayerBean lastAllInPlayer = null;
 		for (PlayerBean playerBean : playersManager.getAllAvailablePlayers()) {
+			int betAmt = getCurrentRoundInfo().getTotalPlayerBetAmount(playerBean);
+			if(maxPlayerAmt< betAmt){
+				maxPlayerAmt=betAmt;
+			}
 			if (!playerBean.isAllIn()){
 				if (!playerBean.isFolded()) {
 					lastPlayer = playerBean;
@@ -184,10 +189,13 @@ public class TexassGameManager implements GameConstants {
 				return null;
 			}
 		}
-		System.out.println("Total All in Player : "+totalAllInPlayers+" >>  "+playersManager.getAllAvailablePlayers().size());
 		if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()-1){
-			System.out.println("Last All in player: "+lastAllInPlayer.getPlayerName());
-			return null;
+			int activePlrBet = getCurrentRoundInfo().getTotalPlayerBetAmount(
+					lastPlayer);
+			if (activePlrBet < maxPlayerAmt) {
+				return null;
+			}
+			return lastPlayer;
 		}else if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()){
 			return lastAllInPlayer;
 		}
@@ -229,10 +237,16 @@ public class TexassGameManager implements GameConstants {
 
 		ArrayList<PlayerBetBean> totalPlayerWiseBetAmount = new ArrayList<PlayerBetBean>();
 		RoundManager currentRound = getCurrentRoundInfo();
-
+		int maxPlayerBetAmt = 0;
+		boolean allPlayersAreAllIn = true;
+		
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+			int totalBetAmt =currentRound.getTotalPlayerBetAmount(player);
+			if(maxPlayerBetAmt<totalBetAmt){
+				maxPlayerBetAmt= totalBetAmt;
+			}
 			if (!player.isFolded() && !player.isAllIn()) {
-
+				allPlayersAreAllIn = false;
 				totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 						.getTotalPlayerBetAmount(player), currentRound
 						.getPlayerLastAction(player)));
@@ -256,18 +270,26 @@ public class TexassGameManager implements GameConstants {
 				allPlayerHaveTurn = false;
 			}
 		}
-		PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
-		totalPlayerWiseBetAmount.remove(0);
+		if (allPlayerHaveTurn && allPlayersAreAllIn) {
+			return true;
+		}
+//		PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
+//		totalPlayerWiseBetAmount.remove(0);
 		// Checking all players have same bet amount
-		for (PlayerBetBean currentPlayerBetAmt : totalPlayerWiseBetAmount) {
-			if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
-					.getBetAmount()) {
-				return false;
-			}
+		for (PlayerBetBean currentPlayer : totalPlayerWiseBetAmount) {
+//			if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
+//					.getBetAmount()) {
+			System.out.println("Chk Bln 1 : "+maxPlayerBetAmt+" >> "+currentPlayer.getBetAmount());
+				if(currentPlayer.getBetAmount()!=maxPlayerBetAmt){
+					return false;
+				}
+//			}
 		}
 		if (!allPlayerHaveTurn) {
+			System.out.println("Chk Bln 2 : "+maxPlayerBetAmt);
 			return false;
 		}
+		System.out.println("Chk Bln 3 : ");
 		return true;
 	}
 
