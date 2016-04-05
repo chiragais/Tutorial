@@ -534,7 +534,10 @@ public class WAGameManager implements GameConstants {
 				return null;
 			}
 		}
-		if (totalAllInPlayers == playersManager.getAllAvailablePlayers().size() - 1) {
+		if(lastPlayer ==null && lastAllInPlayer != null){
+			return lastAllInPlayer;
+		}
+		if (totalAllInPlayers == playersManager.getAllAvailablePlayers().size() - 1|| totalActivePlayersCnt==1) {
 
 			int activePlrBet = getCurrentRoundInfo().getTotalPlayerBetAmount(
 					lastPlayer);

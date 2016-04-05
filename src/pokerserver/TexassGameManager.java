@@ -189,7 +189,10 @@ public class TexassGameManager implements GameConstants {
 				return null;
 			}
 		}
-		if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()-1){
+		if(lastPlayer ==null && lastAllInPlayer != null){
+			return lastAllInPlayer;
+		}
+		if(totalAllInPlayers == playersManager.getAllAvailablePlayers().size()-1 || totalActivePlayersCnt==1){
 			int activePlrBet = getCurrentRoundInfo().getTotalPlayerBetAmount(
 					lastPlayer);
 			if (activePlrBet < maxPlayerAmt) {
@@ -239,7 +242,7 @@ public class TexassGameManager implements GameConstants {
 		RoundManager currentRound = getCurrentRoundInfo();
 		int maxPlayerBetAmt = 0;
 		boolean allPlayersAreAllIn = true;
-		
+		System.out.println("CD 01");
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			int totalBetAmt =currentRound.getTotalPlayerBetAmount(player);
 			if(maxPlayerBetAmt<totalBetAmt){
@@ -252,7 +255,7 @@ public class TexassGameManager implements GameConstants {
 						.getPlayerLastAction(player)));
 			}
 		}
-
+		System.out.println("CD 0");
 		Collections.sort(totalPlayerWiseBetAmount,
 				new Comparator<PlayerBetBean>() {
 					@Override
@@ -271,8 +274,10 @@ public class TexassGameManager implements GameConstants {
 			}
 		}
 		if (allPlayerHaveTurn && allPlayersAreAllIn) {
+			System.out.println("CD 1");
 			return true;
 		}
+		System.out.println(" Total player wise bet amt : "+totalPlayerWiseBetAmount.size());
 //		PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
 //		totalPlayerWiseBetAmount.remove(0);
 		// Checking all players have same bet amount
@@ -281,15 +286,16 @@ public class TexassGameManager implements GameConstants {
 //					.getBetAmount()) {
 			System.out.println("Chk Bln 1 : "+maxPlayerBetAmt+" >> "+currentPlayer.getBetAmount());
 				if(currentPlayer.getBetAmount()!=maxPlayerBetAmt){
+					System.out.println("CD 2");
 					return false;
 				}
 //			}
 		}
 		if (!allPlayerHaveTurn) {
-			System.out.println("Chk Bln 2 : "+maxPlayerBetAmt);
+			System.out.println("CD 3");
 			return false;
 		}
-		System.out.println("Chk Bln 3 : ");
+		System.out.println("CD 4");
 		return true;
 	}
 

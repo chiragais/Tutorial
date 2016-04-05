@@ -140,6 +140,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// winner
 		PlayerBean lastActivePlayer = gameManager.checkAllAreFoldOrAllIn();
 		if (lastActivePlayer != null) {
+			System.out.println("Crony 1");
 			if(gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_PENDING ){
 				gameManager.calculatePotAmountForAllInMembers();
 				gameManager.startWhoopAssRound();
@@ -151,6 +152,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			}
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
+			System.out.println("Crony 2");
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 					&& gameManager.getCurrentRoundIndex() == WA_ROUND_THIRD_FLOP) {

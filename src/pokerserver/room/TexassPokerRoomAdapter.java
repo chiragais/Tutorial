@@ -193,14 +193,12 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// winner
 		PlayerBean lastActivePlayer = gameManager.checkAllAreFoldOrAllIn();
 		if (lastActivePlayer != null) {
-			System.out.println("Manage game Finish event : "+ lastActivePlayer);
 			manageGameFinishEvent();
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 					&& gameManager.getCurrentRoundIndex() == TEXASS_ROUND_RIVER) {
-				System.out.println("Manage game Finish event >> 1");
 				manageGameFinishEvent();
 			} else {
 				gameManager.moveToNextRound();
