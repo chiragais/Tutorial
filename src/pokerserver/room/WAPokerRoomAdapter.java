@@ -211,6 +211,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// Broad cast game completed to all players
 		broadcastRoundCompeleteToAllPlayers();
 		broadcastGameCompleteToAllPlayers();
+		gameManager.findWAShortPot();
 		gameManager.findBestPlayerHand();
 		gameManager.findAllWinnerPlayers();
 		broadcastWinningPlayer();
@@ -421,7 +422,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		if (gameRoom.getJoinedUsers().size() == 0) {
 			player.setTotalBalance(100);
 		} else if (gameRoom.getJoinedUsers().size() == 1) {
-			player.setTotalBalance(200);
+			player.setTotalBalance(120);
 		} else if (gameRoom.getJoinedUsers().size() == 2) {
 			player.setTotalBalance(400);
 		}
@@ -597,6 +598,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					.getTotalBalance());
 			gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_ACTION_DONE
 					+ cardsObject.toString());
+			System.out.println("Action<<>> " + cardsObject.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

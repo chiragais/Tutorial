@@ -1,4 +1,4 @@
-package pokerserver;
+	package pokerserver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +10,7 @@ import pokerserver.handrank.GeneralHandManager;
 import pokerserver.players.AllInPlayer;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
+import pokerserver.players.WAShortPotBean;
 import pokerserver.players.Winner;
 import pokerserver.players.WinnerManager;
 import pokerserver.rounds.RoundManager;
@@ -35,6 +36,7 @@ public class WAGameManager implements GameConstants {
 	RoundManager thirdRound;
 	int currentRound = 0;
 	WinnerManager winnerManager;
+	int waCardAmt = 0;
 
 	public WAGameManager() {
 		playersManager = new PlayersManager();
@@ -51,7 +53,7 @@ public class WAGameManager implements GameConstants {
 		secondFlopRound = new RoundManager(WA_ROUND_SECOND_FLOP);
 		whoopAssRound = new RoundManager(WA_ROUND_WHOOPASS);
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
-
+		 waCardAmt = 0;
 		// startFirstRound();
 	}
 
@@ -81,6 +83,32 @@ public class WAGameManager implements GameConstants {
 		}
 	}
 
+	public void findWAShortPot(){
+//		System.out.println(">>>>> Find Short Pot");
+		for(TurnManager turnManager: whoopAssRound.getAllTurnRecords()){
+			if (turnManager.getBetAmount() < waCardAmt
+					&& turnManager.getBetAmount() != 0) {
+//				System.out.println("Short Pot : "+ turnManager.getBetAmount()+" >> "+ turnManager.getPlayer().getPlayerName());
+				WAShortPotBean waShortPotBean = new WAShortPotBean(turnManager.getPlayer(), waCardAmt, turnManager.getBetAmount());
+				winnerManager.addWAShortPot(waShortPotBean);
+			}
+		}
+		for(WAShortPotBean  waShortPotBean : winnerManager.getAllWAShortPots()){
+			int totalShortPotAmt = 0;
+			for(TurnManager turnManager: whoopAssRound.getAllTurnRecords()){
+				if(!turnManager.getPlayer().getPlayerName().equals(waShortPotBean.getPlayer().getPlayerName())){
+					int diffAmt = turnManager.getBetAmount()-waShortPotBean.getPlayerWACardAmt();
+					if(diffAmt>0){
+//						System.out.println("WA : "+turnManager.getBetAmount()+" >> "+waShortPotBean.getPlayerWACardAmt() +" >> Diff : "+ diffAmt);
+						waShortPotBean.addContributedPlayerDetails(turnManager.getPlayer(), diffAmt);
+						totalShortPotAmt+=diffAmt;
+					}
+				}
+			}
+			waShortPotBean.setShortPotAmt(totalShortPotAmt);
+			System.out.println(">>>>> WA Amt : "+waShortPotBean.getPlayerWACardAmt()+" >>Short Pot : "+waShortPotBean.getTotalShortPotAmt());
+		}
+	}
 	public Winner getTopWinner() {
 		return winnerManager.getTopWinner();
 	}
@@ -442,14 +470,14 @@ public class WAGameManager implements GameConstants {
 		return addCurrentActionToTurnManager(userName, betAmount, userAction);
 	}
 
-	public void setTotalTableBetAmount() {
+/*	public void setTotalTableBetAmount() {
 		int totalBetAmount = 0;
 		totalBetAmount += startRound.getTotalRoundBetAmount();
 		totalBetAmount += firstFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += secondFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += thirdRound.getTotalRoundBetAmount();
 		winnerManager.setTotalTableAmount(totalBetAmount);
-	}
+	}*/
 
 	public int getTotalTableAmount() {
 		int totalBetAmount = 0;
@@ -457,7 +485,7 @@ public class WAGameManager implements GameConstants {
 		totalBetAmount += firstFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += secondFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += thirdRound.getTotalRoundBetAmount();
-
+		totalBetAmount += whoopAssRound.getTotalRoundBetAmount();
 		winnerManager.setTotalTableAmount(totalBetAmount);
 		return totalBetAmount;
 	}
@@ -469,16 +497,20 @@ public class WAGameManager implements GameConstants {
 		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,
 				betAmount, action);
 		if (currentPlayer != null) {
-
 			RoundManager currentRoundManger = getCurrentRoundInfo();
+			if(currentRoundManger.getRound()==WA_ROUND_WHOOPASS && waCardAmt<=betAmount){
+				waCardAmt = betAmount;
+			}
 			if (currentPlayer.getTotalBalance() == 0
 					&& currentRoundManger.getRound() != WA_ROUND_WHOOPASS) {
 				action = ACTION_ALL_IN;
+			}else if(currentPlayer.getTotalBalance() == 0
+					&& currentRoundManger.getRound() == WA_ROUND_WHOOPASS) {
+				currentPlayer.setPlayerAllIn(true);
 			}
 			turnManager = new TurnManager(currentPlayer, action, betAmount);
 			currentRoundManger.addTurnRecord(turnManager);
-			System.out.println();
-			System.out.print("Turn Manager # User: "
+			System.out.println("Turn Manager # User: "
 					+ currentPlayer.getPlayerName() + " # Action: " + action
 					+ " # Bet: " + betAmount + " # Round: "
 					+ currentRoundManger.getRound());

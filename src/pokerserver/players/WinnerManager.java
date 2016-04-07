@@ -14,8 +14,11 @@ public class WinnerManager {
 	PlayersManager playerManager;
 	ArrayList<Winner> listWinners;
 	ArrayList<AllInPlayer> listAllinPotAmounts;
+	ArrayList<WAShortPotBean> listWAShortList;
 	int totalTableAmount = 0;
 	int remainingAmount = 0;
+	
+	
 
 	GeneralHandManager generalHandManager ;
 	public WinnerManager(PlayersManager playerMgr,GeneralHandManager generalHandManager ) {
@@ -23,7 +26,7 @@ public class WinnerManager {
 		this.generalHandManager = generalHandManager;
 		listWinners = new ArrayList<Winner>();
 		listAllinPotAmounts = new ArrayList<AllInPlayer>();
-		
+		listWAShortList = new ArrayList<WAShortPotBean>();
 	}
 
 	public void addWinner(Winner winner) {
@@ -34,6 +37,13 @@ public class WinnerManager {
 		this.listAllinPotAmounts.add(allInPlayer);
 	}
 
+	public void addWAShortPot(WAShortPotBean waShortPotBean){
+		this.listWAShortList.add(waShortPotBean);
+	}
+	
+	public List<WAShortPotBean> getAllWAShortPots(){
+		return listWAShortList;
+	}
 	public int getPlayerWinningAmount(String playerName) {
 		int winningAmount = 0;
 		for (Winner winner : listWinners) {
@@ -120,11 +130,32 @@ public class WinnerManager {
 		return listWinnerPlayer;
 	}
 
+	public WAShortPotBean isWACardShortedPlayer(PlayerBean playerBean){
+		for(WAShortPotBean waShortPotBean : listWAShortList){
+			if(playerBean.getPlayerName().equals(waShortPotBean.getPlayer().getPlayerName())){
+				return waShortPotBean;
+			}
+		}
+		return null;
+	}
 	public void findWinnerPlayers() {
 	//	System.out.println("\n Find Winner Player ------------");
-		for (PlayerBean player : generateWinnerPlayers()) {
+		List<PlayerBean> listAscWinningPlayers = generateWinnerPlayers(); 
+		for (PlayerBean player : listAscWinningPlayers) {
 			if (!player.isFolded()) {
+				
+				// Short WA card calculation
+				
+				WAShortPotBean waShortPotBean = isWACardShortedPlayer(player);
+				if(waShortPotBean!=null){
+					System.out.println("Table Pot Amt : " + totalTableAmount+" >> ShortPot : "+waShortPotBean.getTotalShortPotAmt());					
+					totalTableAmount -= waShortPotBean.getTotalShortPotAmt();
+					System.out.println("Table Pot after short pot Amt : " + totalTableAmount);
+					// Distribute short pot amount to player who purchased WA card
+					waShortPotBean.distributeShortPotToPlayer(listAscWinningPlayers);
+				}
 				if (!player.isAllIn()) {
+					
 					Winner winner = new Winner(player, totalTableAmount);
 					winner.getPlayer().setTotalBalance(
 							winner.getPlayer().getTotalBalance()
