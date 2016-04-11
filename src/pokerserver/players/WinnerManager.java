@@ -7,6 +7,7 @@ import java.util.List;
 
 import pokerserver.cards.Card;
 import pokerserver.handrank.GeneralHandManager;
+import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants.HAND_RANK;
 
 public class WinnerManager {
@@ -14,7 +15,7 @@ public class WinnerManager {
 	PlayersManager playerManager;
 	ArrayList<Winner> listWinners;
 	ArrayList<AllInPlayer> listAllinPotAmounts;
-	ArrayList<WAShortPotBean> listWAShortList;
+	ArrayList<WACardPot> listWACardPotList;
 	int totalTableAmount = 0;
 	int remainingAmount = 0;
 	
@@ -26,7 +27,7 @@ public class WinnerManager {
 		this.generalHandManager = generalHandManager;
 		listWinners = new ArrayList<Winner>();
 		listAllinPotAmounts = new ArrayList<AllInPlayer>();
-		listWAShortList = new ArrayList<WAShortPotBean>();
+		listWACardPotList = new ArrayList<WACardPot>();
 	}
 
 	public void addWinner(Winner winner) {
@@ -36,13 +37,9 @@ public class WinnerManager {
 	public void addAllInTotalPotAmount(AllInPlayer allInPlayer) {
 		this.listAllinPotAmounts.add(allInPlayer);
 	}
-
-	public void addWAShortPot(WAShortPotBean waShortPotBean){
-		this.listWAShortList.add(waShortPotBean);
-	}
 	
-	public List<WAShortPotBean> getAllWAShortPots(){
-		return listWAShortList;
+	public List<WACardPot> getAllWACardPots(){
+		return listWACardPotList;
 	}
 	public int getPlayerWinningAmount(String playerName) {
 		int winningAmount = 0;
@@ -130,32 +127,98 @@ public class WinnerManager {
 		return listWinnerPlayer;
 	}
 
-	public WAShortPotBean isWACardShortedPlayer(PlayerBean playerBean){
-		for(WAShortPotBean waShortPotBean : listWAShortList){
-			if(playerBean.getPlayerName().equals(waShortPotBean.getPlayer().getPlayerName())){
-				return waShortPotBean;
+	public void manageWAAmtInWAPot(PlayerBean playerBean , int betAmt){
+		int pendingPotAmt = betAmt;
+		Collections.sort(listWACardPotList,
+				new Comparator<WACardPot>() {
+					@Override
+					public int compare(WACardPot paramT1,
+							WACardPot paramT2) {
+						return Integer.compare(paramT2.getPotAmt(),
+								paramT1.getPotAmt());
+					}
+				});
+		
+		for(WACardPot waPotBean: listWACardPotList){
+			System.out.println("WA Pot : Pending Amt : "+ pendingPotAmt+" >> Pot Amt : "+waPotBean.getPotAmt());
+			
+			if(waPotBean.getPotAmt()<=betAmt){
+				waPotBean.addPlayer(playerBean);
+				pendingPotAmt-=waPotBean.getPotAmt();
 			}
 		}
+		
+		if(pendingPotAmt != 0){
+			WACardPot waPot = new WACardPot(pendingPotAmt);
+			waPot.addPlayer(playerBean);
+			addWACardPot(waPot);
+			System.out.println("WA Pot : New Added : "+pendingPotAmt);
+		}
+	}
+	/*public WACardPot checkForWACardPot(int potAmt){
+		int pendingPotAmt = potAmt;
+		for(WACardPot waShortPotBean : listWACardPotList){
+			
+			if(waShortPotBean.getPotAmt()==potAmt){
+				return waShortPotBean;
+			}
+			pendingPotAmt -= waShortPotBean.getPotAmt();
+		}
+		
 		return null;
+	}*/
+	public void addWACardPot(WACardPot waCardPot){
+		this.listWACardPotList.add(waCardPot);
+	}
+	public int getLastWAPotAmt(){
+		if(!listWACardPotList.isEmpty()){
+			return listWACardPotList.get(listWACardPotList.size()-1).getPotAmt();
+		}else{
+			return 0;
+		}
+	}
+	public List<WACardPot> getLastPlayerOfWAPotAfterPlayerFold(){
+		List<WACardPot> listWinnerWAPotAfterFold = new ArrayList<WACardPot>();
+		
+		for(WACardPot waCardPot : listWACardPotList){
+			if(waCardPot.getWinnerPlayer()==null){
+				int totalActivePlayerCnr = 0;
+				PlayerBean lastActivePlayer = null;
+				for(PlayerBean player : waCardPot.getPlayers()){
+					if(!player.isFolded()){
+						totalActivePlayerCnr++;
+						lastActivePlayer=player;
+					
+					}
+				}
+				if(totalActivePlayerCnr==1){
+					System.out.println("WA Winner Player : "+lastActivePlayer.getPlayerName()+" >> Pot Amt : "+waCardPot.getPotAmt());
+					waCardPot.setWinnerPlayer(lastActivePlayer);
+					listWinnerWAPotAfterFold.add(waCardPot);
+				}
+			}
+		}
+		return listWinnerWAPotAfterFold;
 	}
 	public void findWinnerPlayers() {
 	//	System.out.println("\n Find Winner Player ------------");
 		List<PlayerBean> listAscWinningPlayers = generateWinnerPlayers(); 
+
+		// Manage WA card pots
+		for(WACardPot waCardPot : listWACardPotList){
+			// Manage WA pot players
+			for(PlayerBean playerBean : listAscWinningPlayers){
+				if(waCardPot.getWinnerPlayer()== null &&
+						!playerBean.isFolded() && 
+						waCardPot.getPlayers().contains(playerBean)){
+					waCardPot.setWinnerPlayer(playerBean);
+					break;
+				}
+			}
+		}
 		for (PlayerBean player : listAscWinningPlayers) {
 			if (!player.isFolded()) {
-				
-				// Short WA card calculation
-				
-				WAShortPotBean waShortPotBean = isWACardShortedPlayer(player);
-				if(waShortPotBean!=null){
-					System.out.println("Table Pot Amt : " + totalTableAmount+" >> ShortPot : "+waShortPotBean.getTotalShortPotAmt());					
-					totalTableAmount -= waShortPotBean.getTotalShortPotAmt();
-					System.out.println("Table Pot after short pot Amt : " + totalTableAmount);
-					// Distribute short pot amount to player who purchased WA card
-					waShortPotBean.distributeShortPotToPlayer(listAscWinningPlayers);
-				}
 				if (!player.isAllIn()) {
-					
 					Winner winner = new Winner(player, totalTableAmount);
 					winner.getPlayer().setTotalBalance(
 							winner.getPlayer().getTotalBalance()

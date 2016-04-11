@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import pokerserver.WAGameManager;
 import pokerserver.players.PlayerBean;
+import pokerserver.players.WACardPot;
 import pokerserver.players.Winner;
 import pokerserver.rounds.RoundManager;
 import pokerserver.turns.TurnManager;
@@ -139,8 +140,14 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// If all players are folded or all in then declare last player as a
 		// winner
 		PlayerBean lastActivePlayer = gameManager.checkAllAreFoldOrAllIn();
+		
+		// WA Card pot calculation if any player fold in third round
+		if(playerAction==ACTION_FOLD && gameManager.getCurrentRoundInfo().getRound()==WA_ROUND_THIRD_FLOP){
+			manageWAPotWinnerPlayers();
+		}
+		
 		if (lastActivePlayer != null) {
-			System.out.println("Crony 1");
+			System.out.println("Crony 1 : "+gameManager.checkEveryPlayerHaveSameBetAmount());
 			if(gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_PENDING ){
 				gameManager.calculatePotAmountForAllInMembers();
 				gameManager.startWhoopAssRound();
@@ -150,6 +157,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 					&& gameManager.checkEveryPlayerHaveSameBetAmount()){
 				manageGameFinishEvent();
 			}
+			
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			System.out.println("Crony 2");
@@ -164,27 +172,50 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		} 
 	}
 
+	private void manageWAPotWinnerPlayers(){
+		List<WACardPot> listWAPots = gameManager.getWinnerManager().getLastPlayerOfWAPotAfterPlayerFold();
+		JSONArray waPotArray = new JSONArray();
+		
+		for(WACardPot waCardPot : listWAPots){
+			JSONObject waCardJsonObject = new JSONObject();
+			try {
+				int totalWinningAmt =  (waCardPot.getPotAmt() * waCardPot.getPlayers().size());
+				int winnerPlayerTotalAmt = waCardPot.getWinnerPlayer().getTotalBalance()+totalWinningAmt;
+				waCardJsonObject.put(TAG_WINNER_NAME, waCardPot.getWinnerPlayer().getPlayerName());
+				waCardJsonObject.put(TAG_WINNERS_WINNING_AMOUNT,totalWinningAmt);
+				waCardJsonObject.put(TAG_WINNER_TOTAL_BALENCE, winnerPlayerTotalAmt);
+				waPotArray.put(waCardJsonObject);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		if(waPotArray.length()>0){
+			gameRoom.BroadcastChat(WA_SERVER_NAME, REQUEST_FOR_WA_POT_WINNER
+					+ waPotArray.toString());
+			System.out.println(">>WA Pot Winner : " +  waPotArray.toString());	
+		}
+	}
 	private void managePlayerTurn(String currentPlayer) {
-		System.out.println(">>Total Players : "
-				+ gameRoom.getJoinedUsers().size());
+//		System.out.println(">>Total Players : "
+//				+ gameRoom.getJoinedUsers().size());
 		RoundManager currentRoundManager = gameManager.getCurrentRoundInfo();
 
 		if (currentRoundManager != null) {
 			PlayerBean nextPlayer = getNextPlayerFromCurrentPlayer(currentPlayer);
 			if (nextPlayer == null) {
-				System.out.println(" Next turn player : Null");
+//				System.out.println(" Next turn player : Null");
 			} else {
 				while (nextPlayer.isFolded() || nextPlayer.isAllIn()) {
-					System.out.println(" Next turn player : "
-							+ nextPlayer.getPlayerName());
+//					System.out.println(" Next turn player : "
+//							+ nextPlayer.getPlayerName());
 					nextPlayer = getNextPlayerFromCurrentPlayer(nextPlayer
 							.getPlayerName());
 				}
 
 				gameRoom.setNextTurn(getUserFromName(nextPlayer.getPlayerName()));
-				System.out.println(currentPlayer
-						+ " >> Next valid turn player : "
-						+ nextPlayer.getPlayerName());
+//				System.out.println(currentPlayer
+//						+ " >> Next valid turn player : "
+//						+ nextPlayer.getPlayerName());
 			}
 		} else {
 			System.out.println("------ Error > Round is not started yet.....");
@@ -211,7 +242,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// Broad cast game completed to all players
 		broadcastRoundCompeleteToAllPlayers();
 		broadcastGameCompleteToAllPlayers();
-		gameManager.findWAShortPot();
+//		gameManager.findWAShortPot();
 		gameManager.findBestPlayerHand();
 		gameManager.findAllWinnerPlayers();
 		broadcastWinningPlayer();
@@ -422,7 +453,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		if (gameRoom.getJoinedUsers().size() == 0) {
 			player.setTotalBalance(100);
 		} else if (gameRoom.getJoinedUsers().size() == 1) {
-			player.setTotalBalance(120);
+			player.setTotalBalance(200);
 		} else if (gameRoom.getJoinedUsers().size() == 2) {
 			player.setTotalBalance(400);
 		}
@@ -552,8 +583,10 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 	}
 
 	private void broadcastWinningPlayer() {
+		JSONObject winningPlayerObject = new JSONObject();
 		JSONArray winnerArray = new JSONArray();
 		try {
+			
 			for (Winner winnerPlayer : gameManager.getAllWinnerPlayers()) {
 				// Winner winnerPlayer = gameManager.getTopWinner();
 				JSONObject winnerObject = new JSONObject();
@@ -574,10 +607,24 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 						.getPlayer().getBestHandCardsName());
 				winnerArray.put(winnerObject);
 			}
-
+			// WA Pot Manage
+			JSONArray winnerWAPotArray = new JSONArray();
+			for(WACardPot waCardPot : gameManager.getWACardPots()){
+				if(waCardPot.getWinnerPlayer()!=null){
+					JSONObject waPotObject = new JSONObject();
+					waPotObject.put(TAG_WINNERS_WINNING_AMOUNT, waCardPot.getPotAmt());
+					waPotObject.put(TAG_WINNER_NAME, waCardPot.getWinnerPlayer().getPlayerName());
+					waCardPot.getWinnerPlayer().setTotalBalance(waCardPot.getWinnerPlayer().getTotalBalance()+waCardPot.getPotAmt());
+					waPotObject.put(TAG_WINNER_TOTAL_BALENCE, waCardPot.getWinnerPlayer().getTotalBalance());
+					winnerWAPotArray.put(waPotObject);
+				}
+			}
+			winningPlayerObject.put("WA_Pot",winnerWAPotArray);
+			winningPlayerObject.put("Table_Pot", winnerArray);
+			System.out.println("<<WinningPlayers>> " + winningPlayerObject.toString());
 			gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_WINNIER_INFO
-					+ winnerArray.toString());
-			System.out.println("<<>> " + winnerArray.toString());
+					+ winningPlayerObject.toString());
+//			System.out.println("<<>> " + winnerArray.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

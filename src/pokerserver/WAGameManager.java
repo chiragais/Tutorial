@@ -10,7 +10,7 @@ import pokerserver.handrank.GeneralHandManager;
 import pokerserver.players.AllInPlayer;
 import pokerserver.players.PlayerBean;
 import pokerserver.players.PlayersManager;
-import pokerserver.players.WAShortPotBean;
+import pokerserver.players.WACardPot;
 import pokerserver.players.Winner;
 import pokerserver.players.WinnerManager;
 import pokerserver.rounds.RoundManager;
@@ -84,35 +84,41 @@ public class WAGameManager implements GameConstants {
 	}
 
 	public void findWAShortPot(){
-//		System.out.println(">>>>> Find Short Pot");
-		for(TurnManager turnManager: whoopAssRound.getAllTurnRecords()){
-			if (turnManager.getBetAmount() < waCardAmt
-					&& turnManager.getBetAmount() != 0) {
-//				System.out.println("Short Pot : "+ turnManager.getBetAmount()+" >> "+ turnManager.getPlayer().getPlayerName());
-				WAShortPotBean waShortPotBean = new WAShortPotBean(turnManager.getPlayer(), waCardAmt, turnManager.getBetAmount());
-				winnerManager.addWAShortPot(waShortPotBean);
-			}
-		}
-		for(WAShortPotBean  waShortPotBean : winnerManager.getAllWAShortPots()){
-			int totalShortPotAmt = 0;
-			for(TurnManager turnManager: whoopAssRound.getAllTurnRecords()){
-				if(!turnManager.getPlayer().getPlayerName().equals(waShortPotBean.getPlayer().getPlayerName())){
-					int diffAmt = turnManager.getBetAmount()-waShortPotBean.getPlayerWACardAmt();
-					if(diffAmt>0){
-//						System.out.println("WA : "+turnManager.getBetAmount()+" >> "+waShortPotBean.getPlayerWACardAmt() +" >> Diff : "+ diffAmt);
-						waShortPotBean.addContributedPlayerDetails(turnManager.getPlayer(), diffAmt);
-						totalShortPotAmt+=diffAmt;
+		List<TurnManager> listTurnManager = whoopAssRound.getAllTurnRecords();
+
+		Collections.sort(listTurnManager,
+				new Comparator<TurnManager>() {
+					@Override
+					public int compare(TurnManager paramT1,
+							TurnManager paramT2) {
+						return Integer.compare(paramT1.getBetAmount(),
+								paramT2.getBetAmount());
 					}
+				});
+		
+		try {
+			for (TurnManager turnManager : listTurnManager) {
+				if (turnManager.getBetAmount() != 0) {
+					winnerManager.manageWAAmtInWAPot(turnManager.getPlayer(), turnManager.getBetAmount());
 				}
 			}
-			waShortPotBean.setShortPotAmt(totalShortPotAmt);
-			System.out.println(">>>>> WA Amt : "+waShortPotBean.getPlayerWACardAmt()+" >>Short Pot : "+waShortPotBean.getTotalShortPotAmt());
+			for(WACardPot waCardPot : winnerManager.getAllWACardPots()){
+				System.out.println("WA Pot Amt : "+waCardPot.getPotAmt() +" >> TotalPlayer : "+waCardPot.getPlayers().size());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	public Winner getTopWinner() {
 		return winnerManager.getTopWinner();
 	}
+	public WinnerManager getWinnerManager(){
+		return winnerManager;
+	}
 
+	public List<WACardPot> getWACardPots(){
+		return winnerManager.getAllWACardPots();
+	}
 	public ArrayList<String> getAllWinnerName() {
 		ArrayList<String> listWinners = new ArrayList<String>();
 		for (Winner winner : winnerManager.getWinnerList()) {
@@ -185,11 +191,11 @@ public class WAGameManager implements GameConstants {
 
 		}
 
-		for (AllInPlayer allInPlayer : winnerManager.getAllInPlayers()) {
-			System.out.println("\n All IN Player :  "
-					+ allInPlayer.getPlayerName() + "  Bet Amount =  "
-					+ allInPlayer.getTotalAllInPotAmount());
-		}
+//		for (AllInPlayer allInPlayer : winnerManager.getAllInPlayers()) {
+//			System.out.println("\n All IN Player :  "
+//					+ allInPlayer.getPlayerName() + "  Bet Amount =  "
+//					+ allInPlayer.getTotalAllInPotAmount());
+//		}
 	}
 
 	public void leavePlayerToGame(PlayerBean player) {
@@ -320,6 +326,7 @@ public class WAGameManager implements GameConstants {
 		RoundManager currentRound = getCurrentRoundInfo();
 
 		if (currentRound.getRound() == WA_ROUND_WHOOPASS) {
+			System.out.println("<> WA");
 			if (currentRound.getAllTurnRecords().size() == playersManager
 					.getAllAvailablePlayers().size()) {
 				for (PlayerBean player : playersManager
@@ -333,6 +340,7 @@ public class WAGameManager implements GameConstants {
 			}
 			return false;
 		} else {
+			System.out.println("<> Other");
 			boolean allPlayersAreAllIn = true;
 			int maxPlayerBetAmt = 0;
 			for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
@@ -342,12 +350,16 @@ public class WAGameManager implements GameConstants {
 				}
 				if (!player.isFolded() && !player.isAllIn()) {
 					allPlayersAreAllIn = false;
+					System.out.println("<> Other "+player.getPlayerName()+" >> "+currentRound.getPlayerLastAction(player));
 					totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 							.getTotalPlayerBetAmount(player), currentRound
 							.getPlayerLastAction(player)));
 				}
 			}
 
+			if(totalPlayerWiseBetAmount.size()==1 && maxPlayerBetAmt==0){
+				return true; // All others are folded or All in
+			}
 			Collections.sort(totalPlayerWiseBetAmount,
 					new Comparator<PlayerBetBean>() {
 						@Override
@@ -367,21 +379,23 @@ public class WAGameManager implements GameConstants {
 			}
 
 			if (allPlayerHaveTurn && allPlayersAreAllIn) {
+				System.out.println("<> Other 1");
 				return true;
 			}
 			// PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
 			// totalPlayerWiseBetAmount.remove(0);
 			// Checking all players have same bet amount
 			for (PlayerBetBean currentPlayerBetAmt : totalPlayerWiseBetAmount) {
-				// if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
-				// .getBetAmount()) {
 				if (currentPlayerBetAmt.getBetAmount() != maxPlayerBetAmt) {
+					System.out.println("<> Other 2");
 					return false;
 				}
 			}
 			if (!allPlayerHaveTurn) {
+				System.out.println("<> Other 3");
 				return false;
 			}
+			System.out.println("<> Other 4");
 			return true;
 
 		}
@@ -418,6 +432,9 @@ public class WAGameManager implements GameConstants {
 			break;
 		case WA_ROUND_WHOOPASS:
 			calculatePotAmountForAllInMembers();
+			System.out.println("WA Round done: Calculate WA Pot: ");
+			findWAShortPot();
+			
 			startThirdFlopRound();
 			break;
 		case WA_ROUND_THIRD_FLOP:
@@ -485,7 +502,7 @@ public class WAGameManager implements GameConstants {
 		totalBetAmount += firstFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += secondFlopRound.getTotalRoundBetAmount();
 		totalBetAmount += thirdRound.getTotalRoundBetAmount();
-		totalBetAmount += whoopAssRound.getTotalRoundBetAmount();
+//		totalBetAmount += whoopAssRound.getTotalRoundBetAmount();
 		winnerManager.setTotalTableAmount(totalBetAmount);
 		return totalBetAmount;
 	}
