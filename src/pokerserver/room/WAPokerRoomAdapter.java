@@ -453,9 +453,9 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 //		if (gameRoom.getJoinedUsers().size() == 0) {
 		int totalPlayers =gameManager.getPlayersManager().getAllAvailablePlayers().size() ; 
 		if(totalPlayers== 0){
-			player.setTotalBalance(1000);
-		} else if (totalPlayers== 1) {
 			player.setTotalBalance(2000);
+		} else if (totalPlayers== 1) {
+			player.setTotalBalance(1000);
 		} else if (totalPlayers == 2) {
 			player.setTotalBalance(3000);
 		}
