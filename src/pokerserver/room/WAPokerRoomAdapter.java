@@ -451,11 +451,11 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		PlayerBean player = new PlayerBean(
 				gameRoom.getJoinedUsers().size() - 1, userName);
 		if (gameRoom.getJoinedUsers().size() == 0) {
-			player.setTotalBalance(100);
+			player.setTotalBalance(1000);
 		} else if (gameRoom.getJoinedUsers().size() == 1) {
-			player.setTotalBalance(200);
+			player.setTotalBalance(2000);
 		} else if (gameRoom.getJoinedUsers().size() == 2) {
-			player.setTotalBalance(400);
+			player.setTotalBalance(3000);
 		}
 
 		player.setCards(gameManager.generatePlayerCards(),

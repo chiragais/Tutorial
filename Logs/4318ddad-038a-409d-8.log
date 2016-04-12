@@ -7253,3 +7253,12 @@
 2016-04-11 13:25:55,948 - ERROR: Error in getLockProperties java.lang.NullPointerException
 2016-04-11 13:27:31,413 - WARNING: already stopped or not in joined user
 2016-04-11 13:27:32,395 - WARNING: already stopped or not in joined user
+2016-04-11 13:30:38,421 - WARNING: closing idle session /192.168.1.200:65420
+2016-04-11 13:30:38,435 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:65430
+2016-04-11 13:30:38,447 - WARNING: exceptionCaught cause An existing connection was forcibly closed by the remote host remote /192.168.1.200:65424
+2016-04-12 11:29:20,198 - WARNING: Room Created: id= 576739009
+2016-04-12 11:29:20,218 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-04-12 11:29:24,294 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-04-12 11:29:28,051 - ERROR: Error in getLockProperties java.lang.NullPointerException
+2016-04-12 11:30:14,623 - WARNING: already stopped or not in joined user
+2016-04-12 11:30:15,222 - WARNING: already stopped or not in joined user
