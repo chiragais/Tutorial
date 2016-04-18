@@ -37,7 +37,8 @@ public class WAGameManager implements GameConstants {
 	int currentRound = 0;
 	WinnerManager winnerManager;
 	int waCardAmt = 0;
-
+	int totalBBPlayersTurn = 0;
+	
 	public WAGameManager() {
 		playersManager = new PlayersManager();
 	}
@@ -53,7 +54,8 @@ public class WAGameManager implements GameConstants {
 		secondFlopRound = new RoundManager(WA_ROUND_SECOND_FLOP);
 		whoopAssRound = new RoundManager(WA_ROUND_WHOOPASS);
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
-		 waCardAmt = 0;
+		waCardAmt = 0;
+		totalBBPlayersTurn = 0;
 		// startFirstRound();
 	}
 
@@ -326,7 +328,6 @@ public class WAGameManager implements GameConstants {
 		RoundManager currentRound = getCurrentRoundInfo();
 
 		if (currentRound.getRound() == WA_ROUND_WHOOPASS) {
-			System.out.println("<> WA");
 			if (currentRound.getAllTurnRecords().size() == playersManager
 					.getAllAvailablePlayers().size()) {
 				for (PlayerBean player : playersManager
@@ -340,17 +341,19 @@ public class WAGameManager implements GameConstants {
 			}
 			return false;
 		} else {
-			System.out.println("<> Other");
 			boolean allPlayersAreAllIn = true;
 			int maxPlayerBetAmt = 0;
+			
 			for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
+				// Check total BB Player turn
+				
 				int totalBetAmt = currentRound.getTotalPlayerBetAmount(player);
 				if (maxPlayerBetAmt < totalBetAmt) {
 					maxPlayerBetAmt = totalBetAmt;
 				}
 				if (!player.isFolded() && !player.isAllIn()) {
 					allPlayersAreAllIn = false;
-					System.out.println("<> Other "+player.getPlayerName()+" >> "+currentRound.getPlayerLastAction(player));
+//					System.out.println("<> Other "+player.getPlayerName()+" >> "+currentRound.getPlayerLastAction(player));
 					totalPlayerWiseBetAmount.add(new PlayerBetBean(currentRound
 							.getTotalPlayerBetAmount(player), currentRound
 							.getPlayerLastAction(player)));
@@ -379,7 +382,6 @@ public class WAGameManager implements GameConstants {
 			}
 
 			if (allPlayerHaveTurn && allPlayersAreAllIn) {
-				System.out.println("<> Other 1");
 				return true;
 			}
 			// PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
@@ -387,15 +389,16 @@ public class WAGameManager implements GameConstants {
 			// Checking all players have same bet amount
 			for (PlayerBetBean currentPlayerBetAmt : totalPlayerWiseBetAmount) {
 				if (currentPlayerBetAmt.getBetAmount() != maxPlayerBetAmt) {
-					System.out.println("<> Other 2");
 					return false;
 				}
 			}
 			if (!allPlayerHaveTurn) {
-				System.out.println("<> Other 3");
 				return false;
 			}
-			System.out.println("<> Other 4");
+			System.out.println("TotalBB Players Turn : "+totalBBPlayersTurn);
+			if(totalBBPlayersTurn==1){
+				return false;
+			}
 			return true;
 
 		}
@@ -513,6 +516,9 @@ public class WAGameManager implements GameConstants {
 		TurnManager turnManager = null;
 		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,
 				betAmount, action);
+		if(currentRound == WA_ROUND_START&&currentPlayer.isBigBlind()){
+			totalBBPlayersTurn++;
+		}
 		if (currentPlayer != null) {
 			RoundManager currentRoundManger = getCurrentRoundInfo();
 			if(currentRoundManger.getRound()==WA_ROUND_WHOOPASS && waCardAmt<=betAmount){

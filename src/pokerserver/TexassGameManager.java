@@ -35,7 +35,8 @@ public class TexassGameManager implements GameConstants {
 	RoundManager riverRound;
 	int currentRound = 0;
 	WinnerManager winnerManager;
-
+	int totalBBPlayersTurn = 0;
+	
 	public TexassGameManager() {
 		playersManager = new PlayersManager();
 	}
@@ -50,6 +51,7 @@ public class TexassGameManager implements GameConstants {
 		flopRound = new RoundManager(TEXASS_ROUND_FLOP);
 		turnRound = new RoundManager(TEXASS_ROUND_TURN);
 		riverRound = new RoundManager(TEXASS_ROUND_RIVER);
+		totalBBPlayersTurn = 0;
 		// handManager = new HandManager(listDefaultCards);
 		// startPreFlopRound();
 	}
@@ -242,7 +244,6 @@ public class TexassGameManager implements GameConstants {
 		RoundManager currentRound = getCurrentRoundInfo();
 		int maxPlayerBetAmt = 0;
 		boolean allPlayersAreAllIn = true;
-		System.out.println("CD 01");
 		for (PlayerBean player : playersManager.getAllAvailablePlayers()) {
 			int totalBetAmt =currentRound.getTotalPlayerBetAmount(player);
 			if(maxPlayerBetAmt<totalBetAmt){
@@ -255,7 +256,6 @@ public class TexassGameManager implements GameConstants {
 						.getPlayerLastAction(player)));
 			}
 		}
-		System.out.println("CD 0");
 		Collections.sort(totalPlayerWiseBetAmount,
 				new Comparator<PlayerBetBean>() {
 					@Override
@@ -274,28 +274,25 @@ public class TexassGameManager implements GameConstants {
 			}
 		}
 		if (allPlayerHaveTurn && allPlayersAreAllIn) {
-			System.out.println("CD 1");
 			return true;
 		}
-		System.out.println(" Total player wise bet amt : "+totalPlayerWiseBetAmount.size());
 //		PlayerBetBean lastPlayerBetAmt = totalPlayerWiseBetAmount.get(0);
 //		totalPlayerWiseBetAmount.remove(0);
 		// Checking all players have same bet amount
 		for (PlayerBetBean currentPlayer : totalPlayerWiseBetAmount) {
 //			if (currentPlayerBetAmt.getBetAmount() != lastPlayerBetAmt
 //					.getBetAmount()) {
-			System.out.println("Chk Bln 1 : "+maxPlayerBetAmt+" >> "+currentPlayer.getBetAmount());
 				if(currentPlayer.getBetAmount()!=maxPlayerBetAmt){
-					System.out.println("CD 2");
 					return false;
 				}
 //			}
 		}
 		if (!allPlayerHaveTurn) {
-			System.out.println("CD 3");
 			return false;
 		}
-		System.out.println("CD 4");
+		if(totalBBPlayersTurn==1){
+			return false;
+		}
 		return true;
 	}
 
@@ -378,6 +375,9 @@ public class TexassGameManager implements GameConstants {
 		TurnManager turnManager = null;
 		PlayerBean currentPlayer = deductPlayerBetAmountFromBalance(userName,
 				betAmount, action);
+		if(currentRound == TEXASS_ROUND_PREFLOP&&currentPlayer.isBigBlind()){
+			totalBBPlayersTurn++;
+		}
 		if (currentPlayer != null) {
 			if(currentPlayer.getTotalBalance()==0){
 				action = ACTION_ALL_IN;
