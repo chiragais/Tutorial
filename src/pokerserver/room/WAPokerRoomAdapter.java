@@ -15,6 +15,7 @@ import pokerserver.rounds.RoundManager;
 import pokerserver.turns.TurnManager;
 import pokerserver.utils.GameConstants;
 
+import com.shephertz.app42.server.domain.Room;
 import com.shephertz.app42.server.idomain.BaseTurnRoomAdaptor;
 import com.shephertz.app42.server.idomain.HandlingResult;
 import com.shephertz.app42.server.idomain.ITurnBasedRoom;
@@ -122,8 +123,10 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			try {
 				responseJson = new JSONObject(moveData);
 				playerAction = responseJson.getInt(TAG_ACTION);
-				managePlayerAction(sender.getName(), playerAction,
-						responseJson.getInt(TAG_BET_AMOUNT));
+				if (playerAction != ACTION_NO_TURN) {
+					managePlayerAction(sender.getName(), playerAction,
+							responseJson.getInt(TAG_BET_AMOUNT));
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -147,7 +150,6 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		}
 		
 		if (lastActivePlayer != null) {
-			System.out.println("Crony 1 : "+gameManager.checkEveryPlayerHaveSameBetAmount());
 			if(gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_PENDING ){
 				gameManager.calculatePotAmountForAllInMembers();
 				gameManager.startWhoopAssRound();
@@ -160,12 +162,14 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
-			System.out.println("Crony 2");
 			isRoundCompelete = true;
 			if (gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE
 					&& gameManager.getCurrentRoundIndex() == WA_ROUND_THIRD_FLOP) {
 				manageGameFinishEvent();
 			} else {
+				System.out.println("Dealer Player : "+ gameManager.getPlayersManager().getDealerPayer()
+						.getPlayerName());
+//				managePlayerTurn(gameManager.getPlayersManager().getDealerPayer().getPlayerName());
 				gameManager.moveToNextRound();
 				broadcastRoundCompeleteToAllPlayers();
 			}
@@ -203,7 +207,7 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		if (currentRoundManager != null) {
 			PlayerBean nextPlayer = getNextPlayerFromCurrentPlayer(currentPlayer);
 			if (nextPlayer == null) {
-//				System.out.println(" Next turn player : Null");
+				System.out.println(" Next turn player : Null");
 			} else {
 				while (nextPlayer.isFolded() || nextPlayer.isAllIn()) {
 //					System.out.println(" Next turn player : "
@@ -213,9 +217,9 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 				}
 
 				gameRoom.setNextTurn(getUserFromName(nextPlayer.getPlayerName()));
-//				System.out.println(currentPlayer
-//						+ " >> Next valid turn player : "
-//						+ nextPlayer.getPlayerName());
+				System.out.println(currentPlayer
+						+ " >> Next valid turn player : "
+						+ nextPlayer.getPlayerName());
 			}
 		} else {
 			System.out.println("------ Error > Round is not started yet.....");

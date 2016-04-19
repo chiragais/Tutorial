@@ -358,7 +358,6 @@ public class TexassGameManager implements GameConstants {
 		while (isAlreadyDesributedCard(cardBean)) {
 			cardBean.generateRandomCard();
 		}
-		
 		return cardBean;
 	}
 

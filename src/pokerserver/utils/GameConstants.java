@@ -122,6 +122,7 @@ public interface GameConstants {
 	public int ACTION_WA_UP = 11;
 	public int ACTION_WA_DOWN = 12;
 	public int ACTION_WA_NO = 13;
+	public int ACTION_NO_TURN = 14;
 
 	// Round status
 	int ROUND_STATUS_ACTIVE = 1;

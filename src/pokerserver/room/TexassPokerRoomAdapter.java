@@ -163,13 +163,14 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			try {
 				responseJson = new JSONObject(moveData);
 				playerAction = responseJson.getInt(TAG_ACTION);
-				managePlayerAction(sender.getName(), playerAction,
-						responseJson.getInt(TAG_BET_AMOUNT));
+				if (playerAction != ACTION_NO_TURN) {
+					managePlayerAction(sender.getName(), playerAction,
+							responseJson.getInt(TAG_BET_AMOUNT));
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-
 	}
 	public void manageGameFinishEvent() {
 		
