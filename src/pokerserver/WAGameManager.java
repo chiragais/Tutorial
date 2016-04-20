@@ -38,6 +38,7 @@ public class WAGameManager implements GameConstants {
 	WinnerManager winnerManager;
 	int waCardAmt = 0;
 	int totalBBPlayersTurn = 0;
+	int totalGameCntr=0;
 	
 	public WAGameManager() {
 		playersManager = new PlayersManager();
@@ -56,6 +57,9 @@ public class WAGameManager implements GameConstants {
 		thirdRound = new RoundManager(WA_ROUND_THIRD_FLOP);
 		waCardAmt = 0;
 		totalBBPlayersTurn = 0;
+		if(totalGameCntr>playersManager.getTotalActivePlayerCounter())
+			totalGameCntr=0;
+		playersManager.setCurrentGameCntr(totalGameCntr++);
 		// startFirstRound();
 	}
 
@@ -559,6 +563,19 @@ public class WAGameManager implements GameConstants {
 		}
 	}
 
+	public boolean isAllPlayersAreFolded(){
+		int foldedCntr = 0;
+		for (PlayerBean playerBean : playersManager.getAllAvailablePlayers()) {
+			if(playerBean.isFolded()){
+				foldedCntr++;
+			}
+		}
+		System.out.println("Number Of players : "+playersManager.getAllAvailablePlayers().size()+" >>Total folded : "+foldedCntr);
+		if(playersManager.getAllAvailablePlayers().size()-1 == foldedCntr){
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Return last active player.
 	 * 

@@ -312,11 +312,12 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		System.out.println("--- Restarting Game -------- ");
 		listRestartGameReq.clear();
 		gameRoom.BroadcastChat(TEXASS_SERVER_NAME, RESPONSE_FOR_GAME_START);
-		gameManager.initGameRounds();
+//		gameManager.initGameRounds();
 		gameManager.getPlayersManager().removeAllPlayers();
 		for (IUser user : gameRoom.getJoinedUsers()) {
 			addNewPlayerCards(user.getName());
 		}
+		gameManager.initGameRounds();
 		sendDefaultCards(null, true);
 		broadcastPlayerCardsInfo();
 		broadcastBlindPlayerDatas();
@@ -482,23 +483,20 @@ public class TexassPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 
 				if (totalPlayerInRoom > 0) {
 					cardsObject.put(TAG_PLAYER_DEALER, gameManager
-							.getPlayersManager().getAllAvailablePlayers()
-							.get(0).getPlayerName());
+							.getPlayersManager().getDealerPayer().getPlayerName());
 				} else {
 					cardsObject.put(TAG_PLAYER_DEALER, RESPONSE_DATA_SEPRATOR);
 				}
 				if (totalPlayerInRoom > 1) {
 					cardsObject.put(TAG_PLAYER_SMALL_BLIND, gameManager
-							.getPlayersManager().getAllAvailablePlayers()
-							.get(1).getPlayerName());
+							.getPlayersManager().getSmallBlindPayer().getPlayerName());
 				} else {
 					cardsObject.put(TAG_PLAYER_SMALL_BLIND,
 							RESPONSE_DATA_SEPRATOR);
 				}
 				if (totalPlayerInRoom > 2) {
 					cardsObject.put(TAG_PLAYER_BIG_BLIND, gameManager
-							.getPlayersManager().getAllAvailablePlayers()
-							.get(2).getPlayerName());
+							.getPlayersManager().getBigBlindPayer().getPlayerName());
 				} else {
 					cardsObject.put(TAG_PLAYER_BIG_BLIND,
 							RESPONSE_DATA_SEPRATOR);

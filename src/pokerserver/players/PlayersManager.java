@@ -5,13 +5,16 @@ import java.util.ArrayList;
 public class PlayersManager {
 
 	public ArrayList<PlayerBean> roomPlayersList; // all player container list
-
+	int dealerPosition,sbPosition,bbPosition,totalActivePlayers = 0;
 	
 	public PlayersManager() {
-		
 		 roomPlayersList = new ArrayList<>();
 	}
 
+	public void setCurrentGameCntr(int currentGameCntr){
+		
+		this.dealerPosition = currentGameCntr;
+	}
 	public void addNewPlayerInRoom(PlayerBean player) {
 		this.roomPlayersList.add(player);
 	}
@@ -67,40 +70,70 @@ public class PlayersManager {
 		this.roomPlayersList.clear();
 	}
 	
+	public int getTotalActivePlayerCounter(){
+		int cntr = 0;
+		for(PlayerBean playerBean : roomPlayersList){
+			if(!playerBean.isAllIn() && !playerBean.isFolded() ){
+				cntr++;
+			}
+		}
+		return cntr;
+	}
 	public PlayerBean getDealerPayer(){
 		PlayerBean dealerPlayer = null;
 		for(int i = 0 ; i<roomPlayersList.size();i++){
-			if(i==0){
+//			if(i==0){
+			if(dealerPosition==i){
 				roomPlayersList.get(i).setDealer(true);
 				dealerPlayer = roomPlayersList.get(i);
 			}else{
 				roomPlayersList.get(i).setDealer(false);
 			}
 		}
-		return dealerPlayer;
-	}
-	public PlayerBean getBigBlindPayer(){
-		PlayerBean bbPlayer = null;
-		for(int i = 0 ; i<roomPlayersList.size();i++){
-			if(i==2){
-				roomPlayersList.get(i).setBigBlind(true);
-				bbPlayer = roomPlayersList.get(i);
-			}else{
-				roomPlayersList.get(i).setBigBlind(false);
-			}
+		if(dealerPlayer==null){
+			dealerPosition=0;
+			dealerPlayer = roomPlayersList.get(dealerPosition);
+			dealerPlayer.setDealer(true);
 		}
-		return bbPlayer;
+		System.out.println("Dealer Position : "+dealerPosition);
+		sbPosition =dealerPosition+1;
+		return dealerPlayer;
 	}
 	public PlayerBean getSmallBlindPayer(){
 		PlayerBean sbPlayer = null;
 		for(int i = 0 ; i<roomPlayersList.size();i++){
-			if(i==1){
+//			if(i==1){
+			if(sbPosition == i){
 				roomPlayersList.get(i).setSmallBlind(true);
 				sbPlayer = roomPlayersList.get(i);
 			}else{
 				roomPlayersList.get(i).setSmallBlind(false);
 			}
 		}
+		if(sbPlayer==null){
+			sbPosition = 0;
+			sbPlayer = roomPlayersList.get(sbPosition);
+			sbPlayer.setSmallBlind(true);
+		}
+		bbPosition = sbPosition+1;
 		return sbPlayer;
+	}
+	public PlayerBean getBigBlindPayer(){
+		PlayerBean bbPlayer = null;
+		for(int i = 0 ; i<roomPlayersList.size();i++){
+//			if(i==2){
+			if(bbPosition==i){
+				roomPlayersList.get(i).setBigBlind(true);
+				bbPlayer = roomPlayersList.get(i);
+			}else{
+				roomPlayersList.get(i).setBigBlind(false);
+			}
+		}
+		if(bbPlayer==null){
+			bbPosition = 0;
+			bbPlayer=roomPlayersList.get(bbPosition);
+			bbPlayer.setBigBlind(true);
+		}
+		return bbPlayer;
 	}
 }

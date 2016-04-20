@@ -143,23 +143,24 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		// If all players are folded or all in then declare last player as a
 		// winner
 		PlayerBean lastActivePlayer = gameManager.checkAllAreFoldOrAllIn();
-		
 		// WA Card pot calculation if any player fold in third round
 		if(playerAction==ACTION_FOLD && gameManager.getCurrentRoundInfo().getRound()==WA_ROUND_THIRD_FLOP){
 			manageWAPotWinnerPlayers();
 		}
 		
 		if (lastActivePlayer != null) {
-			if(gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_PENDING ){
+			if(gameManager.isAllPlayersAreFolded()){
+				manageGameFinishEvent();
+			}else if (gameManager.getWhoopAssRound().getStatus() == ROUND_STATUS_PENDING) {
 				gameManager.calculatePotAmountForAllInMembers();
 				gameManager.startWhoopAssRound();
 				broadcastRoundCompeleteToAllPlayers();
-			}else if((gameManager.getWhoopAssRound().getStatus()==ROUND_STATUS_ACTIVE 
-					||gameManager.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE )
-					&& gameManager.checkEveryPlayerHaveSameBetAmount()){
+			} else if ((gameManager.getWhoopAssRound().getStatus() == ROUND_STATUS_ACTIVE || gameManager
+					.getCurrentRoundInfo().getStatus() == ROUND_STATUS_ACTIVE)
+					&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
 				manageGameFinishEvent();
 			}
-			
+
 		} else if (playerAction != ACTION_DEALER
 				&& gameManager.checkEveryPlayerHaveSameBetAmount()) {
 			isRoundCompelete = true;
@@ -362,11 +363,12 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 		System.out.println("--- Restarting Game -------- ");
 		listRestartGameReq.clear();
 		gameRoom.BroadcastChat(WA_SERVER_NAME, RESPONSE_FOR_GAME_START);
-		gameManager.initGameRounds();
+//		gameManager.initGameRounds();
 		gameManager.getPlayersManager().removeAllPlayers();
 		for (IUser user : gameRoom.getJoinedUsers()) {
 			addNewPlayerCards(user.getName());
 		}
+		gameManager.initGameRounds();
 		sendDefaultCards(null, true);
 		broadcastPlayerCardsInfo();
 		broadcastBlindPlayerDatas();

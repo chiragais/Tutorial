@@ -36,6 +36,7 @@ public class TexassGameManager implements GameConstants {
 	int currentRound = 0;
 	WinnerManager winnerManager;
 	int totalBBPlayersTurn = 0;
+	int totalGameCntr=0;
 	
 	public TexassGameManager() {
 		playersManager = new PlayersManager();
@@ -52,6 +53,9 @@ public class TexassGameManager implements GameConstants {
 		turnRound = new RoundManager(TEXASS_ROUND_TURN);
 		riverRound = new RoundManager(TEXASS_ROUND_RIVER);
 		totalBBPlayersTurn = 0;
+		if(totalGameCntr>playersManager.getTotalActivePlayerCounter())
+			totalGameCntr=0;
+		playersManager.setCurrentGameCntr(totalGameCntr++);
 		// handManager = new HandManager(listDefaultCards);
 		// startPreFlopRound();
 	}
