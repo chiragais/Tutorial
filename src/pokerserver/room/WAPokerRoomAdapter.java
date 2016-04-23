@@ -394,34 +394,38 @@ public class WAPokerRoomAdapter extends BaseTurnRoomAdaptor implements
 			HandlingResult result) {
 		System.out.println("ChatRequest :  User : " + sender.getName()
 				+ " : Message : " + message);
-		if (gameManager.getPlayersManager().getDealerPayer().getPlayerName()
-				.equals(sender.getName())
-				&& message.startsWith(RESPONSE_FOR_DESTRIBUTE_CARD)) {
-			System.out.println("Start Game");
-			gameManager.startFirstRound();
-			gameManager
-					.managePlayerAction(gameManager.getPlayersManager()
-							.getSmallBlindPayer().getPlayerName(), ACTION_BET,
-							SBAmount);
-			gameManager.managePlayerAction(gameManager.getPlayersManager()
-					.getBigBlindPayer().getPlayerName(), ACTION_BET,
-					SBAmount * 2);
-			startGame();
+		if ( message.startsWith(RESPONSE_FOR_DESTRIBUTE_CARD)) {
+			listRestartGameReq.add(sender.getName());
+			System.out.println("Total Request : "+listRestartGameReq.size());
+			if (isRequestFromAllActivePlayers()) {
+				System.out.println("Start Game");
+				listRestartGameReq.clear();
+				gameManager.startFirstRound();
+				gameManager.managePlayerAction(gameManager.getPlayersManager()
+						.getSmallBlindPayer().getPlayerName(), ACTION_BET,
+						SBAmount);
+				gameManager.managePlayerAction(gameManager.getPlayersManager()
+						.getBigBlindPayer().getPlayerName(), ACTION_BET,
+						SBAmount * 2);
+				startGame();
+			}
 		} else if (message.startsWith(REQUEST_FOR_RESTART_GAME)) {
 			listRestartGameReq.add(sender.getName());
-			if (isRequestForRestartFromAllActivePlayers())
+			if (isRequestFromAllActivePlayers())
 				handleRestartGame();
 		}
 	}
 
-	private boolean isRequestForRestartFromAllActivePlayers() {
+	private boolean isRequestFromAllActivePlayers() {
 		// TODO Auto-generated method stub
 		for (PlayerBean playerBean : gameManager.getPlayersManager()
 				.getAllAvailablePlayers()) {
 			if (!listRestartGameReq.contains(playerBean.getPlayerName())) {
+				System.out.println("Request F : "+listRestartGameReq.size());
 				return false;
 			}
 		}
+		System.out.println("Request T : "+listRestartGameReq.size());
 		return true;
 	}
 
